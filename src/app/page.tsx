@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Sliders, Smartphone, Wind, Volume2, Shield, Palette } from 'lucide-react';
@@ -72,7 +74,7 @@ const circadianAtmospheres: CircadianState[] = [
   }
 ];
 
-export const Home: React.FC = () => {
+export default function HomePage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const problemSectionRef = useRef<HTMLDivElement>(null);
   const circadianSectionRef = useRef<HTMLDivElement>(null);
@@ -186,7 +188,6 @@ export const Home: React.FC = () => {
             </span>
           </div>
 
-          {/* High-contrast, clean thin sans-serif heading */}
           <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[95px] tracking-[0.05em] leading-[1.05] text-brand-light mb-8 select-none font-sans font-extralight uppercase">
             <div className="overflow-hidden py-1">
               <span className="hero-reveal-line block">
@@ -211,13 +212,13 @@ export const Home: React.FC = () => {
 
           <div className="hero-fade-in flex flex-wrap gap-4">
             <Link
-              to="/contacto"
+              href="/contacto"
               className="px-6 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold bg-brand-gold text-brand-dark hover:bg-brand-gold-dark transition-all duration-300"
             >
               <BrandText>Agenda tu Cita</BrandText>
             </Link>
             <Link
-              to="/nosotros"
+              href="/nosotros"
               className="px-6 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-white/20 text-brand-light hover:border-brand-gold hover:text-brand-gold transition-all duration-300"
             >
               <BrandText>Explorar Filosofía</BrandText>
@@ -487,7 +488,7 @@ export const Home: React.FC = () => {
               </div>
             </div>
             <Link
-              to="/soluciones"
+              href="/soluciones"
               className="px-6 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold/30 text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 self-start"
             >
               <BrandText>Ver Soluciones Detalladas</BrandText>
@@ -551,7 +552,7 @@ export const Home: React.FC = () => {
               
               <div className="pt-4">
                 <Link
-                  to="/proyectos"
+                  href="/proyectos"
                   className="px-8 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-400 inline-block"
                 >
                   <BrandText>Ver Todos los Proyectos</BrandText>
@@ -606,7 +607,7 @@ export const Home: React.FC = () => {
               <BrandText>Agenda por WhatsApp</BrandText>
             </a>
             <Link
-              to="/contacto"
+              href="/contacto"
               className="px-8 py-4 text-xs tracking-[0.25em] font-sans font-light uppercase border border-white/20 text-brand-light hover:border-brand-gold hover:text-brand-gold transition-all duration-300 w-full sm:w-auto"
             >
               <BrandText>Formulario de Contacto</BrandText>
@@ -617,4 +618,4 @@ export const Home: React.FC = () => {
 
     </div>
   );
-};
+}

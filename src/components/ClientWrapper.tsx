@@ -1,26 +1,25 @@
+"use client";
+
 import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { Header } from './components/Header';
-import { PageTransition } from './components/PageTransition';
-import { BrandText } from './components/BrandText';
-import { Configurator } from './components/Configurator';
-import { Logo } from './components/Logo';
-
-// New Pages
-import { Home } from './pages/Home';
-import { Nosotros } from './pages/Nosotros';
-import { Soluciones } from './pages/Soluciones';
-import { Proyectos } from './pages/Proyectos';
-import { Proceso } from './pages/Proceso';
-import { Contacto } from './pages/Contacto';
+import { Header } from './Header';
+import { PageTransition } from './PageTransition';
+import { BrandText } from './BrandText';
+import { Logo } from './Logo';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const AppContent: React.FC = () => {
+interface ClientWrapperProps {
+  children: React.ReactNode;
+}
+
+export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
+  const pathname = usePathname();
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
 
@@ -97,8 +96,16 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
+  // Refresh ScrollTrigger and scroll to top on path change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+  }, [pathname]);
+
   return (
-    <div className="relative min-h-screen bg-brand-dark overflow-hidden font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark">
+    <div className="relative min-h-screen bg-brand-dark overflow-hidden font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark flex flex-col justify-between">
       {/* Custom Cursor */}
       <div ref={cursorRef} className="hidden md:block custom-cursor" />
       <div ref={cursorDotRef} className="hidden md:block custom-cursor-dot" />
@@ -121,16 +128,8 @@ const AppContent: React.FC = () => {
 
       <Header />
 
-      <main className="w-full">
-        <Routes>
-          <Route path="/" element={<PageTransition><Home /></PageTransition>} />
-          <Route path="/nosotros" element={<PageTransition><Nosotros /></PageTransition>} />
-          <Route path="/soluciones" element={<PageTransition><Soluciones /></PageTransition>} />
-          <Route path="/proyectos" element={<PageTransition><Proyectos /></PageTransition>} />
-          <Route path="/proceso" element={<PageTransition><Proceso /></PageTransition>} />
-          <Route path="/configurador" element={<PageTransition><Configurator /></PageTransition>} />
-          <Route path="/contacto" element={<PageTransition><Contacto /></PageTransition>} />
-        </Routes>
+      <main className="w-full flex-grow">
+        <PageTransition>{children}</PageTransition>
       </main>
 
       {/* Footer */}
@@ -184,7 +183,7 @@ const AppContent: React.FC = () => {
                     { name: 'Nosotros', path: '/nosotros' },
                     { name: 'Soluciones', path: '/soluciones' },
                   ].map((item) => (
-                    <Link key={item.name} to={item.path} className="transform transition-all duration-300 hover:translate-x-1.5 hover:text-brand-gold inline-block">
+                    <Link key={item.name} href={item.path} className="transform transition-all duration-300 hover:translate-x-1.5 hover:text-brand-gold inline-block">
                       <BrandText>{item.name}</BrandText>
                     </Link>
                   ))}
@@ -199,7 +198,7 @@ const AppContent: React.FC = () => {
                     { name: 'Proceso', path: '/proceso' },
                     { name: 'Contacto', path: '/contacto' }
                   ].map((item) => (
-                    <Link key={item.name} to={item.path} className="transform transition-all duration-300 hover:translate-x-1.5 hover:text-brand-gold inline-block">
+                    <Link key={item.name} href={item.path} className="transform transition-all duration-300 hover:translate-x-1.5 hover:text-brand-gold inline-block">
                       <BrandText>{item.name}</BrandText>
                     </Link>
                   ))}
@@ -231,13 +230,3 @@ const AppContent: React.FC = () => {
     </div>
   );
 };
-
-const App: React.FC = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-};
-
-export default App;

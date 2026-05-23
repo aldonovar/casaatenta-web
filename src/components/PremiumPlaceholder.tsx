@@ -20,7 +20,6 @@ export const PremiumPlaceholder: React.FC<PremiumPlaceholderProps> = ({
   aspectRatio = 'aspect-video',
   className = '',
 }) => {
-  // Determine which architectural drawing to render based on the metadata
   const isExterior = plano.toLowerCase().includes('exterior') || plano.toLowerCase().includes('norte') || plano.toLowerCase().includes('paisaje') || plano.toLowerCase().includes('axonométrica');
   const isCeiling = plano.toLowerCase().includes('techo') || plano.toLowerCase().includes('cielorraso') || plano.toLowerCase().includes('termomecánico');
   const isDetail = plano.toLowerCase().includes('detalle') || plano.toLowerCase().includes('corte') || plano.toLowerCase().includes('esquema');
@@ -182,13 +181,13 @@ export const PremiumPlaceholder: React.FC<PremiumPlaceholderProps> = ({
         )}
       </div>
 
-      {/* Bottom section: Text descriptions (clean layout, no tech tags/boxes) */}
+      {/* Bottom section: Text descriptions */}
       <div className="relative z-10 pt-4 flex flex-col md:flex-row md:items-end justify-between w-full gap-4">
         <p className="text-[11px] font-sans font-light text-brand-light/50 leading-relaxed max-w-xl">
           {requirements}
         </p>
         
-        {/* Simple Index Marker (No generic HUD style) */}
+        {/* Simple Index Marker */}
         <div className="text-[9px] font-mono tracking-widest text-brand-gold uppercase whitespace-nowrap self-end border-t border-brand-gold/10 pt-2 w-full md:w-auto text-right">
           <span><BrandText>ESPECIFICACIÓN // CA-0{isExterior ? '1' : isCeiling ? '2' : isDetail ? '3' : '4'}</BrandText></span>
         </div>

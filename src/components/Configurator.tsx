@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { BrandText } from './BrandText';
 
 interface ConfigState {
@@ -55,7 +55,6 @@ export const Configurator: React.FC = () => {
 Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
 
     const encodedText = encodeURIComponent(text);
-    // Open real WhatsApp number shared by user
     window.open(`https://wa.me/51908550942?text=${encodedText}`, '_blank');
     setStep(5); // Go to thank you step
   };
@@ -379,7 +378,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                 <BrandText>NUEVO PROCESO</BrandText>
               </button>
               <Link
-                to="/contacto"
+                href="/contacto"
                 className="px-6 py-2.5 text-[9px] tracking-widest uppercase border border-white/20 text-brand-light hover:border-white/40 transition-all duration-400 flex items-center"
               >
                 <BrandText>VER REDES SOCIALES</BrandText>

@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ArrowRight, MessageSquare, Check, Mail, Phone, MapPin, Clock } from 'lucide-react';
-import { BrandText } from '../components/BrandText';
+import { BrandText } from '../../components/BrandText';
 
-export const Contacto: React.FC = () => {
+export default function ContactoPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -259,4 +261,4 @@ export const Contacto: React.FC = () => {
       </div>
     </div>
   );
-};
+}

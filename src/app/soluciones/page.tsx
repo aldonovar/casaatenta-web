@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BrandText } from '../components/BrandText';
-import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
+import { BrandText } from '../../components/BrandText';
+import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -131,7 +133,7 @@ const solutionsData: SolutionItem[] = [
   }
 ];
 
-export const Soluciones: React.FC = () => {
+export default function SolucionesPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -293,4 +295,4 @@ export const Soluciones: React.FC = () => {
 
     </div>
   );
-};
+}

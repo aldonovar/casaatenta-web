@@ -1,13 +1,15 @@
+"use client";
+
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Check, X } from 'lucide-react';
-import { BrandText } from '../components/BrandText';
-import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
+import { BrandText } from '../../components/BrandText';
+import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const Nosotros: React.FC = () => {
+export default function NosotrosPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -254,4 +256,4 @@ export const Nosotros: React.FC = () => {
 
     </div>
   );
-};
+}

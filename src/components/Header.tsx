@@ -1,11 +1,15 @@
-import React, { useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+"use client";
+
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { BrandText } from './BrandText';
 import { Logo } from './Logo';
 
 export const Header: React.FC = () => {
-  const [isScrolled, setIsScrolled] = React.useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 80);
@@ -36,32 +40,33 @@ export const Header: React.FC = () => {
 
         <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between">
           {/* LOGO */}
-          <Link to="/" className="flex items-center cursor-pointer group" onClick={() => setMobileMenuOpen(false)}>
+          <Link href="/" className="flex items-center cursor-pointer group" onClick={() => setMobileMenuOpen(false)}>
             <Logo className="transition-all duration-500" />
           </Link>
 
           {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={({ isActive }) => 
-                  `text-[11px] xl:text-xs tracking-[0.30em] font-sans font-light uppercase relative group flex items-center transition-all duration-300 hover:-translate-y-[1px] ${
+            {navItems.map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`text-[11px] xl:text-xs tracking-[0.30em] font-sans font-light uppercase relative group flex items-center transition-all duration-300 hover:-translate-y-[1px] ${
                     isActive ? 'text-brand-gold font-medium' : 'text-brand-light/65 hover:text-brand-gold'
-                  }`
-                }
-              >
-                <BrandText>{item.label}</BrandText>
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-brand-gold transition-all duration-300 ease-out group-hover:w-full" />
-              </NavLink>
-            ))}
+                  }`}
+                >
+                  <BrandText>{item.label}</BrandText>
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-brand-gold transition-all duration-300 ease-out group-hover:w-full" />
+                </Link>
+              );
+            })}
           </nav>
 
           {/* CTA + MOBILE TOGGLE */}
           <div className="flex items-center space-x-6">
             <Link
-              to="/configurador"
+              href="/configurador"
               className="hidden md:block px-5 py-2 text-[11px] tracking-[0.25em] font-sans font-light uppercase text-brand-gold border border-brand-gold/20 hover:border-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
             >
               <BrandText>Diseñar Espacio</BrandText>
@@ -86,23 +91,24 @@ export const Header: React.FC = () => {
       }`}>
         <div className="absolute inset-0 bg-brand-dark/97 backdrop-blur-xl" />
         <div className="relative h-full flex flex-col items-center justify-center space-y-8">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileMenuOpen(false)}
-              className={({ isActive }) => 
-                `text-lg md:text-xl font-sans font-light tracking-[0.2em] transition-colors uppercase ${
+          {navItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`text-lg md:text-xl font-sans font-light tracking-[0.2em] transition-colors uppercase ${
                   isActive ? 'text-brand-gold font-medium' : 'text-brand-light hover:text-brand-gold'
-                }`
-              }
-            >
-              <BrandText>{item.label}</BrandText>
-            </NavLink>
-          ))}
+                }`}
+              >
+                <BrandText>{item.label}</BrandText>
+              </Link>
+            );
+          })}
           <div className="h-[1px] w-12 bg-brand-gold/30 my-3" />
           <Link
-            to="/configurador"
+            href="/configurador"
             onClick={() => setMobileMenuOpen(false)}
             className="px-8 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300"
           >

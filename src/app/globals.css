@@ -23,9 +23,9 @@
   --color-brand-gold-light: #e1d0ba;
 
   /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Syne', sans-serif;
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-syne), sans-serif;
+  --font-serif: var(--font-cormorant), Georgia, serif;
 
   /* Letter Spacing */
   --tracking-ultra: 0.3em;
@@ -115,10 +115,6 @@ html.lenis body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.gold-glow {
-  /* Removed glow for premium dry architectural aesthetic */
-}
-
 .gold-gradient-text {
   background: linear-gradient(135deg, #e1d0ba 0%, #c5a880 50%, #b3946a 100%);
   -webkit-background-clip: text;
@@ -139,7 +135,6 @@ html.lenis body {
     linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    Custom Cursor

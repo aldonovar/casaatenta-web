@@ -1,8 +1,10 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BrandText } from '../components/BrandText';
-import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
+import { BrandText } from '../../components/BrandText';
+import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -124,7 +126,7 @@ const projectsData: ProjectCaseStudy[] = [
   }
 ];
 
-export const Proyectos: React.FC = () => {
+export default function ProyectosPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [filter, setFilter] = useState<'todos' | 'residencial' | 'pabellones' | 'wellness'>('todos');
 
@@ -295,4 +297,4 @@ export const Proyectos: React.FC = () => {
       </div>
     </div>
   );
-};
+}

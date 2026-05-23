@@ -1,9 +1,11 @@
+"use client";
+
 import React, { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { BrandText } from '../components/BrandText';
-import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
+import { BrandText } from '../../components/BrandText';
+import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -126,7 +128,7 @@ const processStepsData: ProcessStep[] = [
   }
 ];
 
-export const Proceso: React.FC = () => {
+export default function ProcesoPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -260,7 +262,7 @@ export const Proceso: React.FC = () => {
           </p>
           <div className="pt-4">
             <Link
-              to="/contacto"
+              href="/contacto"
               className="px-8 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-400 inline-block"
             >
               <BrandText>Iniciar Consulta Gratuita</BrandText>
@@ -271,4 +273,4 @@ export const Proceso: React.FC = () => {
       </div>
     </div>
   );
-};
+}

@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import { useLocation } from 'react-router-dom';
+import { usePathname } from 'next/navigation';
 
 interface PageTransitionProps {
   children: React.ReactNode;
@@ -9,7 +11,7 @@ interface PageTransitionProps {
 export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const transitionRef = useRef<HTMLDivElement>(null);
   const curtainRef = useRef<HTMLDivElement>(null);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -34,7 +36,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
     });
 
     return () => ctx.revert();
-  }, [location.pathname]);
+  }, [pathname]);
 
   return (
     <div className="relative w-full">
