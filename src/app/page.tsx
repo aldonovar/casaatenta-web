@@ -4,8 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, Sliders, Smartphone, Wind, Volume2, Shield, Palette, FileText, Calendar, Check, Compass } from 'lucide-react';
+import { ArrowRight, Sliders, Smartphone, Wind, Volume2, Shield, Palette, Calendar, Check } from 'lucide-react';
 import { BrandText } from '../components/BrandText';
+import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,7 +19,6 @@ interface CircadianState {
   color: string;
   opacity: number;
   annotation: string;
-  image: string;
 }
 
 const circadianAtmospheres: CircadianState[] = [
@@ -28,10 +28,9 @@ const circadianAtmospheres: CircadianState[] = [
     lux: '520 lx',
     audio: 'Silencio Pasivo',
     code: 'SYS-MORN-01',
-    color: 'rgba(210, 230, 255, 0.15)',
+    color: '#d2e6ff',
     opacity: 0.8,
-    annotation: 'Luz circadiana fría (5000K) que penetra por los tragaluces para estimular el despertar biológico.',
-    image: '/images/ChatGPT Image 15 may 2026, 03_33_37 p.m. (3).png'
+    annotation: 'Luz circadiana fría (5000K) que penetra por los tragaluces para estimular el despertar biológico.'
   },
   {
     label: 'Mediodía Solar',
@@ -39,10 +38,9 @@ const circadianAtmospheres: CircadianState[] = [
     lux: '780 lx',
     audio: 'Frecuencia Neutra',
     code: 'SYS-MID-02',
-    color: 'rgba(255, 253, 240, 0.1)',
+    color: '#fffdc8',
     opacity: 0.5,
-    annotation: 'Nivel óptimo de iluminación cenital. Las celosías mecánicas se adaptan de forma autónoma.',
-    image: '/images/ChatGPT Image 15 may 2026, 03_33_37 p.m. (5).png'
+    annotation: 'Nivel óptimo de iluminación cenital. Las celosías mecánicas se adaptan de forma autónoma.'
   },
   {
     label: 'Atardecer Cálido',
@@ -50,10 +48,9 @@ const circadianAtmospheres: CircadianState[] = [
     lux: '150 lx',
     audio: 'Acústica Orgánica',
     code: 'SYS-SET-03',
-    color: 'rgba(245, 150, 50, 0.18)',
+    color: '#f59632',
     opacity: 1.0,
-    annotation: 'Luz cálida indirecta (2700K). Las persianas perimetrales de aluminio se despliegan al 40%.',
-    image: '/images/ChatGPT Image 15 may 2026, 03_33_37 p.m. (7).png'
+    annotation: 'Luz cálida indirecta (2700K). Las persianas perimetrales de aluminio se despliegan al 40%.'
   },
   {
     label: 'Modo Cine / Escena',
@@ -61,10 +58,9 @@ const circadianAtmospheres: CircadianState[] = [
     lux: '8 lx',
     audio: 'Audio Envolvente / 52dB',
     code: 'SYS-CINE-04',
-    color: 'rgba(100, 50, 255, 0.15)',
+    color: '#6432ff',
     opacity: 1.0,
-    annotation: 'Audio invisible activo por resonancia en muros de yeso. Iluminación al 1.5%.',
-    image: '/images/ChatGPT Image 15 may 2026, 03_33_37 p.m. (8).png'
+    annotation: 'Audio invisible activo por resonancia en muros de yeso. Iluminación al 1.5%.'
   },
   {
     label: 'Modo Nocturno',
@@ -72,10 +68,9 @@ const circadianAtmospheres: CircadianState[] = [
     lux: '0.2 lx',
     audio: 'Silencio Absoluto',
     code: 'SYS-NIGH-05',
-    color: 'rgba(10, 15, 45, 0.35)',
+    color: '#c5a880',
     opacity: 1.0,
-    annotation: 'Barreras térmicas perimetrales activas. Iluminación de cortesía nocturna en pavimentos.',
-    image: '/images/ChatGPT Image 15 may 2026, 03_33_37 p.m. (10).png'
+    annotation: 'Barreras térmicas perimetrales activas. Iluminación de cortesía nocturna en pavimentos.'
   }
 ];
 
@@ -86,46 +81,15 @@ export default function HomePage() {
   const circadianSectionRef = useRef<HTMLDivElement>(null);
   const casesSectionRef = useRef<HTMLDivElement>(null);
   
-  const [circadianStep, setCircadianStep] = useState(0);
   const [activeSlide, setActiveSlide] = useState(0);
 
   const proposalSlides = [
-    {
-      title: '01 / PROPUESTA CASTELLANA 503',
-      subtitle: 'Remodelación de terraza en Surco (Quinto Nivel)',
-      desc: 'Proyecto real de integración estructural de aluminio 6063-T5, cielo raso PVC Wood-finish y control inteligente para un ático de alta gama.',
-      image: '/images/1.png'
-    },
-    {
-      title: '02 / VISIÓN DEL PROYECTO',
-      subtitle: 'Transformación integral silenciosa',
-      desc: 'El proyecto equilibra diseño, ligereza estructural, durabilidad y ventilación cruzada con celosías perimetrales a 45 grados.',
-      image: '/images/2.png'
-    },
-    {
-      title: '04 / ALCANCE TÉCNICO',
-      subtitle: 'Ingeniería y Materiales Nobles',
-      desc: 'Estructura modular reforzada de bajo peso específico, herrajes de acero inoxidable resistentes al ambiente de Lima y cielo raso acústico.',
-      image: '/images/4.png'
-    },
-    {
-      title: '05 / MATERIALIDAD',
-      subtitle: 'Estética contemporánea libre de mantenimiento',
-      desc: 'Aluminio anodizado, PVC de cámaras múltiples Wood-finish y herrajes premium resistentes a la corrosión marina.',
-      image: '/images/5.png'
-    },
-    {
-      title: '06 / TIMELINE DE OBRA',
-      subtitle: 'Instalación rápida en 7 días hables',
-      desc: 'Planificación en secuencia ordenada desde la preparación de anclajes (Día 1) hasta el sellado termo-acústico y entrega final (Día 7).',
-      image: '/images/6.png'
-    },
-    {
-      title: '07 / PROPUESTA VISUAL',
-      subtitle: 'Render del ático terminado',
-      desc: 'Simulación tridimensional de la iluminación inteligente y cerramiento de 2.40m con rodamientos para máxima versatilidad.',
-      image: '/images/7.png'
-    }
+    { title: '01 / PROPUESTA TÉCNICA' },
+    { title: '02 / VISIÓN DEL PROYECTO' },
+    { title: '03 / MATERIALIDAD' },
+    { title: '04 / DETALLE DE COTIZACIÓN' },
+    { title: '05 / CRONOGRAMA' },
+    { title: '06 / RENDER CONSTRUCTIVO' }
   ];
 
   useEffect(() => {
@@ -170,15 +134,43 @@ export default function HomePage() {
       });
       problemTl.to('.before-card', { opacity: 0, ease: 'none', duration: 0.7 }, 0)
                .to('.after-card', { opacity: 1, ease: 'none', duration: 0.7 }, 0)
-               .to({}, { duration: 0.3 }); // Spacer to maintain state after fade
+               .to({}, { duration: 0.3 }); // Spacer
 
-      // 4. Circadian Experience Pinned Scroll
-      let lastActiveIndex = 0;
+      // 4. Circadian Experience Pinned Scroll & Layer Transition Timeline
+      const circadianTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: circadianSectionRef.current,
+          start: 'top top',
+          end: '+=250%',
+          pin: true,
+          scrub: 0.5,
+        }
+      });
+      circadianTl.to('.circadian-layer-0', { opacity: 0, duration: 1 })
+                 .to('.circadian-layer-1', { opacity: 1, duration: 1 }, '<')
+                 .to('.circadian-layer-1', { opacity: 0, duration: 1 })
+                 .to('.circadian-layer-2', { opacity: 1, duration: 1 }, '<')
+                 .to('.circadian-layer-2', { opacity: 0, duration: 1 })
+                 .to('.circadian-layer-3', { opacity: 1, duration: 1 }, '<')
+                 .to('.circadian-layer-3', { opacity: 0, duration: 1 })
+                 .to('.circadian-layer-4', { opacity: 1, duration: 1 }, '<');
+
+      // Query telemetry DOM elements once to prevent layout thrashing on scroll
+      const container = containerRef.current;
+      const labelEl = container?.querySelector('.telemetry-label');
+      const tempEl = container?.querySelector('.telemetry-temp');
+      const luxEl = container?.querySelector('.telemetry-lux');
+      const audioEl = container?.querySelector('.telemetry-audio');
+      const codeEl = container?.querySelector('.telemetry-code');
+      const descEl = container?.querySelector('.telemetry-desc');
+      const percentageEl = container?.querySelector('.telemetry-percentage');
+      const phaseEl = container?.querySelector('.telemetry-phase');
+
+      // Direct DOM update of Telemetry values to bypass React render cycle during scroll
       ScrollTrigger.create({
         trigger: circadianSectionRef.current,
         start: 'top top',
         end: '+=250%',
-        pin: true,
         scrub: 0.5,
         onUpdate: (self) => {
           const progress = self.progress;
@@ -188,10 +180,15 @@ export default function HomePage() {
           else if (progress >= 0.68 && progress < 0.88) activeIndex = 3;
           else if (progress >= 0.88) activeIndex = 4;
 
-          if (activeIndex !== lastActiveIndex) {
-            lastActiveIndex = activeIndex;
-            setCircadianStep(activeIndex);
-          }
+          const data = circadianAtmospheres[activeIndex];
+          if (labelEl) labelEl.textContent = data.label;
+          if (tempEl) tempEl.textContent = data.temp;
+          if (luxEl) luxEl.textContent = data.lux;
+          if (audioEl) audioEl.textContent = data.audio;
+          if (codeEl) codeEl.textContent = data.code;
+          if (descEl) descEl.textContent = data.annotation;
+          if (percentageEl) percentageEl.textContent = `AVANZAR DÍA: ${Math.round(progress * 100)}%`;
+          if (phaseEl) phaseEl.textContent = `FASE ${activeIndex + 1}/5`;
         }
       });
 
@@ -216,25 +213,16 @@ export default function HomePage() {
     return () => ctx.revert();
   }, []);
 
-  const activeCircadian = circadianAtmospheres[circadianStep];
-
   return (
     <div ref={containerRef} className="bg-brand-dark min-h-screen relative overflow-hidden">
       
-      {/* S1: HERO EDITORIAL INMERSIVO */}
+      {/* S1: HERO EDITORIAL */}
       <section className="relative w-full h-screen flex flex-col justify-end px-6 md:px-12 lg:px-24 pb-20 md:pb-28 z-20">
         
-        {/* Background Image of high-end kitchen/dining */}
-        <div className="absolute inset-0 z-0 select-none">
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/40 to-brand-dark/20 z-10" />
-          <div className="absolute inset-0 bg-brand-dark/30 z-10" />
-          <img 
-            src="/images/ChatGPT Image 13 may 2026, 05_43_19 p.m. (5).png" 
-            alt="CASA ATENTA Residencia"
-            className="w-full h-full object-cover opacity-60 scale-105 animate-[pulse_6s_ease-in-out_infinite]"
-            style={{ animationDuration: '20s' }}
-          />
-        </div>
+        {/* Background Mesh Gradient (Zero Images) */}
+        <div className="absolute inset-0 z-0 bg-brand-dark" style={{
+          background: 'radial-gradient(circle at 75% 30%, #171512 0%, #0d0d0d 70%)'
+        }} />
 
         {/* Dynamic Architectural Grid Overlay */}
         <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" style={{
@@ -242,107 +230,123 @@ export default function HomePage() {
           backgroundSize: '80px 80px'
         }} />
         
-        <div className="relative z-25 max-w-5xl font-light">
+        <div className="relative z-25 max-w-7xl mx-auto w-full grid grid-cols-1 xl:grid-cols-12 gap-12 items-end">
           
-          {/* Logo SVG Wordmark embedded directly */}
-          <div className="hero-fade-in mb-8 flex justify-start">
-            <svg
-              viewBox="0 0 2400 760"
-              className="h-16 sm:h-20 md:h-24 w-auto fill-none stroke-current text-brand-light"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="CASA ATENTA"
-            >
-              <g strokeLinecap="round" strokeLinejoin="round">
-                <g id="sensor-icon">
-                  <circle cx="280" cy="380" r="165" strokeWidth="24" />
-                  <circle cx="280" cy="380" r="120" strokeWidth="7" />
-                  <path d="M 221 362 L 280 329 L 339 362" strokeWidth="15" />
-                  <path d="M 280 395 L 280 447" strokeWidth="15" />
+          <div className="xl:col-span-7 font-light text-left">
+            {/* Logo SVG Wordmark */}
+            <div className="hero-fade-in mb-8 flex justify-start">
+              <svg
+                viewBox="0 0 2400 760"
+                className="h-14 sm:h-18 md:h-20 w-auto fill-none stroke-current text-brand-light"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="CASA ATENTA"
+              >
+                <g strokeLinecap="round" strokeLinejoin="round">
+                  <g id="sensor-icon">
+                    <circle cx="280" cy="380" r="165" strokeWidth="24" />
+                    <circle cx="280" cy="380" r="120" strokeWidth="7" />
+                    <path d="M 221 362 L 280 329 L 339 362" strokeWidth="15" />
+                    <path d="M 280 395 L 280 447" strokeWidth="15" />
+                  </g>
+                  <g id="wordmark" strokeWidth="7.5">
+                    <path d="M 704.40 318.90 C 651.30 318.90 615.90 354.30 615.90 395.60 C 615.90 436.90 651.30 472.30 704.40 472.30" />
+                    <path d="M 776.00 472.30 L 826.74 318.90 L 877.48 472.30" />
+                    <path d="M 1042.30 334.24 C 1015.16 315.36 963.24 316.54 957.34 357.84 C 951.44 395.60 1042.30 383.80 1038.76 429.82 C 1035.22 477.02 978.58 479.38 947.90 454.60" />
+                    <path d="M 1113.90 472.30 L 1164.64 318.90 L 1215.38 472.30" />
+                    <path d="M 1380.80 472.30 L 1431.54 318.90 L 1482.28 472.30" />
+                    <path d="M 1546.80 318.90 L 1658.90 318.90 M 1602.85 318.90 L 1602.85 472.30" />
+                    <path d="M 1815.46 318.90 L 1724.60 318.90 L 1724.60 472.30 L 1817.82 472.30 M 1724.60 395.60 L 1801.30 395.60" />
+                    <path d="M 1890.60 472.30 L 1890.60 318.90 L 1990.90 472.30 L 1990.90 318.90" />
+                    <path d="M 2056.60 318.90 L 2168.70 318.90 M 2112.65 318.90 L 2112.65 472.30" />
+                    <path d="M 2234.40 472.30 L 2285.14 318.90 L 2335.88 472.30" />
+                  </g>
                 </g>
-                <g id="wordmark" strokeWidth="7.5">
-                  <path d="M 704.40 318.90 C 651.30 318.90 615.90 354.30 615.90 395.60 C 615.90 436.90 651.30 472.30 704.40 472.30" />
-                  <path d="M 776.00 472.30 L 826.74 318.90 L 877.48 472.30" />
-                  <path d="M 1042.30 334.24 C 1015.16 315.36 963.24 316.54 957.34 357.84 C 951.44 395.60 1042.30 383.80 1038.76 429.82 C 1035.22 477.02 978.58 479.38 947.90 454.60" />
-                  <path d="M 1113.90 472.30 L 1164.64 318.90 L 1215.38 472.30" />
-                  <path d="M 1380.80 472.30 L 1431.54 318.90 L 1482.28 472.30" />
-                  <path d="M 1546.80 318.90 L 1658.90 318.90 M 1602.85 318.90 L 1602.85 472.30" />
-                  <path d="M 1815.46 318.90 L 1724.60 318.90 L 1724.60 472.30 L 1817.82 472.30 M 1724.60 395.60 L 1801.30 395.60" />
-                  <path d="M 1890.60 472.30 L 1890.60 318.90 L 1990.90 472.30 L 1990.90 318.90" />
-                  <path d="M 2056.60 318.90 L 2168.70 318.90 M 2112.65 318.90 L 2112.65 472.30" />
-                  <path d="M 2234.40 472.30 L 2285.14 318.90 L 2335.88 472.30" />
-                </g>
-              </g>
-            </svg>
-          </div>
+              </svg>
+            </div>
 
-          <div className="overflow-hidden mb-5">
-            <span className="hero-fade-in block text-xs md:text-sm tracking-[0.35em] text-brand-gold uppercase font-mono">
-              ARQUITECTURA + AUTOMATIZACIÓN INVISIBLE
-            </span>
-          </div>
-
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-light text-brand-light leading-[1.1] mb-8 uppercase tracking-[0.05em]">
-            <div className="overflow-hidden py-1">
-              <span className="hero-reveal-line block font-extralight">
-                HOGARES QUE
+            <div className="overflow-hidden mb-5">
+              <span className="hero-fade-in block text-xs md:text-sm tracking-[0.35em] text-brand-gold uppercase font-mono">
+                ARQUITECTURA + AUTOMATIZACIÓN INVISIBLE
               </span>
             </div>
-            <div className="overflow-hidden py-1">
-              <span className="hero-reveal-line block text-brand-gold font-light">
-                RESPONDEN<span className="text-brand-light">.</span>
-              </span>
+
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-display font-light text-brand-light leading-[1.1] mb-8 uppercase tracking-[0.05em]">
+              <div className="overflow-hidden py-1">
+                <span className="hero-reveal-line block font-extralight">
+                  TU HOGAR
+                </span>
+              </div>
+              <div className="overflow-hidden py-1">
+                <span className="hero-reveal-line block text-brand-gold font-light">
+                  RESPONDE<span className="text-brand-light">.</span>
+                </span>
+              </div>
+            </h1>
+
+            {/* Elegant gold line */}
+            <div className="h-[1px] w-48 bg-gradient-to-r from-brand-gold via-brand-gold/60 to-transparent relative mb-8 hero-fade-in">
+              <div className="absolute top-[-1px] left-8 w-1.5 h-[3px] bg-brand-light rounded-full blur-[0.5px] opacity-90" />
             </div>
-          </h1>
 
-          {/* Elegant gold line */}
-          <div className="h-[1px] w-48 bg-gradient-to-r from-brand-gold via-brand-gold/60 to-transparent relative mb-8 hero-fade-in">
-            <div className="absolute top-[-1px] left-8 w-1.5 h-[3px] bg-brand-light rounded-full blur-[0.5px] opacity-90" />
+            <p className="hero-fade-in text-xs md:text-sm font-sans font-light text-brand-light/60 leading-relaxed max-w-lg mb-10">
+              Diseñamos residencias de alta gama donde la tecnología se disuelve por completo en la arquitectura. Sin termostatos ni cables visibles; solo atmósferas que respiran y se adaptan a tu ritmo de vida.
+            </p>
+
+            <div className="hero-fade-in flex flex-wrap gap-4 select-none">
+              <a
+                href="https://wa.me/51908550942?text=Hola%20Casa%20Atenta,%20quiero%20agendar%20una%20visita%20t%C3%A9cnica%20para%20evaluar%20un%20proyecto."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-8 py-4 text-xs tracking-[0.25em] font-sans font-light uppercase bg-brand-gold text-brand-dark border border-brand-gold hover:bg-brand-gold-dark hover:border-brand-gold-dark transition-all duration-300 active:scale-95 cursor-pointer"
+              >
+                <BrandText>Agendar Visita Técnica</BrandText>
+              </a>
+              <Link
+                href="/soluciones"
+                className="px-8 py-4 text-xs tracking-[0.25em] font-sans font-light uppercase border border-white/20 text-brand-light hover:border-brand-gold hover:text-brand-gold transition-all duration-300 active:scale-95"
+              >
+                <BrandText>Explorar Soluciones</BrandText>
+              </Link>
+            </div>
           </div>
 
-          <p className="hero-fade-in text-xs md:text-sm font-sans font-light text-brand-light/60 leading-relaxed max-w-lg mb-10">
-            Diseñamos residencias de alta gama donde la tecnología se disuelve por completo en los planos constructivos. Sin pantallas, sin termostatos de plástico ni cables visibles; solo atmósferas vivas que cuidan de ti.
-          </p>
-
-          <div className="hero-fade-in flex flex-wrap gap-4 select-none">
-            <Link
-              href="/contacto"
-              className="px-8 py-4 text-xs tracking-[0.25em] font-sans font-light uppercase bg-brand-gold text-brand-dark border border-brand-gold hover:bg-brand-gold-dark hover:border-brand-gold-dark transition-all duration-300 active:scale-95"
-            >
-              <BrandText>Agendar Visita Técnica</BrandText>
-            </Link>
-            <Link
-              href="/soluciones"
-              className="px-8 py-4 text-xs tracking-[0.25em] font-sans font-light uppercase border border-white/20 text-brand-light hover:border-brand-gold hover:text-brand-gold transition-all duration-300 active:scale-95"
-            >
-              <BrandText>Explorar Soluciones</BrandText>
-            </Link>
+          {/* Self-drawing isometric SketchUp-style render on the right */}
+          <div className="xl:col-span-5 w-full hero-fade-in hidden xl:block">
+            <PremiumPlaceholder 
+              scene="hero" 
+              title="CASA ATENTA PORTAL V-01" 
+              plano="Perspectiva Axonométrica" 
+              requirements="Diseño modular en aluminio reforzado anodizado para soporte aéreo con conductos de inyección y retorno integrados en las uniones estructurales."
+              dimensions="1600x1200 px"
+              aspectRatio="aspect-[4/3]"
+              className="w-full shadow-2xl"
+            />
           </div>
+
         </div>
 
         {/* Elegant bottom caption and indicator */}
         <div className="absolute bottom-10 left-6 md:left-12 lg:left-24 right-6 md:right-12 lg:right-24 flex justify-between items-center text-[10px] font-mono text-white/30 tracking-widest uppercase">
-          <span>SANTIAGO DE SURCO, LIMA</span>
+          <span>LIMA MODERNA // SANTIAGO DE SURCO</span>
           <span className="animate-pulse">CAPÍTULO I // DESPLAZA PARA EXPLORAR</span>
         </div>
       </section>
 
-      {/* S2: EL MANIFIESTO (Inspirado en collabcapitolium.fr) */}
+      {/* S2: EL MANIFIESTO */}
       <section ref={manifestoRef} className="w-full py-32 px-6 md:px-12 lg:px-24 bg-brand-dark-soft border-t border-b border-white/[0.04] relative z-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
           
-          {/* Left column: poetic vertical image (hand touching concrete wall) */}
-          <div className="lg:col-span-5 relative manifesto-img-panel overflow-hidden border border-white/[0.05] aspect-[4/5] bg-brand-dark shadow-2xl">
-            <div className="absolute inset-0 bg-brand-dark/25 z-10" />
-            <img 
-              src="/images/i.png" 
-              alt="Materialidad táctil Casa Atenta" 
-              className="w-full h-full object-cover transition-transform duration-1000 hover:scale-105"
+          {/* Left column: SketchUp-style rendering of light vault opening */}
+          <div className="lg:col-span-5 relative manifesto-img-panel w-full aspect-[4/5] bg-brand-dark shadow-2xl">
+            <PremiumPlaceholder 
+              scene="manifiesto"
+              title="ESPACIO DISUELTO"
+              plano="Corte de Tragaluz Cenital"
+              requirements="Estudio de la luz solar rasante en encofrados de hormigón. La tecnología se disuelve por completo detrás del yeso continuo."
+              dimensions="1200x1500 px"
+              aspectRatio="h-full w-full"
             />
-            {/* Fine architectural caption overlay */}
-            <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] text-brand-light/75 bg-brand-dark/80 backdrop-blur-md px-3 py-1.5 border border-white/[0.05] tracking-widest uppercase">
-              <span>MANIFIESTO // SENSACIÓN TÁCTIL</span>
-            </div>
           </div>
 
           {/* Right column: Editorial Storytelling */}
@@ -370,7 +374,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 select-none">
               <Link 
                 href="/nosotros" 
                 className="inline-flex items-center space-x-3 text-xs tracking-[0.25em] font-sans font-light text-brand-gold uppercase group hover:text-brand-gold-light transition-colors duration-300"
@@ -384,7 +388,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* S3: EL CONFLICTO CONSTRUCTIVO (Before/After con Renders reales) */}
+      {/* S3: EL CONFLICTO CONSTRUCTIVO */}
       <section ref={problemSectionRef} className="relative w-full h-screen bg-brand-dark overflow-hidden flex items-center justify-center">
         
         {/* Floating title block */}
@@ -416,45 +420,38 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Before/After Overlay Stack (Renders reales del proyecto Castellana 503) */}
+          {/* Before/After Overlay Stack (Vector blueprints) */}
           <div className="lg:col-span-7 relative w-full h-[55vh] lg:h-[70vh] flex items-center justify-center border border-white/[0.04] bg-brand-dark-soft shadow-2xl overflow-hidden">
             
-            {/* BEFORE FRAME (Estudio preliminar/Render crudo de iluminación) */}
+            {/* BEFORE FRAME */}
             <div className="before-card absolute inset-0 w-full h-full">
-              <div className="absolute inset-0 bg-brand-dark/20 z-10" />
-              <img 
-                src="/images/ChatGPT Image 14 may 2026, 02_52_37 p.m.png" 
-                alt="Propuesta de Iluminación Inicial" 
-                className="w-full h-full object-cover"
+              <PremiumPlaceholder 
+                scene="before"
+                title="ESTUDIO PRELIMINAR: MURO CONVENCIONAL"
+                plano="Elevación Interior Oeste (Antes)"
+                requirements="Presencia de teclados múltiples en muro, cableado visible de TV, difusor de aire convencional y sensores expuestos en esquinas."
+                dimensions="1920x1080 px"
+                aspectRatio="h-full w-full"
               />
-              <div className="absolute bottom-6 right-6 z-20 font-mono text-[9px] text-white/50 bg-brand-dark/80 border border-white/[0.08] px-3 py-1.5 tracking-widest uppercase">
-                <span>ESTUDIO PRELIMINAR DE LUMINARIAS</span>
-              </div>
             </div>
 
-            {/* AFTER FRAME (Render terminado y limpio del ático) */}
+            {/* AFTER FRAME */}
             <div className="after-card absolute inset-0 w-full h-full opacity-0">
-              <div className="absolute inset-0 bg-brand-dark/10 z-10" />
-              <img 
-                src="/images/ChatGPT Image 14 may 2026, 02_52_32 p.m.png" 
-                alt="Propuesta de Terraza Terminada" 
-                className="w-full h-full object-cover"
+              <PremiumPlaceholder 
+                scene="after"
+                title="DISEÑO TERMINADO: INTEGRACIÓN INVISIBLE"
+                plano="Elevación Interior Oeste (Después)"
+                requirements="Muro de yeso continuo. Sin termostatos, sin cables. Difusión de clima por ranura lineal superior de 12mm y audio por resonancia invisible."
+                dimensions="1920x1080 px"
+                aspectRatio="h-full w-full"
               />
-              <div className="absolute bottom-6 right-6 z-20 font-mono text-[9px] text-brand-gold bg-brand-dark/85 border border-brand-gold/30 px-3 py-1.5 tracking-widest uppercase">
-                <span>REMODELACIÓN DE TERRAZA COMPLETA</span>
-              </div>
-            </div>
-
-            {/* Scale indicator overlay */}
-            <div className="absolute top-6 right-6 z-20 font-mono text-[9px] text-white/25 uppercase tracking-widest">
-              <span>ESCALA DE PROPUESTA 1:20</span>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* S4: COBERTURA Y TARIFAS (Inspirado en la pulcritud de tresmarescapital.com) */}
+      {/* S4: COBERTURA Y TARIFAS (tresmarescapital.com style) */}
       <section className="w-full py-28 px-6 md:px-12 lg:px-24 bg-brand-dark-soft border-t border-b border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
           
@@ -475,7 +472,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Clean table layout inspired by tresmarescapital.com */}
+          {/* Clean table layout */}
           <div className="overflow-x-auto w-full border-t border-white/[0.08] select-none">
             <table className="w-full text-left font-sans text-xs tracking-wider border-collapse">
               <thead>
@@ -520,7 +517,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* S5: EXPERIENCIA CIRCADIANA (Inspirado en collabcapitolium.fr y aircenter.space) */}
+      {/* S5: EXPERIENCIA CIRCADIANA (100% Vectorized with GPU transitions) */}
       <section ref={circadianSectionRef} className="relative w-full h-screen bg-brand-dark overflow-hidden flex flex-col justify-between">
         
         {/* Floating title block */}
@@ -536,40 +533,76 @@ export default function HomePage() {
 
         <div className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch relative">
           
-          {/* Visual Container (Fades de fotos circadianas reales) */}
+          {/* Visual Container (Opacity transition of clean vector layers) */}
           <div className="lg:col-span-7 relative h-1/2 lg:h-full w-full bg-brand-dark-soft overflow-hidden flex items-end p-6 md:p-10 border-b lg:border-b-0 border-white/[0.04]">
             
-            <div className="absolute inset-0 z-0 flex items-center justify-center">
+            <div className="absolute inset-0 z-0 flex items-center justify-center p-6 md:p-12 lg:p-16">
               
-              {/* Dynamic lighting blend color overlay based on scroll */}
-              <div 
-                className="absolute inset-0 mix-blend-color-burn transition-all duration-700 ease-out pointer-events-none z-10"
-                style={{ 
-                  backgroundColor: activeCircadian.color,
-                  opacity: activeCircadian.opacity
-                }}
-              />
-              <div className="absolute inset-0 bg-brand-dark/30 z-10 pointer-events-none" />
-
-              {/* Circadian image renders */}
-              {circadianAtmospheres.map((atm, i) => (
-                <img
-                  key={atm.code}
-                  src={atm.image}
-                  alt={atm.label}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
-                  style={{ 
-                    opacity: circadianStep === i ? 0.75 : 0,
-                    zIndex: circadianStep === i ? 1 : 0
-                  }}
+              {/* Layer 0: Morning */}
+              <div className="circadian-layer-0 absolute inset-0 w-full h-full p-6 md:p-12 lg:p-16">
+                <PremiumPlaceholder 
+                  title="DORMITORIO CELESTINA // ATMÓSFERA: MAÑANA FRESCA" 
+                  plano="Perspectiva 1:1" 
+                  requirements="Luz fría (5000K) que penetra por los tragaluces para el despertar biológico." 
+                  scene="circadian" 
+                  circadianColor="#d2e6ff" 
+                  aspectRatio="h-full w-full"
                 />
-              ))}
+              </div>
+
+              {/* Layer 1: Solar */}
+              <div className="circadian-layer-1 absolute inset-0 w-full h-full opacity-0 p-6 md:p-12 lg:p-16">
+                <PremiumPlaceholder 
+                  title="DORMITORIO CELESTINA // ATMÓSFERA: MEDIODÍA SOLAR" 
+                  plano="Perspectiva 1:1" 
+                  requirements="Nivel óptimo de iluminación cenital y control de celosías mecánicas." 
+                  scene="circadian" 
+                  circadianColor="#fffdc8" 
+                  aspectRatio="h-full w-full"
+                />
+              </div>
+
+              {/* Layer 2: Sunset */}
+              <div className="circadian-layer-2 absolute inset-0 w-full h-full opacity-0 p-6 md:p-12 lg:p-16">
+                <PremiumPlaceholder 
+                  title="DORMITORIO CELESTINA // ATMÓSFERA: ATARDECER CÁLIDO" 
+                  plano="Perspectiva 1:1" 
+                  requirements="Luz cálida indirecta (2700K). Persianas al 40%." 
+                  scene="circadian" 
+                  circadianColor="#f59632" 
+                  aspectRatio="h-full w-full"
+                />
+              </div>
+
+              {/* Layer 3: Cinema */}
+              <div className="circadian-layer-3 absolute inset-0 w-full h-full opacity-0 p-6 md:p-12 lg:p-16">
+                <PremiumPlaceholder 
+                  title="DORMITORIO CELESTINA // ATMÓSFERA: MODO CINE" 
+                  plano="Perspectiva 1:1" 
+                  requirements="Luz al 1.5%. Audio invisible activo por resonancia en muros de yeso." 
+                  scene="circadian" 
+                  circadianColor="#6432ff" 
+                  aspectRatio="h-full w-full"
+                />
+              </div>
+
+              {/* Layer 4: Night */}
+              <div className="circadian-layer-4 absolute inset-0 w-full h-full opacity-0 p-6 md:p-12 lg:p-16">
+                <PremiumPlaceholder 
+                  title="DORMITORIO CELESTINA // ATMÓSFERA: MODO NOCTURNO" 
+                  plano="Perspectiva 1:1" 
+                  requirements="Luz de cortesía nocturna en pavimentos. Silencio absoluto." 
+                  scene="circadian" 
+                  circadianColor="#c5a880" 
+                  aspectRatio="h-full w-full"
+                />
+              </div>
 
             </div>
 
             <div className="relative z-20 font-mono text-[9px] text-white/40 flex items-center space-x-2 select-none uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-ping" />
-              <span>SIMULACIÓN LUMÍNICA CIRCADIANA</span>
+              <span>SIMULACIÓN VECTORIAL EN TIEMPO REAL</span>
             </div>
           </div>
 
@@ -600,10 +633,10 @@ export default function HomePage() {
               {/* Technical description */}
               <div className="space-y-4 my-auto">
                 <h4 className="text-base font-sans font-light uppercase text-brand-light tracking-wider">
-                  Escena Activa: <span className="text-brand-gold font-medium"><BrandText>{activeCircadian.label}</BrandText></span>
+                  Escena Activa: <span className="text-brand-gold font-medium telemetry-label">Mañana Fresca</span>
                 </h4>
-                <p className="text-xs font-sans font-light text-brand-light/50 leading-relaxed">
-                  {activeCircadian.annotation} El sistema modula la temperatura, filtra el aire por ranuras invisibles y ajusta la sonoridad ambiental de forma autónoma.
+                <p className="text-xs font-sans font-light text-brand-light/50 leading-relaxed telemetry-desc">
+                  Luz circadiana fría (5000K) que penetra por los tragaluces para estimular el despertar biológico.
                 </p>
               </div>
 
@@ -612,26 +645,26 @@ export default function HomePage() {
                 <div className="bg-brand-dark-soft border border-white/[0.05] p-5 font-mono text-[10px] text-brand-light/65 tracking-wider space-y-2.5">
                   <div className="flex justify-between items-center text-brand-gold border-b border-white/[0.05] pb-2 font-sans tracking-[0.15em] uppercase font-bold">
                     <span>LECTURA DE TELEMETRÍA</span>
-                    <span>{activeCircadian.code}</span>
+                    <span className="telemetry-code">SYS-MORN-01</span>
                   </div>
                   <div className="flex justify-between">
                     <span>TEMPERATURA INTERNA:</span>
-                    <span className="text-brand-light font-semibold">{activeCircadian.temp}</span>
+                    <span className="text-brand-light font-semibold telemetry-temp">21.5°C</span>
                   </div>
                   <div className="flex justify-between">
                     <span>ILUMINACIÓN DE DETALLE:</span>
-                    <span className="text-brand-light font-semibold">{activeCircadian.lux}</span>
+                    <span className="text-brand-light font-semibold telemetry-lux">520 lx</span>
                   </div>
                   <div className="flex justify-between">
                     <span>RETORNO Y DIFUSIÓN ACÚSTICA:</span>
-                    <span className="text-brand-light font-semibold uppercase">{activeCircadian.audio}</span>
+                    <span className="text-brand-light font-semibold uppercase telemetry-audio">Silencio Pasivo</span>
                   </div>
                 </div>
 
                 {/* Progress indicator */}
                 <div className="font-mono text-[9px] text-white/20 tracking-wider flex justify-between items-center pt-2">
-                  <span>DESPLAZAR SCROLL PARA TRANSICIÓN</span>
-                  <span>FASE {circadianStep + 1}/5</span>
+                  <span className="telemetry-percentage">AVANZAR DÍA: 0%</span>
+                  <span className="telemetry-phase font-bold text-brand-gold">FASE 1/5</span>
                 </div>
               </div>
 
@@ -641,7 +674,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* S6: LAS ESPECIALIDADES (Inspirado en la sencillez de floema.com/en) */}
+      {/* S6: LAS ESPECIALIDADES */}
       <section className="w-full py-28 px-6 md:px-12 lg:px-24 bg-brand-dark border-t border-b border-white/[0.04] solution-card-grid-trigger">
         <div className="max-w-7xl mx-auto">
           
@@ -689,7 +722,7 @@ export default function HomePage() {
                 </div>
                 <div className="pt-4 flex items-center justify-between text-[9px] font-mono tracking-widest text-white/20 group-hover:text-brand-gold/80 transition-all duration-300 uppercase">
                   <span>INTEGRACIÓN 0{i+1}</span>
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">DETALLE</span>
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-bold">DETALLE</span>
                 </div>
               </div>
             ))}
@@ -698,7 +731,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* S7: CASO DE ESTUDIO INTERACTIVO (Slides reales de la propuesta Castellana 503) */}
+      {/* S7: CASO DE ESTUDIO INTERACTIVO (100% Vectorial, Slide HTML puro sin imágenes) */}
       <section ref={casesSectionRef} className="w-full py-32 px-6 md:px-12 lg:px-24 bg-brand-dark border-b border-white/[0.04]">
         <div className="max-w-7xl mx-auto">
           
@@ -714,13 +747,13 @@ export default function HomePage() {
               <div className="h-[1px] w-24 bg-brand-gold/45" />
               
               <p className="text-xs md:text-sm font-sans font-light text-brand-light/50 leading-relaxed">
-                Navega por las fichas técnicas reales de la propuesta de remodelación para el ático Castellana 503 en Santiago de Surco. La obra involucró el desmontaje de una estructura pesada existente para implementar una terraza de aluminio anodizado reforzado y celosías modulares.
+                Navega por las fichas técnicas de la propuesta de remodelación para la terraza del departamento Castellana 503 en Santiago de Surco. Proyecto diseñado modularmente para alivianar la carga estructural sobre la losa del quinto nivel.
               </p>
 
               {/* Case study micro stats */}
               <div className="grid grid-cols-2 gap-4 border-t border-b border-white/[0.06] py-5 my-4 font-mono text-[10px] text-brand-light/50 tracking-wider">
                 <div>
-                  <span>PRESUPUESTO EJECUTADO:</span>
+                  <span>PRESUPUESTO DE OBRA:</span>
                   <span className="block text-brand-gold font-bold text-sm mt-1">S/ 11,210.00</span>
                 </div>
                 <div>
@@ -729,7 +762,7 @@ export default function HomePage() {
                 </div>
               </div>
               
-              {/* Custom Accordion Navigation for slides */}
+              {/* Accordion Navigation */}
               <div className="space-y-2 pt-2">
                 {proposalSlides.map((slide, idx) => (
                   <button
@@ -748,36 +781,215 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Slider frame */}
+            {/* Pure HTML Slide visualizer */}
             <div className="lg:col-span-7 space-y-4">
               <span className="text-[9px] font-mono tracking-[0.25em] text-white/30 uppercase block select-none">
                 EXPEDIENTE REAL // FICHA PRESENTADA AL CLIENTE
               </span>
               
-              <div className="relative w-full aspect-[3/1] md:aspect-[3/1] border border-white/[0.06] overflow-hidden bg-brand-dark-soft shadow-2xl group/slide">
-                {/* Background rendering of active slide */}
-                <div className="absolute inset-0 z-0">
-                  <img 
-                    src={proposalSlides[activeSlide].image} 
-                    alt={proposalSlides[activeSlide].title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover/slide:scale-[1.01]"
-                  />
-                  <div className="absolute inset-0 bg-brand-dark/20 z-10" />
-                </div>
-              </div>
+              <div className="relative w-full aspect-[16/10] border border-white/[0.06] overflow-hidden bg-brand-dark-soft shadow-2xl p-6 md:p-10 flex flex-col justify-between select-none">
+                {/* Background Grid */}
+                <div className="absolute inset-0 z-0 opacity-15 pointer-events-none" style={{
+                  backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.007) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.007) 1px, transparent 1px)',
+                  backgroundSize: '40px 40px'
+                }} />
+                
+                {/* SLIDE 01 */}
+                {activeSlide === 0 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">MEMORIA CONSTRUCTIVA</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">CASTELLANA 503</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 01 / 06</span>
+                    </div>
+                    <div className="my-auto max-w-xl space-y-3">
+                      <p className="text-xs md:text-sm text-brand-light/70 font-light leading-relaxed">
+                        Propuesta de remodelación arquitectónica del quinto nivel en Santiago de Surco. Plan enfocado en ligereza estructural, durabilidad climática y diseño contemporáneo.
+                      </p>
+                      <div className="text-[9px] font-mono text-brand-gold/60">
+                        CLIENTE: Sonia & Flor // UBICACIÓN: Av. Castellana 456
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>CASA ATENTA // CÓD: CA-2026-0019</span>
+                      <span>SANTIAGO DE SURCO, LIMA</span>
+                    </div>
+                  </div>
+                )}
+                
+                {/* SLIDE 02 */}
+                {activeSlide === 1 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">PROJECT VISION</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">VISIÓN DEL PROYECTO</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 02 / 06</span>
+                    </div>
+                    <div className="my-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                      <p className="text-xs text-brand-light/70 font-light leading-relaxed">
+                        La propuesta equilibra diseño, confort térmico y menor peso sobre la losa mediante un sistema de aluminio reforzado, cielorraso acústico tipo madera y celosías perimetrales.
+                      </p>
+                      <div className="border-l border-brand-gold/20 pl-4 space-y-2.5 font-mono text-[9px] text-brand-gold">
+                        <div>▪ REDUCIR CARGA ESTRUCTURAL (ALUMINIO)</div>
+                        <div>▪ CONFORT TÉRMICO (PVC ACÚSTICO)</div>
+                        <div>▪ CONTROL AMBIENTAL (CELOSÍAS)</div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>CASA ATENTA // ENFOQUE PREMIUM</span>
+                      <span>VALIDEZ: 07 DÍAS CALENDARIO</span>
+                    </div>
+                  </div>
+                )}
 
-              {/* Active slide text box */}
-              <div className="bg-brand-dark-soft border border-white/[0.04] p-6 space-y-3 font-sans">
-                <span className="text-[10px] font-mono tracking-widest text-brand-gold uppercase font-bold">
-                  {proposalSlides[activeSlide].subtitle}
-                </span>
-                <p className="text-xs md:text-sm font-light text-brand-light/60 leading-relaxed">
-                  {proposalSlides[activeSlide].desc}
-                </p>
+                {/* SLIDE 03 */}
+                {activeSlide === 2 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">MATERIALIDAD</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">MATERIALES PREMIUM</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 03 / 06</span>
+                    </div>
+                    <div className="my-auto grid grid-cols-3 gap-4">
+                      <div className="border border-white/[0.04] p-4 bg-brand-dark/20 flex flex-col justify-between min-h-[90px]">
+                        <span className="text-brand-gold font-mono text-[9px] font-bold block">ALUMINIO ANODIZADO</span>
+                        <p className="text-[9px] text-brand-light/50 font-light mt-1.5 leading-normal">Perfilería estructural reforzada liviana 6063-T5.</p>
+                      </div>
+                      <div className="border border-white/[0.04] p-4 bg-brand-dark/20 flex flex-col justify-between min-h-[90px]">
+                        <span className="text-brand-gold font-mono text-[9px] font-bold block">PVC MULTICÁMARAS</span>
+                        <p className="text-[9px] text-brand-light/50 font-light mt-1.5 leading-normal">Cielo raso Wood-Finish acústico de libre mantención.</p>
+                      </div>
+                      <div className="border border-white/[0.04] p-4 bg-brand-dark/20 flex flex-col justify-between min-h-[90px]">
+                        <span className="text-brand-gold font-mono text-[9px] font-bold block">ACERO INOXIDABLE</span>
+                        <p className="text-[9px] text-brand-light/50 font-light mt-1.5 leading-normal">Herrajes anticorrosión de alta durabilidad.</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>ESPECIFICACIONES CONSTRUCTIVAS</span>
+                      <span>LIMA METROPOLITANA</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* SLIDE 04 */}
+                {activeSlide === 3 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">COTIZACIÓN</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">DIAGNÓSTICO DE COSTOS</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 04 / 06</span>
+                    </div>
+                    <div className="my-auto overflow-x-auto">
+                      <table className="w-full text-left text-[10px] text-brand-light/50">
+                        <thead>
+                          <tr className="border-b border-white/[0.06] text-brand-gold font-mono text-[9px] uppercase tracking-wider font-bold">
+                            <th className="pb-1">Concepto</th>
+                            <th className="pb-1">Descripción</th>
+                            <th className="pb-1 text-right">Subtotal</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.03]">
+                          <tr>
+                            <td className="py-1 text-brand-light">Preliminares</td>
+                            <td className="py-1">Desmontaje de pérgola existente y limpieza</td>
+                            <td className="py-1 text-right font-mono text-brand-gold">S/ 600.00</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1 text-brand-light">Estructura</td>
+                            <td className="py-1">Aluminio reforzado anodizado (21 m²)</td>
+                            <td className="py-1 text-right font-mono text-brand-gold">S/ 5,250.00</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1 text-brand-light">Cobertura</td>
+                            <td className="py-1">Cielo raso PVC acabado madera (21 m²)</td>
+                            <td className="py-1 text-right font-mono text-brand-gold">S/ 1,260.00</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1 text-brand-light">Cerramiento</td>
+                            <td className="py-1">Celosía de aluminio con policarbonato (12 m²)</td>
+                            <td className="py-1 text-right font-mono text-brand-gold">S/ 3,000.00</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>VALOR PROPUESTA: S/ 11,210.00 // PAGO: 50% / 20% / 30%</span>
+                      <span>SANTIAGO DE SURCO</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* SLIDE 05 */}
+                {activeSlide === 4 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">TIMELINE</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">CRONOGRAMA DE EJECUCIÓN</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 05 / 06</span>
+                    </div>
+                    <div className="my-auto flex justify-between items-center relative py-6 select-none">
+                      <div className="absolute top-[37px] left-0 right-0 h-[1px] bg-white/[0.08] z-0" />
+                      {[
+                        { day: 'Día 01', name: 'Preparación', desc: 'Desmontaje de pérgola' },
+                        { day: 'Día 02-03', name: 'Estructura', desc: 'Montaje de aluminio' },
+                        { day: 'Día 04-05', name: 'Instalación', desc: 'Cielo raso y celosías' },
+                        { day: 'Día 06-07', name: 'Entrega', desc: 'Sellado y limpieza' }
+                      ].map((step, idx) => (
+                        <div key={idx} className="relative z-10 bg-brand-dark-soft px-2.5 text-center flex flex-col items-center">
+                          <span className="text-brand-gold block font-mono text-[9px] font-bold">{step.day}</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-brand-gold my-2" />
+                          <span className="text-[9px] text-brand-light font-bold block">{step.name}</span>
+                          <span className="text-[7.5px] text-brand-light/35 font-light block leading-none mt-1">{step.desc}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>PLAZO DE ENTREGA: 05-07 DÍAS HÁBILES</span>
+                      <span>MONTAJE EN SECCIÓN ORDENADA</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* SLIDE 06 */}
+                {activeSlide === 5 && (
+                  <div className="relative z-10 flex flex-col justify-between h-full text-left font-sans animate-fade-in">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] font-mono tracking-widest text-brand-gold font-bold">RENDER CONSTRUCTIVO</span>
+                        <h3 className="text-xl md:text-2xl font-display font-light uppercase tracking-wider text-brand-light mt-1">PROPUESTA FINAL</h3>
+                      </div>
+                      <span className="text-[9px] font-mono text-white/35 border border-white/[0.08] px-2 py-0.5 font-bold">SLIDE 06 / 06</span>
+                    </div>
+                    <div className="my-auto w-full h-[52%] flex items-center justify-center">
+                      <PremiumPlaceholder 
+                        scene="pergola" 
+                        title="TERRAZA CASTELLANA 503" 
+                        plano="Isometría de Remodelación" 
+                        requirements="Detalle estructural de pérgola liviana acoplada a muro." 
+                        aspectRatio="h-full w-full" 
+                      />
+                    </div>
+                    <div className="flex justify-between items-center text-[8px] font-mono text-white/20">
+                      <span>GARANTÍA POST-VENTA: 6 MESES</span>
+                      <span>SANTIAGO DE SURCO</span>
+                    </div>
+                  </div>
+                )}
+
               </div>
 
               <div className="flex justify-between items-center text-[10px] font-mono text-white/20 uppercase tracking-widest">
-                <span>ESTATUS COMERCIAL: APROBADA</span>
+                <span>ESTATUS COMERCIAL: PROPUESTA APROBADA</span>
                 <span>PÁG {activeSlide + 1} DE {proposalSlides.length}</span>
               </div>
             </div>
