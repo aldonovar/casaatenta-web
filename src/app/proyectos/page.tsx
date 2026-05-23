@@ -4,26 +4,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BrandText } from '../../components/BrandText';
-import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
 
 gsap.registerPlugin(ScrollTrigger);
 
+interface TriptychItem {
+  title: string;
+  plano: string;
+  requirements: string;
+  src: string;
+}
+
 interface TriptychImages {
-  exterior: {
-    title: string;
-    plano: string;
-    requirements: string;
-  };
-  interior: {
-    title: string;
-    plano: string;
-    requirements: string;
-  };
-  detail: {
-    title: string;
-    plano: string;
-    requirements: string;
-  };
+  exterior: TriptychItem;
+  interior: TriptychItem;
+  detail: TriptychItem;
 }
 
 interface ProjectCaseStudy {
@@ -54,17 +48,20 @@ const projectsData: ProjectCaseStudy[] = [
       exterior: {
         title: 'PABELLÓN DEL AGUA // FASE 01: EXTERIOR',
         plano: 'Elevación Norte - Atardecer',
-        requirements: 'Pabellón minimalista plano horizontal de concreto visto, cedro y vidrio. Iluminación oculta en base reflejada en espejo de agua exterior durante el atardecer.'
+        requirements: 'Pabellón minimalista de concreto visto reflejado en espejo de agua exterior.',
+        src: '/images/ChatGPT Image 14 may 2026, 02_52_23 p.m.png'
       },
       interior: {
         title: 'PABELLÓN DEL AGUA // FASE 02: INTERIOR',
         plano: 'Perspectiva Salón Comedor',
-        requirements: 'Mobiliario travertino a medida. Cielorraso de concreto continuo libre de luminarias y rejillas industriales. Luz cálida indirecta que surge desde las juntas de la madera.'
+        requirements: 'Mobiliario travertino a medida con cielorraso de concreto continuo libre de rejillas.',
+        src: '/images/ChatGPT Image 13 may 2026, 05_43_19 p.m. (5).png'
       },
       detail: {
         title: 'PABELLÓN DEL AGUA // FASE 03: DETALLE TÉCNICO',
-        plano: 'Corte Constructivo Junta de Techo 1:5',
-        requirements: 'Plano técnico mostrando el alojamiento para la tira LED regulable profunda y el colector de inyección de aire oculto detrás del listón de cedro del techo.'
+        plano: 'Junta de Techo Oculta',
+        requirements: 'Alojamiento para iluminación lineal indirecta y ventilación oculta.',
+        src: '/images/i.png'
       }
     }
   },
@@ -82,17 +79,20 @@ const projectsData: ProjectCaseStudy[] = [
       exterior: {
         title: 'CASA TRAVERTINO // FASE 01: EXTERIOR',
         plano: 'Elevación Principal - Noche',
-        requirements: 'Fachada escultórica volumétrica revestida en mármol travertino con iluminación rasante oculta de 2400K que destaca las vetas de la piedra natural.'
+        requirements: 'Fachada escultórica de mármol travertino con iluminación rasante oculta.',
+        src: '/images/ChatGPT Image 14 may 2026, 02_52_28 p.m.png'
       },
       interior: {
         title: 'CASA TRAVERTINO // FASE 02: INTERIOR',
         plano: 'Perspectiva Galería Escalera',
-        requirements: 'Salón de doble altura con enlucido de concreto. Escalera flotante de travertino iluminada indirectamente por sensores de presencia empotrados al ras.'
+        requirements: 'Salón de doble altura con enlucido de concreto y escalera flotante de travertino.',
+        src: '/images/ChatGPT Image 13 may 2026, 05_43_19 p.m. (3).png'
       },
       detail: {
         title: 'CASA TRAVERTINO // FASE 03: DETALLE TÉCNICO',
-        plano: 'Detalle de Sensor bajo Travertino 1:2',
-        requirements: 'Esquema de fresado posterior en la placa de travertino para embutir el sensor táctil capacitivo invisible, dejando solo 3mm de piedra sólida al frente.'
+        plano: 'Encofrado de Materiales',
+        requirements: 'Fresado posterior en la placa de travertino para embutir sensores táctiles.',
+        src: '/images/vi.png'
       }
     }
   },
@@ -110,17 +110,20 @@ const projectsData: ProjectCaseStudy[] = [
       exterior: {
         title: 'REFUGIO WELLNESS // FASE 01: EXTERIOR',
         plano: 'Elevación Paisaje - Mañana',
-        requirements: 'Pabellón de spa revestido en piedra volcánica local y madera rústica oscura. Integrado suavemente en las terrazas del paisaje andino bajo luz matinal.'
+        requirements: 'Pabellón de spa revestido en piedra volcánica local y madera rústica oscura.',
+        src: '/images/ChatGPT Image 14 may 2026, 02_52_32 p.m.png'
       },
       interior: {
         title: 'REFUGIO WELLNESS // FASE 02: INTERIOR',
         plano: 'Perspectiva Cámara de Vapor',
-        requirements: 'Zona de spa húmeda minimalista iluminada por luz indirecta cálida perimetral circadiana. Vaporizadores invisibles y difusores lineales ocultos.'
+        requirements: 'Zona de spa húmeda iluminada por luz indirecta cálida perimetral circadiana.',
+        src: '/images/ChatGPT Image 13 may 2026, 05_43_19 p.m. (4).png'
       },
       detail: {
         title: 'REFUGIO WELLNESS // FASE 03: DETALLE TÉCNICO',
-        plano: 'Detalle de Emisor Acústico en Muro 1:5',
-        requirements: 'Plano de montaje de transductor de flexión de audio invisible cubierto por mortero fino de arcilla y revoque andino rústico de 3mm.'
+        plano: 'Montaje Acústico',
+        requirements: 'Transductor de flexión de audio invisible cubierto por revoque andino rústico.',
+        src: '/images/v.png'
       }
     }
   }
@@ -264,29 +267,43 @@ export default function ProyectosPage() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                   {/* Phase 1: Exterior */}
-                  <PremiumPlaceholder 
-                    title={project.triptych.exterior.title}
-                    plano={project.triptych.exterior.plano}
-                    requirements={project.triptych.exterior.requirements}
-                    dimensions="1000x700 px"
-                    aspectRatio="aspect-[4/3]"
-                  />
+                  <div className="relative aspect-[4/3] overflow-hidden border border-white/[0.04] bg-brand-dark-soft group/img">
+                    <div className="absolute inset-0 bg-brand-dark/25 group-hover/img:bg-brand-dark/15 transition-colors duration-300 z-10" />
+                    <img 
+                      src={project.triptych.exterior.src} 
+                      alt={project.triptych.exterior.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" 
+                    />
+                    <div className="absolute bottom-3.5 left-3.5 z-20 font-mono text-[8px] text-brand-light/85 bg-brand-dark/80 px-2.5 py-1 border border-white/[0.05] tracking-widest uppercase">
+                      <span>{project.triptych.exterior.plano}</span>
+                    </div>
+                  </div>
+
                   {/* Phase 2: Interior */}
-                  <PremiumPlaceholder 
-                    title={project.triptych.interior.title}
-                    plano={project.triptych.interior.plano}
-                    requirements={project.triptych.interior.requirements}
-                    dimensions="1000x700 px"
-                    aspectRatio="aspect-[4/3]"
-                  />
+                  <div className="relative aspect-[4/3] overflow-hidden border border-white/[0.04] bg-brand-dark-soft group/img">
+                    <div className="absolute inset-0 bg-brand-dark/25 group-hover/img:bg-brand-dark/15 transition-colors duration-300 z-10" />
+                    <img 
+                      src={project.triptych.interior.src} 
+                      alt={project.triptych.interior.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" 
+                    />
+                    <div className="absolute bottom-3.5 left-3.5 z-20 font-mono text-[8px] text-brand-light/85 bg-brand-dark/80 px-2.5 py-1 border border-white/[0.05] tracking-widest uppercase">
+                      <span>{project.triptych.interior.plano}</span>
+                    </div>
+                  </div>
+
                   {/* Phase 3: Detail */}
-                  <PremiumPlaceholder 
-                    title={project.triptych.detail.title}
-                    plano={project.triptych.detail.plano}
-                    requirements={project.triptych.detail.requirements}
-                    dimensions="1000x700 px"
-                    aspectRatio="aspect-[4/3]"
-                  />
+                  <div className="relative aspect-[4/3] overflow-hidden border border-white/[0.04] bg-brand-dark-soft group/img">
+                    <div className="absolute inset-0 bg-brand-dark/25 group-hover/img:bg-brand-dark/15 transition-colors duration-300 z-10" />
+                    <img 
+                      src={project.triptych.detail.src} 
+                      alt={project.triptych.detail.title} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" 
+                    />
+                    <div className="absolute bottom-3.5 left-3.5 z-20 font-mono text-[8px] text-brand-light/85 bg-brand-dark/80 px-2.5 py-1 border border-white/[0.05] tracking-widest uppercase">
+                      <span>{project.triptych.detail.plano}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 

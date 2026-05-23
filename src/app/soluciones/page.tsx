@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { BrandText } from '../../components/BrandText';
-import { PremiumPlaceholder } from '../../components/PremiumPlaceholder';
+// Real brand image visualization instead of placeholder
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -193,13 +193,18 @@ export default function SolucionesPage() {
                   pointerEvents: activeIndex === i ? 'auto' : 'none'
                 }}
               >
-                <PremiumPlaceholder
-                  title={sol.placeholder.title}
-                  plano={sol.placeholder.plano}
-                  requirements={sol.placeholder.requirements}
-                  dimensions="1200x800 px"
-                  aspectRatio="h-full w-full"
-                />
+                <div className="relative w-full h-full overflow-hidden border border-white/[0.05] group">
+                  <div className="absolute inset-0 bg-brand-dark/25 z-10 transition-colors duration-500 group-hover:bg-brand-dark/15" />
+                  <img
+                    src={`/images/${['i', 'ii', 'iii', 'iv', 'v', 'vi'][i]}.png`}
+                    alt={sol.title}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  {/* Floating fine telemetry label typical of aircenter.space and collabcapitolium */}
+                  <div className="absolute bottom-6 left-6 z-20 font-mono text-[9px] text-brand-light/75 bg-brand-dark/80 backdrop-blur-md px-3 py-1.5 border border-white/[0.05] tracking-widest uppercase">
+                    <span>{sol.placeholder.plano}</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -243,13 +248,17 @@ export default function SolucionesPage() {
               
               {/* Mobile visualizer (Only visible on small screen) */}
               <div className="block lg:hidden w-full mb-8">
-                <PremiumPlaceholder
-                  title={sol.placeholder.title}
-                  plano={sol.placeholder.plano}
-                  requirements={sol.placeholder.requirements}
-                  dimensions="1200x800 px"
-                  aspectRatio="aspect-video"
-                />
+                <div className="relative w-full aspect-video overflow-hidden border border-white/[0.05]">
+                  <div className="absolute inset-0 bg-brand-dark/25 z-10" />
+                  <img
+                    src={`/images/${sol.id === 'iluminacion' ? 'i' : sol.id === 'clima' ? 'ii' : sol.id === 'acustica' ? 'iii' : sol.id === 'seguridad' ? 'iv' : sol.id === 'automatizacion' ? 'v' : 'vi'}.png`}
+                    alt={sol.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-4 left-4 z-20 font-mono text-[8px] text-brand-light/80 bg-brand-dark/80 px-2.5 py-1.5 border border-white/[0.05] tracking-wider">
+                    <span>{sol.placeholder.plano}</span>
+                  </div>
+                </div>
               </div>
 
               {/* Number and Title */}
