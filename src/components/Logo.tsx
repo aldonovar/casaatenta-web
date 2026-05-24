@@ -40,8 +40,8 @@ export const Logo: React.FC<LogoProps> = ({ className = '', iconOnly = false, li
         <g id="sensor-icon">
           <circle cx="280" cy="380" r="165" strokeWidth="24" />
           <circle cx="280" cy="380" r="120" strokeWidth="7" />
-          <path d="M 221 362 L 280 329 L 339 362" stroke-width="15" />
-          <path d="M 280 395 L 280 447" stroke-width="15" />
+          <path d="M 221 362 L 280 329 L 339 362" strokeWidth="15" />
+          <path d="M 280 395 L 280 447" strokeWidth="15" />
         </g>
         <g id="wordmark" strokeWidth="7.5">
           {/* C */}
