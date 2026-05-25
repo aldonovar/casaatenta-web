@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Sliders, Smartphone, Wind, Volume2, Shield, Palette, Calendar, Check } from 'lucide-react';
 import { BrandText } from '../components/BrandText';
 import { PremiumPlaceholder } from '../components/PremiumPlaceholder';
+import { HomeBackgroundBlueprint } from '../components/HomeBackgroundBlueprint';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -208,6 +209,28 @@ export default function HomePage() {
         }
       );
 
+      // 6. Master Background Blueprint Scroll Transitions
+      const bgTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 0.5,
+        }
+      });
+      bgTl.to('.blueprint-frame-0', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-1', { opacity: 0.25, duration: 1 }, '<')
+          .to('.blueprint-frame-1', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-2', { opacity: 0.25, duration: 1 }, '<')
+          .to('.blueprint-frame-2', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-3', { opacity: 0.25, duration: 1 }, '<')
+          .to('.blueprint-frame-3', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-4', { opacity: 0.25, duration: 1 }, '<')
+          .to('.blueprint-frame-4', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-5', { opacity: 0.25, duration: 1 }, '<')
+          .to('.blueprint-frame-5', { opacity: 0, duration: 1 })
+          .to('.blueprint-frame-6', { opacity: 0.25, duration: 1 }, '<');
+
     }, containerRef);
 
     return () => ctx.revert();
@@ -215,6 +238,7 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="bg-brand-dark min-h-screen relative overflow-hidden">
+      <HomeBackgroundBlueprint />
       
       {/* S1: HERO EDITORIAL */}
       <section className="relative w-full h-screen flex flex-col justify-end px-6 md:px-12 lg:px-24 pb-20 md:pb-28 z-20">
