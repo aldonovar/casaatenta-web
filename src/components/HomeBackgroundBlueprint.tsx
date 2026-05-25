@@ -1,342 +1,443 @@
 "use client";
 
 import React from 'react';
-import { BrandText } from './BrandText';
 
 export const HomeBackgroundBlueprint: React.FC = () => {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden bg-brand-dark">
+      
       {/* Retícula Arquitectónica de Fondo (Sutil y constante en toda la web) */}
       <div 
-        className="absolute inset-0 opacity-[0.03]" 
+        className="absolute inset-0 opacity-[0.04]" 
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px), 
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+            linear-gradient(to right, rgba(255, 255, 255, 0.12) 1px, transparent 1px), 
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px'
         }} 
       />
       <div 
-        className="absolute inset-0 opacity-[0.015]" 
+        className="absolute inset-0 opacity-[0.02]" 
         style={{
           backgroundImage: `
-            linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px), 
-            linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+            linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px), 
+            linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px)
           `,
           backgroundSize: '200px 200px'
         }} 
       />
 
-      {/* FRAME 0: HERO (Fachada Axonométrica de Villa) */}
-      <div className="blueprint-frame-0 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-25">
+      {/* ═══════════════════════════════════════════════════════════════
+         MARCO CONSTRUCTIVO FIJO DE PLANO (Aporta densidad visual)
+         ═══════════════════════════════════════════════════════════════ */}
+      <div className="absolute inset-4 md:inset-8 border border-white/[0.04] pointer-events-none z-10">
+        
+        {/* Corner ticks */}
+        <div className="absolute -top-1 -left-1 w-5 h-5 border-t border-l border-brand-gold/60" />
+        <div className="absolute -top-1 -right-1 w-5 h-5 border-t border-r border-brand-gold/60" />
+        <div className="absolute -bottom-1 -left-1 w-5 h-5 border-b border-l border-brand-gold/60" />
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 border-b border-r border-brand-gold/60" />
+
+        {/* Center Crosshairs */}
+        <div className="absolute top-1/2 left-0 w-3 h-[1px] bg-white/20 -translate-y-1/2" />
+        <div className="absolute top-1/2 right-0 w-3 h-[1px] bg-white/20 -translate-y-1/2" />
+        <div className="absolute top-0 left-1/2 h-3 w-[1px] bg-white/20 -translate-x-1/2" />
+        <div className="absolute bottom-0 left-1/2 h-3 w-[1px] bg-white/20 -translate-x-1/2" />
+
+        {/* Coordinate rulers text on borders */}
+        <div className="absolute top-2 left-6 text-[6.5px] font-mono text-white/20 tracking-widest uppercase">
+          SECCIÓN: H-09 // ELEVACIÓN GENERAL
+        </div>
+        <div className="absolute top-2 right-6 text-[6.5px] font-mono text-white/20 tracking-widest uppercase">
+          PROYECTO: RESIDENCIA CASTELLANA
+        </div>
+        <div className="absolute bottom-2 left-6 text-[6.5px] font-mono text-white/20 tracking-widest uppercase">
+          CΛSΛ ΛTENTΛ © 2026 // TECNOLOGÍA DISUELTA
+        </div>
+
+        {/* Technical Title Block (Esquina inferior derecha) */}
+        <div className="absolute bottom-6 right-6 bg-brand-dark border border-white/[0.08] p-4 text-[8px] font-mono tracking-widest uppercase text-brand-light/40 space-y-1.5 hidden md:block">
+          <div>
+            <span className="text-brand-gold font-bold">CΛSΛ ΛTENTΛ</span> // EXPEDIENTE DE INTEGRACIÓN
+          </div>
+          <div>PLANO: PLAN DE AUTOMATIZACIÓN INVISIBLE</div>
+          <div className="flex justify-between gap-8 text-[7.5px] text-white/30 border-t border-white/[0.04] pt-1 mt-1">
+            <span>ESCALA: 1:50</span>
+            <span>FECHA: 24/05/2026</span>
+          </div>
+          <div className="text-brand-gold/65 text-[7.5px]">
+            APROBADO POR: DIRECTIVOS DE ARQUITECTURA
+          </div>
+        </div>
+
+        {/* Isometric compass indicator on left border */}
+        <div className="absolute top-1/3 left-4 border border-white/[0.05] p-2 flex flex-col items-center justify-center space-y-1 hidden md:flex bg-brand-dark/50">
+          <span className="text-[6px] font-mono text-brand-gold">AXO</span>
+          <svg viewBox="0 0 30 30" className="w-6 h-6 text-brand-gold/50" fill="none" stroke="currentColor" strokeWidth="0.75">
+            <circle cx="15" cy="15" r="12" />
+            <line x1="15" y1="3" x2="15" y2="27" />
+            <line x1="3" y1="15" x2="27" y2="15" />
+            <line x1="6" y1="6" x2="24" y2="24" className="text-brand-gold" />
+          </svg>
+          <span className="text-[5.5px] font-mono text-white/20">30° / 60°</span>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+         BLUEPRINT FRAMES (GSAP controlará autoAlpha para evitar cuelgues)
+         ═══════════════════════════════════════════════════════════════ */}
+
+      {/* FRAME 0: HERO (Fachada Axonométrica de Villa Completa) */}
+      <div className="blueprint-frame-0 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Ground contour lines */}
-          <path d="M 50,500 C 250,520 450,470 650,490 C 850,510 900,480 950,500" strokeDasharray="3,3" />
-          <path d="M 50,520 C 300,540 500,490 700,510 C 900,530 950,510 950,520" strokeDasharray="5,5" className="opacity-50" />
+          {/* Ground contour lines - denser */}
+          <path d="M 50,480 C 250,510 450,450 650,480 C 850,510 900,470 950,490" strokeDasharray="3,3" className="text-white/25" />
+          <path d="M 50,500 C 300,530 500,470 700,500 C 900,530 950,500 950,510" strokeDasharray="5,5" className="text-brand-gold/20" />
+          <path d="M 50,520 C 350,550 550,490 750,520 C 920,550 950,530 950,530" strokeWidth="0.3" className="opacity-15" />
           
-          {/* Villa Structure */}
-          {/* Main block */}
-          <polygon points="300,450 300,300 480,210 650,300 650,450 480,530" />
-          <line x1="480" y1="210" x2="480" y2="530" />
+          {/* Detailed Villa Structure */}
+          {/* Main geometric blocks */}
+          <polygon points="300,430 300,260 480,170 650,260 650,430 480,510" strokeWidth="1" className="text-brand-gold" />
+          <line x1="480" y1="170" x2="480" y2="510" strokeWidth="0.75" />
           
-          {/* Left garage slab */}
-          <polygon points="120,450 300,360 300,450 120,450" className="opacity-80" />
-          <polygon points="120,380 300,290 300,360 120,380" />
-          <line x1="120" y1="380" x2="120" y2="450" />
+          {/* Left Block (Garage / Service) */}
+          <polygon points="120,430 300,340 300,430 120,430" className="text-white/20" />
+          <polygon points="120,360 300,270 300,340 120,360" />
+          <line x1="120" y1="360" x2="120" y2="430" />
           
-          {/* Right structural overhang cantilever */}
-          <polygon points="650,350 830,260 830,180 650,270" strokeWidth="0.8" />
-          <polygon points="480,210 650,120 830,210 650,300" strokeWidth="0.8" />
-          <line x1="830" y1="260" x2="830" y2="450" strokeDasharray="2,2" className="opacity-40" />
-          <line x1="830" y1="180" x2="830" y2="260" />
+          {/* Second level floor plates and ceilings */}
+          <polygon points="300,340 480,430 650,340 480,250" strokeWidth="0.8" />
+          <line x1="300" y1="343" x2="480" y2="433" strokeWidth="0.5" strokeDasharray="2,2" />
           
-          {/* Glass panels frame */}
-          <line x1="330" y1="335" x2="330" y2="435" />
-          <line x1="450" y1="275" x2="450" y2="515" />
-          <line x1="510" y1="275" x2="510" y2="515" />
-          <line x1="620" y1="335" x2="620" y2="435" />
+          {/* Cantilever overhang roof on the right */}
+          <polygon points="650,310 830,220 830,140 650,230" strokeWidth="1" className="text-brand-gold" />
+          <polygon points="480,170 650,80 830,170 650,260" strokeWidth="1" />
+          <line x1="830" y1="220" x2="830" y2="410" strokeDasharray="2,2" className="opacity-40" />
+          <line x1="830" y1="140" x2="830" y2="220" strokeWidth="0.8" />
           
-          {/* Coordinates and notations */}
-          <text x="670" y="140" fill="currentColor" className="text-brand-gold" fontSize="8" fontFamily="monospace" letterSpacing="1">SYS_PROJ_CA_01</text>
-          <text x="670" y="155" fill="currentColor" fontSize="6" fontFamily="monospace" className="opacity-50">LAT: -12.0431 // LON: -77.0282</text>
-          <line x1="650" y1="135" x2="665" y2="135" />
-          <circle cx="650" cy="135" r="1.5" fill="#c5a880" />
+          {/* Window mullion divisions */}
+          <line x1="330" y1="315" x2="330" y2="415" strokeWidth="0.5" />
+          <line x1="450" y1="250" x2="450" y2="495" strokeWidth="0.5" />
+          <line x1="510" y1="250" x2="510" y2="495" strokeWidth="0.5" />
+          <line x1="620" y1="315" x2="620" y2="415" strokeWidth="0.5" />
+
+          {/* Perspective grid projection lines */}
+          <line x1="120" y1="360" x2="300" y2="270" strokeWidth="0.3" strokeDasharray="4,4" className="text-brand-gold/45" />
+          <line x1="300" y1="260" x2="480" y2="170" strokeWidth="0.3" strokeDasharray="4,4" className="text-brand-gold/45" />
+          
+          {/* Notations */}
+          <text x="670" y="100" fill="currentColor" className="text-brand-gold font-bold" fontSize="8.5" fontFamily="monospace" letterSpacing="1">VILLA_MODEL_RE-01</text>
+          <text x="670" y="115" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="text-white/40">LAT: -12.0431 // LON: -77.0282 // SURCO</text>
+          <circle cx="650" cy="97" r="2.5" fill="#c5a880" />
+          <line x1="650" y1="97" x2="665" y2="97" strokeWidth="0.5" className="text-brand-gold" />
         </svg>
       </div>
 
-      {/* FRAME 1: MANIFIESTO (Corte Arquitectónico y Tragaluz Cenital) */}
-      <div className="blueprint-frame-1 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 1: MANIFIESTO (Corte Transversal, Columnas y Cimientos) */}
+      <div className="blueprint-frame-1 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Structural grid lines */}
-          <line x1="200" y1="50" x2="200" y2="550" strokeDasharray="3,3" className="opacity-30" />
-          <line x1="500" y1="50" x2="500" y2="550" strokeDasharray="3,3" className="opacity-30" />
-          <line x1="800" y1="50" x2="800" y2="550" strokeDasharray="3,3" className="opacity-30" />
-          <text x="195" y="45" fill="currentColor" fontSize="8" fontFamily="monospace">EJE A</text>
-          <text x="495" y="45" fill="currentColor" fontSize="8" fontFamily="monospace">EJE B</text>
-          <text x="795" y="45" fill="currentColor" fontSize="8" fontFamily="monospace">EJE C</text>
+          {/* Column grids (A, B, C, D) */}
+          <line x1="150" y1="40" x2="150" y2="540" strokeDasharray="3,3" className="opacity-25" />
+          <line x1="380" y1="40" x2="380" y2="540" strokeDasharray="3,3" className="opacity-25" />
+          <line x1="610" y1="40" x2="610" y2="540" strokeDasharray="3,3" className="opacity-25" />
+          <line x1="840" y1="40" x2="840" y2="540" strokeDasharray="3,3" className="opacity-25" />
+          <text x="145" y="35" fill="currentColor" fontSize="8" fontFamily="monospace" className="text-white/35">EJE 01</text>
+          <text x="375" y="35" fill="currentColor" fontSize="8" fontFamily="monospace" className="text-white/35">EJE 02</text>
+          <text x="605" y="35" fill="currentColor" fontSize="8" fontFamily="monospace" className="text-white/35">EJE 03</text>
+          <text x="835" y="35" fill="currentColor" fontSize="8" fontFamily="monospace" className="text-white/35">EJE 04</text>
 
-          {/* Foundation & concrete floor slabs */}
-          <rect x="100" y="480" width="800" height="40" />
-          <line x1="100" y1="500" x2="900" y2="500" strokeDasharray="10,5" />
+          {/* Foundation ground detailing */}
+          <rect x="80" y="470" width="840" height="50" strokeWidth="0.5" className="text-white/20" />
+          <line x1="80" y1="495" x2="920" y2="495" strokeDasharray="8,4" className="text-brand-gold/30" />
           
-          {/* Second level slab */}
-          <rect x="100" y="270" width="800" height="25" />
+          {/* Slab and structural joists */}
+          <rect x="80" y="260" width="840" height="25" strokeWidth="0.8" className="text-brand-gold" />
+          <line x1="80" y1="272.5" x2="920" y2="272.5" strokeWidth="0.3" strokeDasharray="1,2" />
           
-          {/* Vertical Columns */}
-          <rect x="190" y="100" width="20" height="380" />
-          <rect x="790" y="100" width="20" height="380" />
-          <rect x="490" y="295" width="20" height="185" />
+          {/* Vertical concrete pillars */}
+          <rect x="140" y="90" width="20" height="380" />
+          <rect x="830" y="90" width="20" height="380" />
+          <rect x="370" y="285" width="20" height="185" />
+          <rect x="600" y="285" width="20" height="185" />
+
+          {/* Foundation reinforcements lines (cross hatch inside foundation) */}
+          <line x1="140" y1="480" x2="160" y2="510" strokeWidth="0.3" className="opacity-20" />
+          <line x1="370" y1="480" x2="390" y2="510" strokeWidth="0.3" className="opacity-20" />
+          <line x1="600" y1="480" x2="620" y2="510" strokeWidth="0.3" className="opacity-20" />
           
-          {/* Roof line and Cenital opening */}
-          <polygon points="100,100 420,100 420,70 580,70 580,100 900,100 900,80 100,80" />
+          {/* Roof slab and central cenital skylight aperture */}
+          <polygon points="80,90 350,90 350,60 550,60 550,90 920,90 920,70 80,70" strokeWidth="1" className="text-brand-gold" />
           
-          {/* Sunlight angle beam representation */}
-          <line x1="420" y1="70" x2="680" y2="480" className="text-brand-gold" strokeWidth="0.75" />
-          <line x1="480" y1="70" x2="780" y2="480" className="text-brand-gold" strokeWidth="0.75" strokeDasharray="2,2" />
-          <path d="M 420,70 A 100,100 0 0,0 470,140" strokeWidth="0.5" className="text-brand-gold/60" />
-          <text x="430" y="110" fill="currentColor" className="text-brand-gold" fontSize="7" fontFamily="monospace">SUN_ANG: 42.5°</text>
-          
-          {/* Dimension notations */}
-          <text x="120" y="260" fill="currentColor" fontSize="7" fontFamily="monospace">H1: +2.95 m</text>
-          <text x="120" y="470" fill="currentColor" fontSize="7" fontFamily="monospace">NPT: +0.00 m</text>
+          {/* Sunlight beams slicing down */}
+          <line x1="350" y1="60" x2="570" y2="470" className="text-brand-gold" strokeWidth="1" />
+          <line x1="410" y1="60" x2="630" y2="470" className="text-brand-gold" strokeWidth="0.75" strokeDasharray="3,3" />
+          <line x1="470" y1="60" x2="690" y2="470" className="text-brand-gold/60" strokeWidth="0.5" strokeDasharray="4,4" />
+          <path d="M 350,60 A 120,120 0 0,0 410,130" strokeWidth="0.5" className="text-brand-gold" />
+          <text x="365" y="105" fill="#c5a880" fontSize="8.5" fontFamily="monospace">SOLAR_ANGLE: 38.6°</text>
+
+          {/* Telemetry and height metrics */}
+          <text x="95" y="250" fill="currentColor" fontSize="7.5" fontFamily="monospace">NIV_2: +3.00 m</text>
+          <text x="95" y="460" fill="currentColor" fontSize="7.5" fontFamily="monospace">NPT: +0.00 m</text>
+          <text x="95" y="60" fill="currentColor" fontSize="7.5" fontFamily="monospace">CUB: +6.30 m</text>
         </svg>
       </div>
 
-      {/* FRAME 2: ANTES / DESPUÉS (Estructura de Vigas e Interiores) */}
-      <div className="blueprint-frame-2 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 2: ANTES / DESPUÉS (Montantes, Cavidades y Juntas) */}
+      <div className="blueprint-frame-2 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Room perspective bounding box */}
-          <polygon points="150,120 400,220 400,420 150,480" />
-          <polygon points="400,220 850,120 850,480 400,420" />
-          <line x1="150" y1="120" x2="850" y2="120" />
-          <line x1="150" y1="480" x2="850" y2="480" />
+          {/* perspective floor grid - denser */}
+          <polygon points="100,100 400,220 400,420 100,500" strokeWidth="0.5" />
+          <polygon points="400,220 900,100 900,500 400,420" strokeWidth="0.5" />
+          <line x1="100" y1="100" x2="900" y2="100" />
+          <line x1="100" y1="500" x2="900" y2="500" />
           
-          {/* Perspective grid lines on floor (converging to center) */}
-          <line x1="150" y1="480" x2="400" y2="420" />
-          <line x1="280" y1="480" x2="400" y2="420" />
-          <line x1="400" y1="480" x2="400" y2="420" />
-          <line x1="550" y1="480" x2="400" y2="420" />
-          <line x1="700" y1="480" x2="400" y2="420" />
-          <line x1="850" y1="480" x2="400" y2="420" />
+          {/* Floor grid lines */}
+          <line x1="100" y1="500" x2="400" y2="420" />
+          <line x1="220" y1="500" x2="400" y2="420" />
+          <line x1="340" y1="500" x2="400" y2="420" />
+          <line x1="460" y1="500" x2="400" y2="420" />
+          <line x1="580" y1="500" x2="400" y2="420" />
+          <line x1="700" y1="500" x2="400" y2="420" />
+          <line x1="820" y1="500" x2="400" y2="420" />
+          <line x1="900" y1="500" x2="400" y2="420" />
 
-          {/* Wall framing studs (metal structure details) */}
-          <line x1="200" y1="138" x2="200" y2="460" strokeDasharray="3,3" />
-          <line x1="250" y1="156" x2="250" y2="444" strokeDasharray="3,3" />
-          <line x1="300" y1="175" x2="300" y2="430" strokeDasharray="3,3" />
-          <line x1="350" y1="195" x2="350" y2="423" strokeDasharray="3,3" />
+          {/* Wall metal framing studs (detailed vertical lines) */}
+          <line x1="150" y1="120" x2="150" y2="487" strokeDasharray="2,2" className="text-white/20" />
+          <line x1="200" y1="140" x2="200" y2="473" strokeDasharray="2,2" className="text-white/20" />
+          <line x1="250" y1="160" x2="250" y2="460" strokeDasharray="2,2" className="text-white/20" />
+          <line x1="300" y1="180" x2="300" y2="447" strokeDasharray="2,2" className="text-white/20" />
+          <line x1="350" y1="200" x2="350" y2="433" strokeDasharray="2,2" className="text-white/20" />
 
-          {/* Ceiling slot (Ranura Clima 12mm) */}
-          <path d="M 400,220 L 760,140" strokeWidth="2" className="text-brand-gold" />
-          <path d="M 400,223 L 760,143" strokeWidth="0.5" className="text-brand-gold/60" />
-          <text x="620" y="125" fill="#c5a880" fontSize="7.5" fontFamily="monospace" letterSpacing="0.8">DET_SLOT: RANURA_12mm</text>
-          <circle cx="600" cy="175" r="2.5" fill="#c5a880" />
-          <line x1="600" y1="175" x2="615" y2="135" strokeWidth="0.5" className="text-brand-gold" />
+          {/* Recessed slots with golden outline (Ranura Clima 12mm) */}
+          <path d="M 400,220 L 800,127" strokeWidth="2.5" className="text-brand-gold" />
+          <path d="M 400,225 L 800,132" strokeWidth="0.5" className="text-brand-gold/60" />
+          <text x="650" y="115" fill="#c5a880" fontSize="8.5" fontFamily="monospace" letterSpacing="0.8">DETALLE_RANURA: ACABADO_12mm</text>
+          <circle cx="620" cy="169" r="3" fill="#c5a880" />
+          <line x1="620" y1="169" x2="640" y2="125" strokeWidth="0.5" className="text-brand-gold" />
+
+          {/* Transducer speaker structural outline on left wall */}
+          <rect x="220" y="240" width="50" height="80" strokeWidth="0.8" className="text-brand-gold" />
+          <circle cx="245" cy="280" r="12" className="text-brand-gold/50" />
+          <line x1="245" y1="260" x2="245" y2="300" />
+          <line x1="225" y1="280" x2="265" y2="280" />
+          <text x="180" y="340" fill="currentColor" fontSize="6.5" fontFamily="monospace">EMISOR_ACÚSTICO_OCULTO</text>
         </svg>
       </div>
 
-      {/* FRAME 3: CIRCADIANO (Trayectorias Solares y Esfera Celeste) */}
-      <div className="blueprint-frame-3 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 3: CIRCADIANO (Trayectorias, Brújula y Espectros de Luz) */}
+      <div className="blueprint-frame-3 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Compass circle */}
-          <circle cx="500" cy="300" r="220" strokeWidth="0.75" />
-          <circle cx="500" cy="300" r="180" strokeDasharray="4,4" className="opacity-40" />
-          <circle cx="500" cy="300" r="240" strokeWidth="0.25" />
+          {/* Compass circle system */}
+          <circle cx="500" cy="300" r="230" strokeWidth="0.8" className="text-brand-gold" />
+          <circle cx="500" cy="300" r="222" strokeWidth="0.3" strokeDasharray="3,1" />
+          <circle cx="500" cy="300" r="190" strokeDasharray="6,4" className="opacity-30" />
+          <circle cx="500" cy="300" r="255" strokeWidth="0.25" />
+          
+          {/* Compass axes */}
+          <line x1="500" y1="50" x2="500" y2="550" strokeWidth="0.3" className="opacity-35" />
+          <line x1="220" y1="300" x2="780" y2="300" strokeWidth="0.3" className="opacity-35" />
           
           {/* Compass labels */}
-          <text x="495" y="65" fill="currentColor" fontSize="10" fontFamily="sans-serif" className="opacity-80">N</text>
-          <text x="495" y="545" fill="currentColor" fontSize="10" fontFamily="sans-serif" className="opacity-80">S</text>
-          <text x="735" y="304" fill="currentColor" fontSize="10" fontFamily="sans-serif" className="opacity-80">E</text>
-          <text x="250" y="304" fill="currentColor" fontSize="10" fontFamily="sans-serif" className="opacity-80">W</text>
+          <text x="494" y="60" fill="currentColor" fontSize="12" fontFamily="sans-serif" className="text-brand-gold font-bold">N</text>
+          <text x="495" y="550" fill="currentColor" fontSize="12" fontFamily="sans-serif" className="opacity-80">S</text>
+          <text x="745" y="304" fill="currentColor" fontSize="12" fontFamily="sans-serif" className="opacity-80">E</text>
+          <text x="235" y="304" fill="currentColor" fontSize="12" fontFamily="sans-serif" className="opacity-80">W</text>
           
-          {/* Dials / Degree marks */}
-          <line x1="500" y1="80" x2="500" y2="90" />
-          <line x1="500" y1="510" x2="500" y2="520" />
-          <line x1="280" y1="300" x2="290" y2="300" />
-          <line x1="710" y1="300" x2="720" y2="300" />
+          {/* Solar paths curve (Multiple golden arcs representing seasons) */}
+          <path d="M 270,300 Q 500,60 730,300" strokeWidth="1.5" className="text-brand-gold" />
+          <path d="M 270,300 Q 500,140 730,300" strokeWidth="0.75" strokeDasharray="4,2" className="text-brand-gold" />
+          <path d="M 270,300 Q 500,220 730,300" strokeWidth="0.5" strokeDasharray="10,5" className="text-brand-gold/60" />
           
-          {/* Solar paths curve (Sine waves) */}
-          <path d="M 280,300 Q 500,80 720,300" strokeWidth="1.25" className="text-brand-gold" />
-          <path d="M 280,300 Q 500,160 720,300" strokeDasharray="3,3" className="text-brand-gold/60" />
-          <path d="M 280,300 Q 500,240 720,300" strokeWidth="0.5" className="text-brand-gold/30" />
-          
-          {/* Active sun vector lines */}
-          <circle cx="430" cy="165" r="4" fill="currentColor" className="text-brand-gold" />
-          <line x1="500" y1="300" x2="430" y2="165" strokeWidth="0.75" className="text-brand-gold" />
-          <text x="360" y="150" fill="#c5a880" fontSize="8" fontFamily="monospace">SOLAR_POS: 11:20 AM</text>
-          <text x="360" y="162" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="opacity-50">AZIMUTH: 142.4° // ELEV: 58.2°</text>
+          {/* Active sun vector position indicator */}
+          <circle cx="410" cy="151" r="5.5" fill="currentColor" className="text-brand-gold" />
+          <line x1="500" y1="300" x2="410" y2="151" strokeWidth="1" className="text-brand-gold" />
+          <text x="320" y="130" fill="#c5a880" fontSize="9" fontFamily="monospace" className="font-bold">POS_SOL: 10:45 AM</text>
+          <text x="320" y="142" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">AZIMUTH: 136.2° // ELEVACIÓN: 48.9°</text>
 
-          {/* Lux chart graph (bottom left) */}
-          <path d="M 120,500 L 260,500" />
-          <path d="M 120,440 L 120,500" />
-          <path d="M 120,500 Q 190,440 260,500" strokeWidth="0.75" className="text-brand-gold/50" />
-          <text x="125" y="435" fill="currentColor" fontSize="6" fontFamily="monospace">LUX SPECTRUM INDEX</text>
+          {/* Lux/Kelvin spectrum charts on the bottom sides */}
+          {/* Left chart */}
+          <path d="M 100,500 H 260" strokeWidth="0.5" />
+          <path d="M 100,430 V 500" strokeWidth="0.5" />
+          <path d="M 100,500 C 130,410 180,450 260,500" strokeWidth="1.25" className="text-brand-gold/70" />
+          <text x="105" y="420" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="text-brand-gold">ESPECTRO DE LUZ CIRCADIANA</text>
+          
+          {/* Right chart */}
+          <path d="M 740,500 H 900" strokeWidth="0.5" />
+          <path d="M 900,430 V 500" strokeWidth="0.5" />
+          <path d="M 740,500 C 820,450 870,410 900,500" strokeWidth="1" strokeDasharray="3,3" className="text-white/40" />
+          <text x="745" y="420" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="text-white/40">KELVIN DYNAMIC CHART</text>
         </svg>
       </div>
 
-      {/* FRAME 4: ESPECIALIDADES (Retícula de Nodos e Ingeniería IoT) */}
-      <div className="blueprint-frame-4 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 4: ESPECIALIDADES (Nodos, Acústica y Clima IoT) */}
+      <div className="blueprint-frame-4 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Mosaic matrix grid */}
-          <rect x="150" y="100" width="700" height="400" strokeWidth="0.25" className="opacity-30" />
-          <line x1="150" y1="233" x2="850" y2="233" strokeWidth="0.25" className="opacity-20" />
-          <line x1="150" y1="366" x2="850" y2="366" strokeWidth="0.25" className="opacity-20" />
-          <line x1="383" y1="100" x2="383" y2="500" strokeWidth="0.25" className="opacity-20" />
-          <line x1="616" y1="100" x2="616" y2="500" strokeWidth="0.25" className="opacity-20" />
+          {/* Detailed schematic mosaic grid */}
+          <rect x="120" y="80" width="760" height="440" strokeWidth="0.25" className="opacity-30" />
+          <line x1="120" y1="226.6" x2="880" y2="226.6" strokeWidth="0.25" className="opacity-20" />
+          <line x1="120" y1="373.3" x2="880" y2="373.3" strokeWidth="0.25" className="opacity-20" />
+          <line x1="373.3" y1="80" x2="373.3" y2="520" strokeWidth="0.25" className="opacity-20" />
+          <line x1="626.6" y1="80" x2="626.6" y2="520" strokeWidth="0.25" className="opacity-20" />
           
-          {/* Technical block schematic - Block 1 */}
-          <rect x="180" y="120" width="160" height="85" />
-          <text x="190" y="135" fill="currentColor" className="text-brand-gold font-bold" fontSize="8" fontFamily="monospace">NODE_LUMI_01</text>
-          <text x="190" y="150" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="opacity-50">STATUS: ON_LINE</text>
-          <text x="190" y="162" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="opacity-50">TEMP: 32.5°C // V: 24V</text>
-          <circle cx="320" cy="132" r="2.5" fill="currentColor" className="text-brand-gold" />
+          {/* Node block 1: Lighting controller */}
+          <rect x="150" y="110" width="180" height="90" strokeWidth="1" className="text-brand-gold" />
+          <text x="160" y="128" fill="currentColor" className="text-brand-gold font-bold" fontSize="9" fontFamily="monospace">CTRL_LUMI_NODE_A</text>
+          <text x="160" y="145" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">ESTADO: TRANSMITIENDO</text>
+          <text x="160" y="157" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">OUTPUT: DALI-2 (64CH)</text>
+          <text x="160" y="169" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">VOLT: 24VDC // TEMP: 28.5°C</text>
+          <circle cx="310" cy="125" r="3" fill="currentColor" className="text-brand-gold animate-pulse" />
           
-          {/* Signal path arrows */}
-          <path d="M 340,162 H 450 V 280" strokeDasharray="3,3" />
-          <path d="M 445,280 L 450,285 L 455,280" />
+          {/* Connection lines with arrows */}
+          <path d="M 330,155 H 480 V 270" strokeDasharray="3,3" className="text-brand-gold/60" />
+          <path d="M 475,270 L 480,275 L 485,270" />
 
-          {/* Technical block schematic - Block 2 */}
-          <rect x="450" y="280" width="120" height="90" />
-          <text x="460" y="298" fill="currentColor" className="text-brand-gold font-bold" fontSize="8" fontFamily="monospace">GATEWAY_RACK_A</text>
-          <text x="460" y="315" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="opacity-50">IP: 192.168.10.12</text>
-          <text x="460" y="327" fill="currentColor" fontSize="6.5" fontFamily="monospace" className="opacity-50">PING: 2.1ms</text>
-          <circle cx="550" cy="295" r="2.5" fill="currentColor" className="text-emerald-400" />
+          {/* Node block 2: Main Rack Gateway */}
+          <rect x="440" y="270" width="140" height="100" strokeWidth="1" />
+          <text x="450" y="290" fill="currentColor" className="text-brand-gold font-bold" fontSize="9" fontFamily="monospace">GATEWAY_SERVER_RACK</text>
+          <text x="450" y="308" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">HOST IP: 192.168.1.150</text>
+          <text x="450" y="320" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">LATENCY: 1.4ms (LOCAL)</text>
+          <text x="450" y="332" fill="currentColor" fontSize="7" fontFamily="monospace" className="text-white/40">BUS: KNX-TP / ETHERNET</text>
+          <circle cx="560" cy="285" r="3" fill="currentColor" className="text-emerald-400" />
           
-          {/* Acoustic soundwaves diagram inside block */}
-          <path d="M 640,150 Q 660,130 680,150 T 720,150" strokeWidth="0.75" className="text-brand-gold/60" />
-          <path d="M 640,165 Q 660,145 680,165 T 720,165" strokeWidth="0.75" className="text-brand-gold/40" />
-          <text x="640" y="125" fill="currentColor" fontSize="7" fontFamily="monospace">ACOUSTIC WAVEFORM (DSP)</text>
+          {/* Acoustic soundwaves diagram */}
+          <g transform="translate(650, 110)">
+            <rect x="0" y="0" width="200" height="90" strokeWidth="0.5" className="opacity-20" />
+            <path d="M 15,45 Q 40,15 65,45 T 115,45 T 165,45" strokeWidth="1" className="text-brand-gold" />
+            <path d="M 15,55 Q 40,25 65,55 T 115,55 T 165,55" strokeWidth="0.5" strokeDasharray="2,2" className="text-brand-gold/50" />
+            <text x="15" y="80" fill="currentColor" fontSize="7" fontFamily="monospace">AUDIO INVISIBLE DSP TUNING</text>
+          </g>
 
-          {/* Dotted connections */}
-          <line x1="570" y1="325" x2="680" y2="325" strokeDasharray="2,2" />
-          <circle cx="680" cy="325" r="2" fill="currentColor" />
+          {/* Intersecting flow lines */}
+          <line x1="580" y1="320" x2="680" y2="320" strokeDasharray="3,3" />
+          <circle cx="680" cy="320" r="2.5" fill="currentColor" />
         </svg>
       </div>
 
-      {/* FRAME 5: CASTELLANA 503 (Corte e Isometría Explotada de Pérgola) */}
-      <div className="blueprint-frame-5 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 5: CASTELLANA 503 (Cortes de Pérgola e Isometría Explotada) */}
+      <div className="blueprint-frame-5 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Structural framing isometric */}
-          <polygon points="350,420 350,180 750,180 750,420" strokeWidth="0.3" className="opacity-20" />
+          {/* Structural framing guide lines */}
+          <polygon points="350,420 350,180 750,180 750,420" strokeWidth="0.25" className="opacity-20" />
           
-          {/* Pérgola top rafters framing */}
-          {/* Back wall ledger plate */}
-          <line x1="280" y1="210" x2="680" y2="210" strokeWidth="1.25" />
-          <line x1="280" y1="225" x2="680" y2="225" />
+          {/* Rafters and ledger plates details */}
+          <line x1="260" y1="210" x2="720" y2="210" strokeWidth="1.5" />
+          <line x1="260" y1="225" x2="720" y2="225" strokeWidth="1" />
           
-          {/* Main projection structural beams */}
-          <polygon points="280,210 180,380 580,380 680,210" strokeWidth="1.5" className="text-brand-gold" />
-          <polygon points="280,225 180,395 580,395 680,225" strokeWidth="1" className="text-brand-gold/60" />
-          <line x1="180" y1="380" x2="180" y2="395" />
-          <line x1="580" y1="380" x2="580" y2="395" />
+          {/* Main projecting structural beams of the pergola */}
+          <polygon points="260,210 160,380 620,380 720,210" strokeWidth="1.5" className="text-brand-gold" />
+          <polygon points="260,225 160,395 620,395 720,225" strokeWidth="1" className="text-brand-gold/60" />
+          <line x1="160" y1="380" x2="160" y2="395" strokeWidth="1.25" />
+          <line x1="620" y1="380" x2="620" y2="395" strokeWidth="1.25" />
           
-          {/* Structural Louvers slats (transversal) */}
-          <line x1="330" y1="295" x2="430" y2="295" />
-          <line x1="370" y1="295" x2="470" y2="295" />
-          <line x1="410" y1="295" x2="510" y2="295" />
-          <line x1="450" y1="295" x2="550" y2="295" />
-          <line x1="490" y1="295" x2="590" y2="295" />
+          {/* Slats / louvers detail (transversal layout) */}
+          <line x1="310" y1="295" x2="410" y2="295" />
+          <line x1="350" y1="295" x2="450" y2="295" />
+          <line x1="390" y1="295" x2="490" y2="295" />
+          <line x1="430" y1="295" x2="530" y2="295" />
+          <line x1="470" y1="295" x2="570" y2="295" />
+          <line x1="510" y1="295" x2="610" y2="295" />
+          <line x1="550" y1="295" x2="650" y2="295" />
+
+          {/* Exploded detail arrow for wall anchor */}
+          <line x1="210" y1="295" x2="210" y2="215" strokeDasharray="3,3" className="text-brand-gold" />
+          <polygon points="200,215 220,215 210,200" fill="none" className="text-brand-gold" />
+          <text x="180" y="195" fill="#c5a880" fontSize="8" fontFamily="monospace" className="font-bold">PERFIL: AL-6063-T5</text>
           
-          {/* Exploded line for bracket assembly */}
-          <line x1="230" y1="295" x2="230" y2="215" strokeDasharray="3,3" className="text-brand-gold/80" />
-          <polygon points="220,215 240,215 230,200" fill="none" className="text-brand-gold" />
-          <text x="210" y="195" fill="#c5a880" fontSize="7.5" fontFamily="monospace">MOD_BOLT: M12-SUS316</text>
+          {/* Dimension notations - metric */}
+          <line x1="160" y1="415" x2="620" y2="415" strokeWidth="0.5" />
+          <line x1="160" y1="410" x2="160" y2="420" />
+          <line x1="620" y1="410" x2="620" y2="420" />
+          <text x="360" y="432" fill="currentColor" fontSize="8.5" fontFamily="monospace" letterSpacing="0.8">COT_A // ANCHO: 6000 mm</text>
           
-          {/* Dimension guidelines */}
-          <line x1="180" y1="415" x2="580" y2="415" strokeWidth="0.5" />
-          <line x1="180" y1="410" x2="180" y2="420" />
-          <line x1="580" y1="410" x2="580" y2="420" />
-          <text x="350" y="432" fill="currentColor" fontSize="8" fontFamily="monospace" letterSpacing="0.8">WIDTH: 6000 mm</text>
-          
-          <line x1="150" y1="380" x2="250" y2="210" strokeWidth="0.5" />
-          <line x1="147" y1="385" x2="153" y2="375" />
-          <line x1="247" y1="215" x2="253" y2="205" />
-          <text x="145" y="285" fill="currentColor" fontSize="8" fontFamily="monospace" letterSpacing="0.8" transform="rotate(-30 145 285)">PROJ: 3500 mm</text>
+          <line x1="130" y1="380" x2="230" y2="210" strokeWidth="0.5" />
+          <line x1="127" y1="385" x2="133" y2="375" />
+          <line x1="227" y1="215" x2="233" y2="205" />
+          <text x="120" y="285" fill="currentColor" fontSize="8.5" fontFamily="monospace" letterSpacing="0.8" transform="rotate(-30 120 285)">COT_B // PROJ: 3500 mm</text>
         </svg>
       </div>
 
-      {/* FRAME 6: CTA / GEOMETRÍA CONCÉNTRICA */}
-      <div className="blueprint-frame-6 absolute inset-0 w-full h-full flex items-center justify-center p-12 md:p-24 transition-opacity duration-700 ease-out opacity-0">
+      {/* FRAME 6: CTA / LOGO DE MARCA Y CÍRCULOS CONCÉNTRICOS */}
+      <div className="blueprint-frame-6 absolute inset-0 w-full h-full flex items-center justify-center p-8 md:p-24">
         <svg 
           viewBox="0 0 1000 600" 
-          className="w-full h-full text-brand-light max-w-6xl opacity-20" 
+          className="w-full h-full text-brand-light max-w-5xl opacity-45" 
           stroke="currentColor" 
           fill="none" 
-          strokeWidth="0.5"
+          strokeWidth="0.65"
           strokeLinecap="round" 
           strokeLinejoin="round"
         >
-          {/* Large Concentric Circles (Geometric Dial) */}
-          <circle cx="500" cy="300" r="180" strokeWidth="1" className="text-brand-gold" />
-          <circle cx="500" cy="300" r="150" strokeWidth="0.5" strokeDasharray="5,3" className="text-brand-gold/60" />
-          <circle cx="500" cy="300" r="220" strokeWidth="0.25" className="opacity-40" />
+          {/* Large Concentric Calibration Circles */}
+          <circle cx="500" cy="300" r="200" strokeWidth="1" className="text-brand-gold" />
+          <circle cx="500" cy="300" r="170" strokeWidth="0.5" strokeDasharray="6,4" className="text-brand-gold/60" />
+          <circle cx="500" cy="300" r="235" strokeWidth="0.25" className="opacity-40" />
           
-          {/* Inner details representing geometric sensor badge */}
-          <circle cx="500" cy="300" r="120" strokeWidth="0.5" />
-          <path d="M 440,280 L 500,250 L 560,280" strokeWidth="1" className="text-brand-gold" />
-          <path d="M 500,310 L 500,350" strokeWidth="1" className="text-brand-gold" />
+          {/* Inner brand geometric details */}
+          <circle cx="500" cy="300" r="140" strokeWidth="0.5" />
+          <path d="M 430,270 L 500,240 L 570,270" strokeWidth="1.25" className="text-brand-gold" />
+          <path d="M 500,305 L 500,355" strokeWidth="1.25" className="text-brand-gold" />
           
-          {/* Intersecting horizontal and vertical lines */}
+          {/* Diagonal grids */}
           <line x1="200" y1="300" x2="800" y2="300" strokeWidth="0.25" className="opacity-30" />
           <line x1="500" y1="50" x2="500" y2="550" strokeWidth="0.25" className="opacity-30" />
-          
-          {/* Angled axes */}
           <line x1="287" y1="87" x2="713" y2="513" strokeWidth="0.25" strokeDasharray="3,3" className="opacity-20" />
           <line x1="287" y1="513" x2="713" y2="87" strokeWidth="0.25" strokeDasharray="3,3" className="opacity-20" />
           
-          {/* Monospace coordinates watermark */}
-          <text x="500" y="470" fill="currentColor" fontSize="10" fontFamily="monospace" letterSpacing="3" textAnchor="middle" className="text-brand-gold font-bold">CΛSΛ ΛTENTΛ</text>
-          <text x="500" y="485" fill="currentColor" fontSize="7" fontFamily="monospace" letterSpacing="1" textAnchor="middle" className="opacity-40">INTEGRACIÓN TECNOLÓGICA INVISIBLE</text>
+          {/* Watermark brand text */}
+          <text x="500" y="465" fill="currentColor" fontSize="11" fontFamily="monospace" letterSpacing="4" textAnchor="middle" className="text-brand-gold font-bold">CΛSΛ ΛTENTΛ</text>
+          <text x="500" y="480" fill="currentColor" fontSize="7.5" fontFamily="monospace" letterSpacing="1" textAnchor="middle" className="opacity-40">DISEÑO Y REMODELACIÓN INVISIBLE</text>
         </svg>
       </div>
+
     </div>
   );
 };

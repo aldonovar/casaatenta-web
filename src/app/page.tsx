@@ -209,7 +209,10 @@ export default function HomePage() {
         }
       );
 
-      // 6. Master Background Blueprint Scroll Transitions
+      // 6. Master Background Blueprint Scroll Transitions (autoAlpha targets visibility: hidden)
+      gsap.set('.blueprint-frame-0', { autoAlpha: 1 });
+      gsap.set(['.blueprint-frame-1', '.blueprint-frame-2', '.blueprint-frame-3', '.blueprint-frame-4', '.blueprint-frame-5', '.blueprint-frame-6'], { autoAlpha: 0 });
+
       const bgTl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
@@ -218,18 +221,18 @@ export default function HomePage() {
           scrub: 0.5,
         }
       });
-      bgTl.to('.blueprint-frame-0', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-1', { opacity: 0.25, duration: 1 }, '<')
-          .to('.blueprint-frame-1', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-2', { opacity: 0.25, duration: 1 }, '<')
-          .to('.blueprint-frame-2', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-3', { opacity: 0.25, duration: 1 }, '<')
-          .to('.blueprint-frame-3', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-4', { opacity: 0.25, duration: 1 }, '<')
-          .to('.blueprint-frame-4', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-5', { opacity: 0.25, duration: 1 }, '<')
-          .to('.blueprint-frame-5', { opacity: 0, duration: 1 })
-          .to('.blueprint-frame-6', { opacity: 0.25, duration: 1 }, '<');
+      bgTl.to('.blueprint-frame-0', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-1', { autoAlpha: 1, duration: 1 }, '<')
+          .to('.blueprint-frame-1', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-2', { autoAlpha: 1, duration: 1 }, '<')
+          .to('.blueprint-frame-2', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-3', { autoAlpha: 1, duration: 1 }, '<')
+          .to('.blueprint-frame-3', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-4', { autoAlpha: 1, duration: 1 }, '<')
+          .to('.blueprint-frame-4', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-5', { autoAlpha: 1, duration: 1 }, '<')
+          .to('.blueprint-frame-5', { autoAlpha: 0, duration: 1 })
+          .to('.blueprint-frame-6', { autoAlpha: 1, duration: 1 }, '<');
 
     }, containerRef);
 
