@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { usePathname } from "next/navigation";
+import { PreloaderParticles, getPreloaderDirection } from "./PreloaderParticles";
 
 interface PageTransitionProps {
   children: React.ReactNode;
@@ -19,12 +20,15 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
   const pathname = usePathname();
   const [displayChildren, setDisplayChildren] = useState(children);
   const isFirstRender = useRef(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
+
+    setIsTransitioning(true);
 
     // Slide curtain up, swap children, slide curtain out
     const ctx = gsap.context(() => {
@@ -37,6 +41,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       const tl = gsap.timeline({
         onComplete: () => {
           gsap.set(curtainRef.current, { display: "none" });
+          setIsTransitioning(false);
         }
       });
 
@@ -82,10 +87,15 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       {/* Slide Curtain Overlay */}
       <div
         ref={curtainRef}
-        className="fixed inset-0 z-[9999] bg-[#07111D] flex flex-col items-center justify-center pointer-events-none hidden"
+        className="fixed inset-0 z-[9999] bg-[#07111D] flex flex-col items-center justify-center pointer-events-none overflow-hidden hidden"
       >
         {/* Architectural grid overlay inside curtain */}
         <div className="absolute inset-0 z-0 opacity-[0.015] architectural-grid pointer-events-none" />
+
+        {/* Dynamic transition stellar rain/constellation particles */}
+        {isTransitioning && (
+          <PreloaderParticles direction={getPreloaderDirection(pathname)} />
+        )}
 
         <div className="flex flex-col items-center space-y-6 relative z-10">
           {/* Animated Isotipo */}

@@ -2,8 +2,11 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { usePathname } from "next/navigation";
+import { PreloaderParticles, getPreloaderDirection } from "./PreloaderParticles";
 
 export const Preloader: React.FC = () => {
+  const pathname = usePathname();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDone, setIsDone] = useState(false);
 
@@ -96,6 +99,9 @@ export const Preloader: React.FC = () => {
     >
       {/* Cinematic noise film grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
+
+      {/* Stellar rain and constellation background particles */}
+      <PreloaderParticles direction={getPreloaderDirection(pathname)} />
 
       {/* Center Wrapper for Logo Icon */}
       <div className="relative flex flex-col items-center max-w-[90vw] px-6">
