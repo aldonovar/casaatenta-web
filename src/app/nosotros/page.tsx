@@ -225,25 +225,19 @@ export default function NosotrosPage() {
         </div>
 
         {/* Team profiles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {[
             {
-              name: "Alexis Falcon",
-              role: "Director de Arquitectura & UX",
-              bio: "Arquitecto y especialista en diseño de iluminación. Dirige la integración estética y la relación espacial en cada obra.",
+              name: "Jhon Febres",
+              role: "Propietario & Gerente General",
+              bio: "Lidera la dirección comercial, la viabilidad constructiva en obra civil y la correcta ejecución estructural de terrazas y acabados residenciales.",
               icon: Award,
             },
             {
-              name: "Carlos Mendoza",
-              role: "Director de Integración IoT",
-              bio: "Ingeniero de automatización. Especialista en sistemas de control distribuidos, redes y acústica invisible de alta fidelidad.",
+              name: "Alexis Espíritu",
+              role: "Cofundador & Director Técnico Visual",
+              bio: "Dirige el modelado de iluminación circadiana, el diseño acústico por transductores invisibles y el desarrollo del ecosistema IoT local.",
               icon: Shield,
-            },
-            {
-              name: "Diana Valdivia",
-              role: "Diseño de Interiores & Materialidad",
-              bio: "Interiorista experta en texturas, acabados y disolución técnica de ductos en piedra travertino, concreto y madera.",
-              icon: UserCheck,
             },
           ].map((member, i) => {
             const Icon = member.icon;

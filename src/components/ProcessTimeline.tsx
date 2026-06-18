@@ -3,14 +3,14 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { processSteps } from "@/constants/services";
+import { methodSteps, homeCopy } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
 import { BrandText } from "./BrandText";
-import { Ruler, Layers, ShieldCheck, Calendar } from "lucide-react";
+import { Eye, Layers, Cpu, Ruler, Sliders, ShieldCheck } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const icons = [Ruler, Layers, ShieldCheck, Calendar];
+const icons = [Eye, Layers, Cpu, Ruler, Sliders, ShieldCheck];
 
 export const ProcessTimeline: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -99,9 +99,9 @@ export const ProcessTimeline: React.FC = () => {
         <div className="mb-20 text-center flex flex-col items-center">
           <SectionHeading
             number="04"
-            label="Proceso"
-            title="VISITA, PROPUESTA Y EJECUCIÓN"
-            subtitle="Medimos y diseñamos cada detalle antes de mover un solo cable. Nuestro proceso de cuatro fases elimina sorpresas."
+            label={homeCopy.method.label}
+            title={homeCopy.method.title}
+            subtitle={homeCopy.method.subtitle}
             align="center"
           />
         </div>
@@ -126,7 +126,7 @@ export const ProcessTimeline: React.FC = () => {
 
           {/* Steps List */}
           <div className="space-y-16 lg:space-y-32">
-            {processSteps.map((step, index) => {
+            {methodSteps.map((step, index) => {
               const IconComponent = icons[index] ?? Ruler;
               const isEven = index % 2 === 0;
 
@@ -165,7 +165,7 @@ export const ProcessTimeline: React.FC = () => {
                       </h3>
                       
                       <p className="text-sm font-light leading-relaxed text-brand-light/60">
-                        {step.description}
+                        {step.text}
                       </p>
                     </div>
                   </div>

@@ -1,34 +1,54 @@
 import React from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { PhilosophySection } from "@/components/PhilosophySection";
+import { CinematicWalk } from "@/components/CinematicWalk";
+import { CreativeLenses } from "@/components/CreativeLenses";
 import { ServicesGallery } from "@/components/ServicesGallery";
+import { SceneController } from "@/components/SceneController";
+import { HalfRenderReality } from "@/components/HalfRenderReality";
 import { ProjectsShowcase } from "@/components/ProjectsShowcase";
 import { ProcessTimeline } from "@/components/ProcessTimeline";
+import { AboutSection } from "@/components/AboutSection";
 import { StatsCounter } from "@/components/StatsCounter";
 import { CTAFinal } from "@/components/CTAFinal";
 
 export default function HomePage() {
   return (
     <>
-      {/* Immersive cinematic introductory hero */}
+      {/* CAPÍTULO 01: HERO / LA CASA RESPONDE */}
       <HeroSection />
 
-      {/* Brand philosophy scroll-driven pinned layout */}
+      {/* CAPÍTULO 01.5: FILOSOFÍA */}
       <PhilosophySection />
 
-      {/* Horizontal scroll business lines presentation */}
+      {/* CAPÍTULO 02: CINEMATIC WALK */}
+      <CinematicWalk />
+
+      {/* CAPÍTULO 03: CREATIVE LENSES */}
+      <CreativeLenses />
+
+      {/* CAPÍTULO 04: SERVICIOS COMO ESCENAS */}
       <ServicesGallery />
 
-      {/* Modern bento project masonry grid */}
+      {/* CAPÍTULO 05: SCENE CONTROLLER INTERACTIVO */}
+      <SceneController />
+
+      {/* CAPÍTULO 06: HALF-RENDER / HALF-REALITY */}
+      <HalfRenderReality />
+
+      {/* CAPÍTULO 07: CASOS / PROYECTOS */}
       <ProjectsShowcase />
 
-      {/* SVG vertical drawing timeline */}
+      {/* CAPÍTULO 08: MÉTODO CASA ATENTA */}
       <ProcessTimeline />
 
-      {/* Numerical count increments counters section */}
+      {/* CAPÍTULO 09: ABOUT / FUNDADORES */}
+      <AboutSection />
+
+      {/* CAPÍTULO 09.5: TELEMETRÍA DE ESTADÍSTICAS */}
       <StatsCounter />
 
-      {/* Conversion CTA layout */}
+      {/* CAPÍTULO 10: CTA FINAL Y CONVERSIÓN */}
       <CTAFinal />
     </>
   );

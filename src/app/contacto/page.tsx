@@ -13,7 +13,11 @@ export default function ContactoPage() {
     name: "",
     email: "",
     phone: "",
-    projectType: "residencial",
+    city: "",
+    spaceType: "terraza",
+    serviceOfInterest: "automatizacion",
+    spaceStatus: "proyecto",
+    scope: "ambos",
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
@@ -43,7 +47,17 @@ export default function ContactoPage() {
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setFormData({ name: "", email: "", phone: "", projectType: "residencial", message: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        city: "",
+        spaceType: "terraza",
+        serviceOfInterest: "automatizacion",
+        spaceStatus: "proyecto",
+        scope: "ambos",
+        message: "",
+      });
     }, 4000);
   };
 
@@ -59,7 +73,7 @@ export default function ContactoPage() {
           <SectionHeading
             number="05"
             label="Contacto"
-            title="AGNDA TU CITA Y EVALÚA TU OBRA"
+            title="AGENDA TU CITA Y EVALÚA TU OBRA"
             subtitle="Escríbenos para agendar una sesión virtual de revisión de planos o una reunión presencial en obra."
           />
         </div>
@@ -87,9 +101,6 @@ export default function ContactoPage() {
                   <span>REG-MAILING</span>
                 </div>
                 
-                {/* Form fields here */}
-
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Name */}
                   <div className="space-y-2">
@@ -138,19 +149,93 @@ export default function ContactoPage() {
                     />
                   </div>
 
-                  {/* Project Type */}
+                  {/* City */}
                   <div className="space-y-2">
                     <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
-                      Tipo de Proyecto
+                      Distrito / Ciudad
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ej. La Molina, Lima"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Space Type */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Tipo de Espacio
                     </label>
                     <select
-                      value={formData.projectType}
-                      onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                      value={formData.spaceType}
+                      onChange={(e) => setFormData({ ...formData, spaceType: e.target.value })}
                       className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-brand-gold tracking-widest outline-none transition-all duration-300 uppercase cursor-pointer"
                     >
-                      <option value="residencial" className="bg-ca-bg-surface text-ca-text">Residencial Alta Gama</option>
-                      <option value="pabellon" className="bg-ca-bg-surface text-ca-text">Pabellones / Terrazas</option>
-                      <option value="wellness" className="bg-ca-bg-surface text-ca-text">Wellness / Spa</option>
+                      <option value="terraza" className="bg-ca-bg-surface text-ca-text">Terraza / Pérgola</option>
+                      <option value="casa" className="bg-ca-bg-surface text-ca-text">Casa Completa</option>
+                      <option value="departamento" className="bg-ca-bg-surface text-ca-text">Departamento</option>
+                      <option value="oficina" className="bg-ca-bg-surface text-ca-text">Oficina / Local</option>
+                      <option value="fachada" className="bg-ca-bg-surface text-ca-text">Fachada / Accesos</option>
+                      <option value="cocina" className="bg-ca-bg-surface text-ca-text">Cocina</option>
+                      <option value="otro" className="bg-ca-bg-surface text-ca-text">Otro Espacio</option>
+                    </select>
+                  </div>
+
+                  {/* Service of Interest */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Servicio de Interés
+                    </label>
+                    <select
+                      value={formData.serviceOfInterest}
+                      onChange={(e) => setFormData({ ...formData, serviceOfInterest: e.target.value })}
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-brand-gold tracking-widest outline-none transition-all duration-300 uppercase cursor-pointer"
+                    >
+                      <option value="automatizacion" className="bg-ca-bg-surface text-ca-text">Automatización Inteligente</option>
+                      <option value="iluminacion" className="bg-ca-bg-surface text-ca-text">Iluminación Circadiana</option>
+                      <option value="terraza" className="bg-ca-bg-surface text-ca-text">Terraza / Pérgola</option>
+                      <option value="acceso" className="bg-ca-bg-surface text-ca-text">Accesos y Seguridad</option>
+                      <option value="acabados" className="bg-ca-bg-surface text-ca-text">Superficies y Acabados</option>
+                      <option value="renovacion" className="bg-ca-bg-surface text-ca-text">Renovación Integral</option>
+                      <option value="diagnostico" className="bg-ca-bg-surface text-ca-text">Diagnóstico Técnico Inicial</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Space Status */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      ¿El espacio ya existe o está en proyecto?
+                    </label>
+                    <select
+                      value={formData.spaceStatus}
+                      onChange={(e) => setFormData({ ...formData, spaceStatus: e.target.value })}
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-brand-gold tracking-widest outline-none transition-all duration-300 uppercase cursor-pointer"
+                    >
+                      <option value="existe" className="bg-ca-bg-surface text-ca-text">El espacio ya existe (Obra/Reforma)</option>
+                      <option value="proyecto" className="bg-ca-bg-surface text-ca-text">Está en proyecto (Planos/Fase inicial)</option>
+                    </select>
+                  </div>
+
+                  {/* Scope */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      ¿Deseas automatización, acabados o ambos?
+                    </label>
+                    <select
+                      value={formData.scope}
+                      onChange={(e) => setFormData({ ...formData, scope: e.target.value })}
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-brand-gold tracking-widest outline-none transition-all duration-300 uppercase cursor-pointer"
+                    >
+                      <option value="automatizacion" className="bg-ca-bg-surface text-ca-text">Solo Automatización Inteligente</option>
+                      <option value="acabados" className="bg-ca-bg-surface text-ca-text">Solo Acabados y Superficies</option>
+                      <option value="ambos" className="bg-ca-bg-surface text-ca-text">Ambos (Diseño Integrado)</option>
                     </select>
                   </div>
                 </div>
@@ -158,12 +243,12 @@ export default function ContactoPage() {
                 {/* Message */}
                 <div className="space-y-2">
                   <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
-                    Cuéntanos sobre tu obra (Estado de planos, constructor, etc.)
+                    Mensaje / Detalles Adicionales de tu Obra
                   </label>
                   <textarea
                     rows={4}
                     required
-                    placeholder="Ej. Estoy en etapa de planos civiles con el estudio X. Quisiera integrar iluminación circadiana y control inteligente por WhatsApp."
+                    placeholder="Ej. Quisiera integrar iluminación circadiana y control por WhatsApp en la terraza. Adjunto planos preliminares."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300 resize-none"

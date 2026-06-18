@@ -52,19 +52,19 @@ export const services: Service[] = [
     eyebrow: "Casa Atenta Exterior",
     title: "Terrazas Atentas",
     description:
-      "Pergolas, techos corredizos, sombra, luz y proteccion para usar mejor tu exterior.",
+      "Pérgolas, techos corredizos, sombra, luz y protección para usar mejor tu exterior.",
     bullets: [
-      "Pergolas sol y sombra",
+      "Pérgolas sol y sombra",
       "Techos corredizos",
       "Cortavientos",
-      "Iluminacion exterior",
+      "Iluminación exterior",
     ],
     cta: "Cotizar terraza",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero cotizar mi terraza y agendar una visita tecnica."
+      "Hola Casa Atenta, quiero cotizar mi terraza y agendar una visita técnica."
     ),
     image: "/backgrounds/casestudy.png",
-    imageAlt: "Terraza residencial con pergola, madera calida e iluminacion puntual.",
+    imageAlt: "Terraza residencial con pérgola, madera cálida e iluminación puntual.",
     tags: ["Sombra", "Cubierta", "Luz exterior"],
   },
   {
@@ -79,7 +79,7 @@ export const services: Service[] = [
       "Hola Casa Atenta, quiero cotizar pintura y acabados para mi casa."
     ),
     image: "/backgrounds/beforeafter.png",
-    imageAlt: "Comparativa de superficie residencial antes y despues de una intervencion.",
+    imageAlt: "Comparativa de superficie residencial antes y después de una intervención.",
     tags: ["Resane", "Pintura", "Madera"],
   },
   {
@@ -87,14 +87,14 @@ export const services: Service[] = [
     eyebrow: "Casa Atenta Luz",
     title: "Luz Atenta",
     description:
-      "Escenas de iluminacion interior y exterior segun rutina, material y momento.",
+      "Escenas de iluminación interior y exterior según rutina, material y momento.",
     bullets: ["Dicroicos", "Apliques", "Sensores", "Escenas"],
-    cta: "Diseñar iluminacion",
+    cta: "Diseñar iluminación",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero diseñar iluminacion inteligente para mi hogar."
+      "Hola Casa Atenta, quiero diseñar iluminación inteligente para mi hogar."
     ),
     image: "/backgrounds/circadian.png",
-    imageAlt: "Dormitorio residencial con luz calida, sombras naturales y luminarias indirectas.",
+    imageAlt: "Dormitorio residencial con luz cálida, sombras naturales y luminarias indirectas.",
     tags: ["Escenas", "Sensores", "Ambientes"],
   },
   {
@@ -102,14 +102,14 @@ export const services: Service[] = [
     eyebrow: "Casa Atenta Smart",
     title: "Smart Home por etapas",
     description:
-      "Luces, accesos, sensores, WhatsApp y OpenClaw para automatizar lo que mas usas.",
+      "Luces, accesos, sensores, WhatsApp y OpenClaw para automatizar lo que más usas.",
     bullets: ["Luces", "Sensores", "WhatsApp", "OpenClaw"],
-    cta: "Planificar automatizacion",
+    cta: "Planificar automatización",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero planificar automatizacion por etapas para mi casa."
+      "Hola Casa Atenta, quiero planificar automatización por etapas para mi casa."
     ),
     image: "/backgrounds/specialties.png",
-    imageAlt: "Sistema tecnico de control residencial con lineas de conexion discretas.",
+    imageAlt: "Sistema técnico de control residencial con líneas de conexión discretas.",
     tags: ["OpenClaw", "WhatsApp", "Rutinas"],
   },
 ];
@@ -117,7 +117,7 @@ export const services: Service[] = [
 export const processSteps: ProcessStepData[] = [
   {
     number: "01",
-    title: "Visita tecnica",
+    title: "Visita técnica",
     description:
       "Medimos, revisamos superficie, estructura, uso y condiciones reales.",
   },
@@ -125,11 +125,11 @@ export const processSteps: ProcessStepData[] = [
     number: "02",
     title: "Propuesta clara",
     description:
-      "Definimos materiales, acabado, recorrido, luminarias o automatizacion segun el servicio.",
+      "Definimos materiales, acabado, recorrido, luminarias o automatización según el servicio.",
   },
   {
     number: "03",
-    title: "Ejecucion cuidada",
+    title: "Ejecución cuidada",
     description:
       "Protegemos, instalamos, aplicamos o configuramos con orden y control.",
   },
@@ -144,54 +144,54 @@ export const processSteps: ProcessStepData[] = [
 export const featuredServices: FeaturedService[] = [
   {
     id: "exterior",
-    eyebrow: "Linea principal",
-    title: "Terrazas Atentas: tu exterior como un ambiente mas de la casa.",
+    eyebrow: "Línea principal",
+    title: "Terrazas Atentas: tu exterior como un ambiente más de la casa.",
     subtitle:
-      "Diseñamos pergolas, techos corredizos, sombra, luz y proteccion para que patios, balcones y azoteas se usen mas horas al dia.",
+      "Diseñamos pérgolas, techos corredizos, sombra, luz y protección para que patios, balcones y azoteas se usen más horas al día.",
     blocks: [
       {
-        title: "Pergola fija / sol y sombra",
+        title: "Pérgola fija / sol y sombra",
         description:
-          "Estructura, cubierta y orientacion pensadas antes de ejecutar.",
+          "Estructura, cubierta y orientación pensadas antes de ejecutar.",
       },
       {
         title: "Techo corredizo manual / motorizado",
         description:
-          "Control de sol, lluvia y ventilacion con recorrido revisado en visita.",
+          "Control de sol, lluvia y ventilación con recorrido revisado en visita.",
       },
       {
-        title: "Iluminacion exterior / cortaviento",
+        title: "Iluminación exterior / cortaviento",
         description:
           "Luminarias reales, vidrio y escenas para uso nocturno sin exceso visual.",
       },
     ],
     cta: "Cotizar mi terraza",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero cotizar mi terraza con pergola, cubierta o iluminacion."
+      "Hola Casa Atenta, quiero cotizar mi terraza con pérgola, cubierta o iluminación."
     ),
     image: "/backgrounds/casestudy.png",
-    imageAlt: "Terraza local con pergola, cubierta y luz exterior calida.",
-    tags: ["Pergola", "Techo corredizo", "Cortaviento"],
+    imageAlt: "Terraza local con pérgola, cubierta y luz exterior cálida.",
+    tags: ["Pérgola", "Techo corredizo", "Cortaviento"],
   },
   {
     id: "acabados",
-    eyebrow: "Renovacion visible",
-    title: "Acabados Atentos: pintura y renovacion por superficie.",
+    eyebrow: "Renovación visible",
+    title: "Acabados Atentos: pintura y renovación por superficie.",
     subtitle:
-      "Muros, puertas, madera, muebles, cocinas, metal y fachadas con preparacion adecuada y acabado definido antes de ejecutar.",
+      "Muros, puertas, madera, muebles, cocinas, metal y fachadas con preparación adecuada y acabado definido antes de ejecutar.",
     blocks: [
       {
         title: "Muros",
-        description: "Mate, satinado o latex segun transito, limpieza y luz.",
+        description: "Mate, satinado o látex según tránsito, limpieza y luz.",
       },
       {
         title: "Puertas y madera",
-        description: "Lacado, gloss, barniz, laca o DD segun uso real.",
+        description: "Lacado, gloss, barniz, laca o DD según uso real.",
       },
       {
         title: "Muebles, metal y fachada",
         description:
-          "Refinish, acrilico, portones, rejas, garajes, resane y proteccion.",
+          "Refinish, acrílico, portones, rejas, garajes, resane y protección.",
       },
     ],
     cta: "Cotizar pintura y acabados",
@@ -205,38 +205,38 @@ export const featuredServices: FeaturedService[] = [
   {
     id: "luz",
     eyebrow: "Ambientes por uso",
-    title: "Luz Atenta: escenas para cada momento del dia.",
+    title: "Luz Atenta: escenas para cada momento del día.",
     subtitle:
-      "Diseñamos iluminacion interior y exterior con luminarias reales, escenas utiles y control simple.",
+      "Diseñamos iluminación interior y exterior con luminarias reales, escenas útiles y control simple.",
     blocks: [
       {
         title: "Entrada segura",
-        description: "Apliques, sensores y horarios para llegada y circulacion.",
+        description: "Apliques, sensores y horarios para llegada y circulación.",
       },
       {
         title: "Terraza nocturna",
-        description: "Spots, luces de jardin y escenas calidas sin invadir.",
+        description: "Spots, luces de jardín y escenas cálidas sin invadir.",
       },
       {
-        title: "Cocina, descanso y perimetro",
+        title: "Cocina, descanso y perímetro",
         description:
-          "Dicroicos, luz funcional y temperaturas segun tarea o rutina.",
+          "Dicroicos, luz funcional y temperaturas según tarea o rutina.",
       },
     ],
-    cta: "Diseñar iluminacion inteligente",
+    cta: "Diseñar iluminación inteligente",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero diseñar escenas de iluminacion inteligente."
+      "Hola Casa Atenta, quiero diseñar escenas de iluminación inteligente."
     ),
     image: "/backgrounds/circadian.png",
-    imageAlt: "Ambiente interior con luz calida, sombra natural y control de escena.",
+    imageAlt: "Ambiente interior con luz cálida, sombra natural y control de escena.",
     tags: ["Dicroicos", "Apliques", "Spots", "Sensores"],
   },
   {
     id: "smart",
     eyebrow: "Producto escalable",
-    title: "Casa Atenta Smart: automatizacion por etapas.",
+    title: "Casa Atenta Smart: automatización por etapas.",
     subtitle:
-      "Empezamos por lo que mas usas: luces, accesos, sensores, horarios y escenas. Luego escalamos hacia una casa mas conectada.",
+      "Empezamos por lo que más usas: luces, accesos, sensores, horarios y escenas. Luego escalamos hacia una casa más conectada.",
     blocks: [
       {
         title: "Control de luces",
@@ -248,17 +248,17 @@ export const featuredServices: FeaturedService[] = [
           "Rutinas conversacionales y sistema preparado para integraciones futuras.",
       },
       {
-        title: "Pergolas, seguridad y accesos",
+        title: "Pérgolas, seguridad y accesos",
         description:
           "Sistemas motorizados, sensores, cerraduras y soporte por etapas.",
       },
     ],
-    cta: "Planificar automatizacion",
+    cta: "Planificar automatización",
     href: createWhatsAppLink(
-      "Hola Casa Atenta, quiero planificar automatizacion por etapas para mi hogar."
+      "Hola Casa Atenta, quiero planificar automatización por etapas para mi hogar."
     ),
     image: "/backgrounds/specialties.png",
-    imageAlt: "Panel tecnico abstracto de automatizacion residencial con nodos sutiles.",
+    imageAlt: "Panel técnico abstracto de automatización residencial con nodos sutiles.",
     tags: ["Luces", "Sensores", "OpenClaw", "AtentaOS Home"],
     note:
       "Smart Home no empieza con toda la casa. Empieza con una rutina que vale la pena automatizar.",
@@ -279,22 +279,21 @@ export const proofItems: ProofItem[] = [
   {
     label: "Cocina",
     image: "/backgrounds/circadian.png",
-    imageAlt: "Ambiente interior renovado con iluminacion calida.",
+    imageAlt: "Ambiente interior renovado con iluminación cálida.",
   },
   {
     label: "Madera",
     image: "/backgrounds/cta.png",
-    imageAlt: "Detalle residencial con madera y acabado calido.",
+    imageAlt: "Detalle residencial con madera y acabado cálido.",
   },
   {
-    label: "Pergola",
+    label: "Pérgola",
     image: "/backgrounds/casestudy.png",
-    imageAlt: "Pergola residencial con estructura y luces puntuales.",
+    imageAlt: "Pérgola residencial con estructura y luces puntuales.",
   },
   {
     label: "Metal",
     image: "/backgrounds/specialties.png",
-    imageAlt: "Detalle tecnico de metal y sistema integrado.",
+    imageAlt: "Detalle técnico de metal y sistema integrado.",
   },
 ];
-

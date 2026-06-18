@@ -24,17 +24,17 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "C\u039BS\u039B \u039BTENT\u039B | Servicios residenciales",
+  title: "Casa Atenta | Diseño residencial inteligente y automatización para hogares que responden",
   description:
-    "Estructura, acabados, luz y automatizacion residencial en Lima con visita tecnica, propuesta clara y ejecucion cuidada.",
+    "Casa Atenta integra domótica, iluminación, accesos, terrazas, acabados y escenas inteligentes para transformar la forma en que tu hogar responde.",
   keywords: [
-    "pergolas lima",
+    "pérgolas lima",
     "terrazas lima",
     "pintura residencial lima",
     "acabados residenciales",
-    "iluminacion inteligente peru",
-    "automatizacion residencial lima",
-    "smart home peru",
+    "iluminación inteligente perú",
+    "automatización residencial lima",
+    "smart home perú",
   ],
   authors: [{ name: "Casa Atenta" }],
 };

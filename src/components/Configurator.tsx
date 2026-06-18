@@ -5,6 +5,7 @@ import { CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { BrandText } from "./BrandText";
+import { WHATSAPP_NUMBER } from "@/constants/contact";
 
 interface ConfigState {
   spaceType: string;
@@ -70,7 +71,7 @@ export const Configurator: React.FC = () => {
 Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
 
     const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/51908550942?text=${encodedText}`, "_blank");
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`, "_blank");
     setStep(5); // Go to thank you step
   };
 
