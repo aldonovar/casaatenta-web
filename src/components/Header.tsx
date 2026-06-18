@@ -111,7 +111,10 @@ export const Header: React.FC = () => {
 
   const navItems = [
     { label: "Inicio", path: "/" },
-    { label: "Diseño", path: "/diseno" },
+    { label: "Servicios", path: "/servicios" },
+    { label: "Proyectos", path: "/proyectos" },
+    { label: "Proceso", path: "/proceso" },
+    { label: "Blog", path: "/blog" },
     { label: "Nosotros", path: "/nosotros" },
     { label: "Contacto", path: "/contacto" },
   ];
