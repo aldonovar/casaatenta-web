@@ -8,6 +8,27 @@ import { BrandText } from "./BrandText";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const HERO_IMAGES = [
+  {
+    src: "/media/hero/hero-desktop-01.webp",
+    fallback: "/media/hero/bg-hero.png",
+    delay: "-0.5s",
+    position: "center center",
+  },
+  {
+    src: "/media/hero/hero-desktop-02.webp",
+    fallback: "/media/hero/bg-hero.png",
+    delay: "-6.5s",
+    position: "center center",
+  },
+  {
+    src: "/media/hero/hero-desktop-03.webp",
+    fallback: "/media/hero/bg-hero.png",
+    delay: "-12.5s",
+    position: "center center",
+  },
+];
+
 export const HeroSection: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -77,8 +98,9 @@ export const HeroSection: React.FC = () => {
 
       // Parallax effects on scroll
       gsap.to(bgImageRef.current, {
-        yPercent: 12,
-        opacity: 0.08,
+        yPercent: 10,
+        scale: 1.035,
+        opacity: 0.32,
         ease: "none",
         scrollTrigger: {
           trigger: hero,
@@ -159,24 +181,48 @@ export const HeroSection: React.FC = () => {
       ref={heroRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative h-screen w-full flex flex-col justify-center overflow-hidden bg-ca-bg-deep px-6 md:px-16 lg:px-28"
+      className="relative h-screen min-h-[720px] w-full flex flex-col justify-center overflow-hidden bg-ca-bg-deep px-6 md:px-16 lg:px-28"
       style={{ perspective: "1000px" }}
     >
-      {/* Background visual render overlay */}
+      <style>{`
+        @keyframes caHeroImageFade {
+          0% { opacity: 0; transform: scale(1.06); }
+          4% { opacity: 1; transform: scale(1.065); }
+          30% { opacity: 1; transform: scale(1.09); }
+          38% { opacity: 0; transform: scale(1.11); }
+          100% { opacity: 0; transform: scale(1.11); }
+        }
+      `}</style>
+
+      {/* Background visual render sequence */}
       <div
         ref={bgImageRef}
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20 scale-102"
-        style={{ backgroundImage: `url('/media/hero/bg-hero.png')` }}
-      />
-      <div className="absolute inset-0 z-0 bg-gradient-to-b from-ca-bg-deep/90 via-ca-bg-deep/80 to-ca-bg-deep" />
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_45%,transparent_20%,var(--color-ca-bg-deep)_85%)]" />
+        className="absolute inset-0 z-0 overflow-hidden opacity-[0.65] scale-105"
+        aria-hidden="true"
+      >
+        {HERO_IMAGES.map((image) => (
+          <div
+            key={image.src}
+            className="absolute inset-0 bg-cover bg-no-repeat will-change-transform"
+            style={{
+              animation: "caHeroImageFade 18s linear infinite",
+              animationDelay: image.delay,
+              backgroundImage: `url('${image.src}'), url('${image.fallback}')`,
+              backgroundPosition: image.position,
+            }}
+          />
+        ))}
+      </div>
+      <div className="absolute inset-0 z-0 bg-gradient-to-r from-ca-bg-deep via-ca-bg-deep/78 to-ca-bg-deep/35" />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-ca-bg-deep/45 via-ca-bg-deep/25 to-ca-bg-deep" />
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_70%_45%,transparent_12%,var(--color-ca-bg-deep)_92%)] opacity-75" />
 
       {/* Large Abstract Geometric Layout Lines in background instead of complex plans */}
       <div className="absolute inset-0 z-0 flex items-center justify-end pointer-events-none select-none px-6 md:px-16 lg:px-28">
         <svg
           ref={geomRef}
           viewBox="0 0 1000 700"
-          className="w-full max-w-[850px] h-auto fill-none stroke-ca-text opacity-[0.06] md:opacity-[0.09] transition-transform duration-300 transform-gpu"
+          className="w-full max-w-[850px] h-auto fill-none stroke-ca-text opacity-[0.045] md:opacity-[0.075] transition-transform duration-300 transform-gpu"
           style={{ transformStyle: "preserve-3d" }}
         >
           {/* Outer elegant borders */}
@@ -204,15 +250,15 @@ export const HeroSection: React.FC = () => {
           
           {/* Eyebrow */}
           <div className="hero-animate-fade flex items-center">
-            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.4em] text-ca-gold">
-              CASA ATENTA // INTEGRACIÓN DE TECNOLOGÍA SILENCIOSA
+            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.4em] text-ca-gold drop-shadow-[0_2px_18px_rgba(0,0,0,0.35)]">
+              CASA ATENTA // DISEÑO, ARQUITECTURA Y HOGAR INTELIGENTE
             </span>
           </div>
 
           {/* Epic scale title */}
           <h1
             ref={titleRef}
-            className="text-5xl font-display font-black uppercase leading-[0.95] tracking-[0.04em] text-ca-text sm:text-7xl md:text-8xl lg:text-9.5xl max-w-6xl"
+            className="text-5xl font-display font-black uppercase leading-[0.95] tracking-[0.04em] text-ca-text sm:text-7xl md:text-8xl lg:text-9.5xl max-w-6xl drop-shadow-[0_18px_45px_rgba(0,0,0,0.42)]"
           >
             LA CASA <br />
             <span className="font-light text-ca-gold">
@@ -226,8 +272,8 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Expanded readable subtext */}
-          <p className="hero-animate-fade max-w-2xl text-base md:text-lg font-light leading-relaxed text-ca-blue-gray">
-            Diseñamos pérgolas bioclimáticas, acabados continuos de travertino, audio de resonancia e iluminación circadiana que se disuelven de forma invisible en tus espacios.
+          <p className="hero-animate-fade max-w-2xl text-base md:text-lg font-light leading-relaxed text-ca-blue-gray drop-shadow-[0_8px_24px_rgba(0,0,0,0.4)]">
+            Diseñamos terrazas, pérgolas sol y sombra, iluminación arquitectónica y automatización inteligente para que tu hogar se vea mejor, funcione mejor y responda a ti.
           </p>
 
           {/* Expanded CTAs */}
@@ -241,10 +287,10 @@ export const HeroSection: React.FC = () => {
               <BrandText>Agendar visita técnica</BrandText>
             </a>
             <a
-              href="/diseno"
-              className="inline-flex min-h-14 items-center justify-center border border-ca-border bg-ca-bg-surface/5 backdrop-filter backdrop-blur-md px-10 py-4.5 text-[11px] font-mono uppercase tracking-[0.25em] text-ca-text transition-all duration-300 hover:bg-ca-text/10 rounded"
+              href="/servicios"
+              className="inline-flex min-h-14 items-center justify-center border border-ca-border bg-ca-bg-surface/10 backdrop-filter backdrop-blur-md px-10 py-4.5 text-[11px] font-mono uppercase tracking-[0.25em] text-ca-text transition-all duration-300 hover:bg-ca-text/10 rounded"
             >
-              <BrandText>Ver Diseño</BrandText>
+              <BrandText>Ver servicios</BrandText>
             </a>
           </div>
         </div>
@@ -253,7 +299,7 @@ export const HeroSection: React.FC = () => {
       {/* Bottom coordinate line details simplified */}
       <div
         ref={scrollIndicatorRef}
-        className="absolute bottom-10 left-6 md:left-16 lg:left-28 z-10 flex items-center gap-6 text-[10px] font-mono uppercase tracking-[0.3em] text-ca-text/30 select-none opacity-0"
+        className="absolute bottom-10 left-6 md:left-16 lg:left-28 z-10 flex items-center gap-6 text-[10px] font-mono uppercase tracking-[0.3em] text-ca-text/40 select-none opacity-0"
       >
         <span>LIMA // EXCELENCIA HABITABLE</span>
         <span className="h-[1px] w-16 bg-ca-text/20" />
