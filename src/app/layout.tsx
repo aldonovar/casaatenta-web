@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Syne, Cormorant_Garamond } from "next/font/google";
+import { Cormorant_Garamond, Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { ClientWrapper } from "../components/ClientWrapper";
 
@@ -24,9 +24,18 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "CΛSΛ ΛTENTΛ | Arquitectura de Automatización Residencial",
-  description: "Diseñamos residencias de alta gama donde la tecnología se disuelve por completo en la arquitectura. Sin cables, sin polución visual.",
-  keywords: ["domotica peru", "automatizacion residencial lima", "smart home peru", "casa inteligente", "arquitectura inteligente", "pergolados lima", "iluminacion inteligente peru"],
+  title: "C\u039BS\u039B \u039BTENT\u039B | Servicios residenciales",
+  description:
+    "Estructura, acabados, luz y automatizacion residencial en Lima con visita tecnica, propuesta clara y ejecucion cuidada.",
+  keywords: [
+    "pergolas lima",
+    "terrazas lima",
+    "pintura residencial lima",
+    "acabados residenciales",
+    "iluminacion inteligente peru",
+    "automatizacion residencial lima",
+    "smart home peru",
+  ],
   authors: [{ name: "Casa Atenta" }],
 };
 
@@ -40,10 +49,8 @@ export default function RootLayout({
       lang="es"
       className={`${inter.variable} ${syne.variable} ${cormorant.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-brand-dark text-brand-light">
-        <ClientWrapper>
-          {children}
-        </ClientWrapper>
+      <body className="flex min-h-full flex-col bg-ca-bg-deep text-ca-text">
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );

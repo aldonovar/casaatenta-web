@@ -1,228 +1,228 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ArrowRight, MessageSquare, Check, Mail, Phone, MapPin, Clock } from 'lucide-react';
-import { BrandText } from '../../components/BrandText';
+import React, { useEffect, useRef, useState } from "react";
+import { gsap } from "gsap";
+import { ArrowRight, MessageSquare, Check, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { BrandText } from "@/components/BrandText";
+import { SectionHeading } from "@/components/SectionHeading";
+import { WHATSAPP_LINK } from "@/constants/contact";
 
 export default function ContactoPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    projectType: 'residencial',
-    message: ''
+    name: "",
+    email: "",
+    phone: "",
+    projectType: "residencial",
+    message: "",
   });
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
     const ctx = gsap.context(() => {
-      gsap.fromTo('.contact-title', 
-        { opacity: 0, y: 30 }, 
-        { opacity: 1, y: 0, duration: 1.2, ease: 'power4.out' }
-      );
-      gsap.fromTo('.contact-anim-item', 
-        { opacity: 0, y: 30 }, 
-        { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', stagger: 0.1, delay: 0.2 }
+      // Reveal anims
+      gsap.fromTo(
+        ".contact-reveal",
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.1 }
       );
     }, containerRef);
     return () => ctx.revert();
   }, []);
 
   const socials = [
-    { name: 'Instagram', handle: '@casaatenta', url: 'https://www.instagram.com/casaatenta/' },
-    { name: 'TikTok', handle: '@casaatenta', url: 'https://www.tiktok.com/@casaatenta' },
-    { name: 'LinkedIn', handle: 'casaatenta', url: 'https://www.linkedin.com/company/casaatenta' },
-    { name: 'Facebook', handle: 'casaatenta', url: 'https://www.facebook.com/casaatenta' }
+    { name: "Instagram", handle: "@casaatenta", url: "https://www.instagram.com/casaatenta/" },
+    { name: "TikTok", handle: "@casaatenta", url: "https://www.tiktok.com/@casaatenta" },
+    { name: "Facebook", handle: "casaatenta", url: "https://www.facebook.com/casaatenta" },
   ];
-
-  const handleWhatsApp = () => {
-    const text = 'Hola Casa Atenta, deseo agendar una sesión de consulta para mi proyecto de integración invisible.';
-    window.open(`https://wa.me/51908550942?text=${encodeURIComponent(text)}`, '_blank');
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setFormData({ name: '', email: '', phone: '', projectType: 'residencial', message: '' });
+      setFormData({ name: "", email: "", phone: "", projectType: "residencial", message: "" });
     }, 4000);
   };
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-brand-dark pt-36 pb-24 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-1 pointer-events-none" style={{
-        backgroundImage: 'linear-gradient(to right, rgba(255, 255, 255, 0.007) 1px, transparent 1px), linear-gradient(to bottom, rgba(255, 255, 255, 0.007) 1px, transparent 1px)',
-        backgroundSize: '80px 80px'
-      }} />
+    <div ref={containerRef} className="min-h-screen bg-ca-bg-deep pt-36 pb-24 relative overflow-hidden">
+      <div className="absolute inset-0 z-0 opacity-5 architectural-grid pointer-events-none" />
+      <div className="absolute left-1/3 top-1/4 h-[400px] w-[400px] rounded-full bg-brand-gold opacity-[0.02] blur-[120px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+      <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 relative z-10">
         
-        {/* Page Header */}
-        <div className="max-w-3xl mb-16 contact-title">
-          <span className="text-[10px] font-sans tracking-[0.25em] text-brand-gold uppercase mb-4 block">
-            05 / CONTACTO & AGENDAS
-          </span>
-          <h1 className="text-4xl md:text-6xl font-sans font-extralight text-brand-light uppercase tracking-widest leading-[1.1]">
-            <BrandText>Agenda tu Cita</BrandText> <br />
-            <span className="font-light text-brand-gold"><BrandText>proyecta tu espacio</BrandText></span><span className="text-brand-gold">.</span>
-          </h1>
-          {/* Sparkle divider */}
-          <div className="h-[1px] w-28 bg-gradient-to-r from-brand-gold via-brand-gold/60 to-transparent relative my-5">
-            <div className="absolute top-[-1px] left-6 w-1.5 h-[3px] bg-brand-light rounded-full blur-[0.5px] opacity-90" />
-          </div>
-          <p className="text-xs md:text-sm font-sans font-light text-brand-light/45 leading-relaxed max-w-xl pt-4">
-            Escríbenos para coordinar una reunión presencial en nuestro showroom o una sesión virtual de revisión de planos.
-          </p>
+        {/* Header */}
+        <div className="max-w-3xl mb-16 contact-reveal">
+          <SectionHeading
+            number="05"
+            label="Contacto"
+            title="AGNDA TU CITA Y EVALÚA TU OBRA"
+            subtitle="Escríbenos para agendar una sesión virtual de revisión de planos o una reunión presencial en obra."
+          />
         </div>
 
-        {/* Form and Contact cards Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch contact-anim-item">
-          
-          {/* Left: Premium Contact Form */}
-          <div className="lg:col-span-7 bg-brand-dark-soft border border-white/[0.04] p-8 md:p-10 flex flex-col justify-between">
+        {/* Split grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch contact-reveal">
+          {/* Left Form */}
+          <div className="lg:col-span-7 glass-card p-8 md:p-10 rounded-xl flex flex-col justify-between border border-ca-border bg-ca-bg-surface/10">
             {submitted ? (
-              <div className="my-auto text-center space-y-6 py-12 animate-fade-in">
-                <div className="w-16 h-16 border border-brand-gold rounded-full flex items-center justify-center mx-auto bg-brand-dark">
+              <div className="my-auto text-center space-y-6 py-12 animate-pulse">
+                <div className="w-16 h-16 border border-brand-gold rounded-full flex items-center justify-center mx-auto bg-ca-bg-deep">
                   <Check size={28} className="text-brand-gold" />
                 </div>
-                <h3 className="text-xl font-sans font-light text-brand-light uppercase tracking-wider">
+                <h3 className="text-xl font-display font-light text-ca-text uppercase tracking-wide">
                   <BrandText>Mensaje Enviado</BrandText>
                 </h3>
-                <p className="text-xs font-sans text-brand-light/50 max-w-sm mx-auto leading-relaxed">
-                  Gracias por escribirnos. Un diseñador especializado se pondrá en contacto contigo en las próximas 24 horas para revisar tu caso.
+                <p className="text-xs font-sans text-ca-text-secondary max-w-sm mx-auto leading-relaxed">
+                  Gracias por escribirnos. Un director técnico se pondrá en contacto contigo en las próximas 24 horas para revisar los planos y viabilidad.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="flex justify-between items-center font-sans text-[10px] text-brand-gold uppercase tracking-widest border-b border-white/[0.04] pb-3 font-bold">
+                <div className="flex justify-between items-center font-mono text-[9px] text-brand-gold uppercase tracking-widest border-b border-ca-border pb-3 font-semibold">
                   <span>FORMULARIO DE CONTACTO</span>
-                  <span>CÓD: REG-FORM</span>
+                  <span>REG-MAILING</span>
                 </div>
+                
+                {/* Form fields here */}
+
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Name input */}
+                  {/* Name */}
                   <div className="space-y-2">
-                    <label className="text-[9px] font-sans tracking-widest text-brand-gold uppercase block">Nombre Completo</label>
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Nombre Completo
+                    </label>
                     <input
                       type="text"
                       required
-                      placeholder="Ej. Alexis Falcon"
+                      placeholder="Ej. Alexis Ruiz"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-brand-dark border border-white/[0.08] focus:border-brand-gold px-4 py-3 text-xs font-sans text-brand-light focus:outline-none transition-all duration-300"
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300"
                     />
                   </div>
 
-                  {/* Phone input */}
+                  {/* Phone */}
                   <div className="space-y-2">
-                    <label className="text-[9px] font-sans tracking-widest text-brand-gold uppercase block">Teléfono / WhatsApp</label>
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Teléfono / WhatsApp
+                    </label>
                     <input
                       type="tel"
                       required
                       placeholder="Ej. +51 908 550 942"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      className="w-full bg-brand-dark border border-white/[0.08] focus:border-brand-gold px-4 py-3 text-xs font-sans text-brand-light focus:outline-none transition-all duration-300"
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Email input */}
+                  {/* Email */}
                   <div className="space-y-2">
-                    <label className="text-[9px] font-sans tracking-widest text-brand-gold uppercase block">Correo Electrónico</label>
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Correo Electrónico
+                    </label>
                     <input
                       type="email"
                       required
                       placeholder="Ej. contacto@casaatenta.pe"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-brand-dark border border-white/[0.08] focus:border-brand-gold px-4 py-3 text-xs font-sans text-brand-light focus:outline-none transition-all duration-300"
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300"
                     />
                   </div>
 
-                  {/* Project Type select */}
+                  {/* Project Type */}
                   <div className="space-y-2">
-                    <label className="text-[9px] font-sans tracking-widest text-brand-gold uppercase block">Tipo de Proyecto</label>
+                    <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                      Tipo de Proyecto
+                    </label>
                     <select
                       value={formData.projectType}
                       onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
-                      className="w-full bg-brand-dark border border-white/[0.08] focus:border-brand-gold px-4 py-3 text-xs font-sans text-brand-gold tracking-widest focus:outline-none transition-all duration-300 uppercase"
+                      className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-brand-gold tracking-widest outline-none transition-all duration-300 uppercase cursor-pointer"
                     >
-                      <option value="residencial">Residencial Alta Gama</option>
-                      <option value="pabellon">Pabellón / Showroom</option>
-                      <option value="wellness">Wellness / Spa</option>
-                      <option value="corporativo">Corporativo / Hotel</option>
+                      <option value="residencial" className="bg-ca-bg-surface text-ca-text">Residencial Alta Gama</option>
+                      <option value="pabellon" className="bg-ca-bg-surface text-ca-text">Pabellones / Terrazas</option>
+                      <option value="wellness" className="bg-ca-bg-surface text-ca-text">Wellness / Spa</option>
                     </select>
                   </div>
                 </div>
 
-                {/* Message input */}
+                {/* Message */}
                 <div className="space-y-2">
-                  <label className="text-[9px] font-sans tracking-widest text-brand-gold uppercase block">Cuéntanos sobre tu obra (Estado, Arquitecto, etc.)</label>
+                  <label className="text-[9px] font-mono tracking-widest text-ca-text/60 uppercase block">
+                    Cuéntanos sobre tu obra (Estado de planos, constructor, etc.)
+                  </label>
                   <textarea
                     rows={4}
                     required
-                    placeholder="Ej. Estoy en etapa de planos civiles con el estudio X. Quisiera integrar audio y clima invisible en el salón principal."
+                    placeholder="Ej. Estoy en etapa de planos civiles con el estudio X. Quisiera integrar iluminación circadiana y control inteligente por WhatsApp."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/[0.08] focus:border-brand-gold px-4 py-3 text-xs font-sans text-brand-light focus:outline-none transition-all duration-300 resize-none"
+                    className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-4 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold bg-brand-gold text-brand-dark hover:bg-brand-gold-dark transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer"
+                  className="glow-btn w-full py-4 text-[10px] tracking-widest font-mono uppercase border border-brand-gold bg-brand-gold text-brand-dark hover:bg-brand-gold-dark transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer font-semibold"
                 >
-                  <span><BrandText>ENVIAR PROPUESTA DE CONSULTA</BrandText></span>
-                  <ArrowRight size={12} />
+                  <span>
+                    <BrandText>Enviar Propuesta de Consulta</BrandText>
+                  </span>
+                  <ArrowRight size={13} />
                 </button>
               </form>
             )}
           </div>
 
-          {/* Right: Direct Contacts & Channels */}
+          {/* Right contacts */}
           <div className="lg:col-span-5 flex flex-col justify-between gap-6">
             
-            {/* Direct WhatsApp Box */}
-            <div className="bg-brand-dark-soft border border-brand-gold/30 p-8 flex flex-col justify-between flex-1">
+            {/* WhatsApp Box */}
+            <div className="glass-card p-8 rounded-xl flex flex-col justify-between flex-1 border border-brand-gold/25 bg-brand-gold/[0.01]">
               <div className="space-y-4">
-                <div className="flex justify-between items-center font-sans text-[10px] text-brand-gold uppercase tracking-widest border-b border-white/[0.04] pb-2 font-bold">
-                  <span>ATENCIÓN COMERCIAL</span>
-                  <span>WA-SUPPORT</span>
+                <div className="flex justify-between items-center font-mono text-[9px] text-brand-gold uppercase tracking-widest border-b border-brand-gold/15 pb-2 font-semibold">
+                  <span>Contacto Directo</span>
+                  <span>WA-CHANNEL</span>
                 </div>
-                <div className="w-10 h-10 border border-brand-gold/20 flex items-center justify-center bg-brand-dark mb-4">
+                <div className="w-10 h-10 border border-brand-gold/25 flex items-center justify-center rounded bg-ca-bg-deep mb-4">
                   <MessageSquare size={18} className="text-brand-gold" />
                 </div>
-                <h3 className="text-lg font-sans font-light text-brand-light uppercase tracking-wider">
-                  Asistencia por <span className="font-light text-brand-gold italic lowercase">WhatsApp</span>
+                <h3 className="text-lg font-display font-light text-ca-text uppercase tracking-wide">
+                  Consulta rápida vía <span className="text-brand-gold italic">WhatsApp</span>
                 </h3>
-                <p className="text-[11px] font-sans font-light text-brand-light/55 leading-relaxed">
-                  ¿Deseas una respuesta rápida? Escríbenos directamente para agendar citas presenciales o virtuales en minutos.
+                <p className="text-xs font-sans font-light text-ca-text-secondary leading-relaxed">
+                  ¿Deseas una respuesta rápida? Escríbenos directamente por chat para evaluar viabilidad y coordinar llamadas técnicas.
                 </p>
               </div>
 
-              <button
-                onClick={handleWhatsApp}
-                className="w-full py-3.5 text-xs tracking-[0.2em] font-sans font-light uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 mt-6"
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glow-btn w-full py-3.5 text-[10px] tracking-widest font-mono uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark text-center transition-all duration-300 mt-8 font-semibold inline-block"
               >
                 <BrandText>Escribir por WhatsApp</BrandText>
-              </button>
+              </a>
             </div>
 
-            {/* Technical Metadata Box */}
-            <div className="bg-brand-dark-soft border border-white/[0.04] p-8 space-y-6 font-sans text-[10px] tracking-wider text-brand-light/50">
-              <div className="text-brand-gold border-b border-white/[0.04] pb-2 font-sans tracking-[0.15em] uppercase font-bold">
-                COORDENADAS & COBERTURA
+            {/* Coordinates */}
+            <div className="glass-card p-8 rounded-xl space-y-6 font-mono text-[10px] tracking-wider text-ca-text-secondary border border-ca-border bg-ca-bg-surface/10">
+              <div className="text-brand-gold border-b border-white/[0.05] pb-2 font-semibold tracking-widest uppercase">
+                COBERTURA Y DATOS DE ACCESO
               </div>
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 <div className="flex items-center space-x-3">
                   <MapPin size={12} className="text-brand-gold" />
-                  <span>COBERTURA: LIMA Y CIUDADES A NIVEL NACIONAL</span>
+                  <span>ÁREA CIVIL: LIMA Y PROVINCIAS</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone size={12} className="text-brand-gold" />
@@ -238,8 +238,8 @@ export default function ContactoPage() {
                 </div>
               </div>
 
-              {/* Social Channels row */}
-              <div className="border-t border-white/[0.04] pt-4 mt-4 flex flex-wrap gap-x-4 gap-y-2">
+              {/* Socials */}
+              <div className="border-t border-white/[0.05] pt-4 mt-4 flex flex-wrap gap-4">
                 {socials.map((net, idx) => (
                   <a
                     key={idx}
@@ -253,11 +253,8 @@ export default function ContactoPage() {
                 ))}
               </div>
             </div>
-
           </div>
-
         </div>
-
       </div>
     </div>
   );

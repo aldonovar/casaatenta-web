@@ -1,121 +1,182 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { BrandText } from './BrandText';
-import { Logo } from './Logo';
+import React, { useEffect, useState, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { gsap } from "gsap";
+import { Sun, Moon } from "lucide-react";
+import { Logo } from "./Logo";
+import { BrandText } from "./BrandText";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [isLight, setIsLight] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const linksContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Theme logic
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const savedTheme = localStorage.getItem("casa-atenta-theme");
+    const systemPrefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    
+    if (savedTheme === "light" || (!savedTheme && systemPrefersLight)) {
+      document.documentElement.classList.add("light");
+      setIsLight(true);
+    } else {
+      document.documentElement.classList.remove("light");
+      setIsLight(false);
+    }
   }, []);
 
+  const toggleTheme = () => {
+    if (isLight) {
+      document.documentElement.classList.remove("light");
+      localStorage.setItem("casa-atenta-theme", "dark");
+      setIsLight(false);
+    } else {
+      document.documentElement.classList.add("light");
+      localStorage.setItem("casa-atenta-theme", "light");
+      setIsLight(true);
+    }
+  };
+
+  // Overlay Menu Animation Logic
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      if (!overlayRef.current) return;
+      
+      if (menuOpen) {
+        document.body.style.overflow = "hidden";
+        
+        // Overlay reveal: slides down
+        gsap.to(overlayRef.current, {
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          duration: 1.2,
+          ease: "power4.inOut"
+        });
+        
+        // Links stagger slide-up
+        gsap.fromTo(".menu-link-item", 
+          { yPercent: 120, opacity: 0, rotateZ: 3 },
+          { 
+            yPercent: 0, 
+            opacity: 1, 
+            rotateZ: 0,
+            duration: 1, 
+            stagger: 0.1, 
+            ease: "power4.out",
+            delay: 0.4 
+          }
+        );
+        
+        // Secondary info fade-in
+        gsap.fromTo(".menu-secondary", 
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.8 }
+        );
+      } else {
+        document.body.style.overflow = "";
+        
+        // Close animation
+        gsap.to(".menu-link-item", {
+          yPercent: -120,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.inOut",
+          stagger: -0.05
+        });
+        
+        gsap.to(".menu-secondary", {
+          opacity: 0,
+          duration: 0.4
+        });
+        
+        gsap.to(overlayRef.current, {
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+          duration: 1,
+          ease: "power4.inOut",
+          delay: 0.3
+        });
+      }
+    }, overlayRef);
+
+    return () => ctx.revert();
+  }, [menuOpen]);
+
+  // Route change -> close menu
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   const navItems = [
-    { label: 'Nosotros', path: '/nosotros' },
-    { label: 'Soluciones', path: '/soluciones' },
-    { label: 'Proyectos', path: '/proyectos' },
-    { label: 'Proceso', path: '/proceso' },
-    { label: 'Contacto', path: '/contacto' },
+    { label: "Inicio", path: "/" },
+    { label: "Diseño", path: "/diseno" },
+    { label: "Nosotros", path: "/nosotros" },
+    { label: "Contacto", path: "/contacto" },
   ];
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-        isScrolled ? 'py-2.5' : 'py-4 md:py-5'
-      }`}>
-        {/* Subtle gradient backdrop */}
-        <div className={`absolute inset-0 transition-opacity duration-500 ${
-          isScrolled ? 'opacity-100' : 'opacity-0'
-        }`} style={{
-          background: 'linear-gradient(to bottom, rgba(13,13,13,0.95) 0%, rgba(13,13,13,0.6) 70%, transparent 100%)',
-          backdropFilter: isScrolled ? 'blur(16px)' : 'none',
-        }} />
-
-        <div className="relative max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24 flex items-center justify-between">
-          {/* LOGO */}
-          <Link href="/" className="flex items-center cursor-pointer group" onClick={() => setMobileMenuOpen(false)}>
-            <Logo className="transition-all duration-500" />
+      <header className={`fixed top-0 left-0 w-full z-50 py-8 px-6 md:px-12 lg:px-24 transition-colors duration-500 text-ca-text`}>
+        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
+          <Link href="/" className="relative z-[60] group" onClick={() => setMenuOpen(false)}>
+            <Logo className="h-10 md:h-12 lg:h-14 w-auto transition-transform duration-500 group-hover:scale-105" />
           </Link>
-
-          {/* DESKTOP NAV */}
-          <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10">
-            {navItems.map((item) => {
-              const isActive = pathname === item.path;
-              return (
-                <Link
-                  key={item.path}
-                  href={item.path}
-                  className={`text-[11px] xl:text-xs tracking-[0.30em] font-sans font-light uppercase relative group flex items-center transition-all duration-300 hover:-translate-y-[1px] ${
-                    isActive ? 'text-brand-gold font-medium' : 'text-brand-light/65 hover:text-brand-gold'
-                  }`}
-                >
-                  <BrandText>{item.label}</BrandText>
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-brand-gold transition-all duration-300 ease-out group-hover:w-full" />
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* CTA + MOBILE TOGGLE */}
-          <div className="flex items-center space-x-6">
-            <Link
-              href="/configurador"
-              className="hidden md:block px-5 py-2 text-[11px] tracking-[0.25em] font-sans font-light uppercase text-brand-gold border border-brand-gold/20 hover:border-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <BrandText>Diseñar Espacio</BrandText>
-            </Link>
-
-            {/* Hamburger */}
+          
+          <div className="flex items-center space-x-6 md:space-x-12 relative z-[60]">
             <button
-              className="lg:hidden flex flex-col space-y-1.5 w-7 relative z-50 cursor-pointer"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={toggleTheme}
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-ca-border hover:border-ca-text hover:bg-ca-text/5 transition-all duration-300"
+              aria-label="Toggle Theme"
             >
-              <span className={`h-[1px] bg-brand-light transition-all duration-300 ${mobileMenuOpen ? 'w-7 rotate-45 translate-y-[4px]' : 'w-7'}`} />
-              <span className={`h-[1px] bg-brand-light transition-all duration-300 ${mobileMenuOpen ? 'opacity-0 w-0' : 'w-5'}`} />
-              <span className={`h-[1px] bg-brand-light transition-all duration-300 ${mobileMenuOpen ? 'w-7 -rotate-45 -translate-y-[4px]' : 'w-3'}`} />
+              {isLight ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+            
+            <button 
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="group flex items-center space-x-3 cursor-pointer"
+            >
+              <span className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] font-medium hidden md:block">
+                {menuOpen ? "Cerrar" : "Menú"}
+              </span>
+              <div className="w-8 flex flex-col space-y-1.5 items-end">
+                <span className={`h-[1.5px] bg-ca-text transition-all duration-500 ease-in-out ${menuOpen ? "w-8 rotate-45 translate-y-[3.5px]" : "w-8 group-hover:w-6"}`} />
+                <span className={`h-[1.5px] bg-ca-text transition-all duration-500 ease-in-out ${menuOpen ? "w-8 -rotate-45 -translate-y-[4px]" : "w-5 group-hover:w-8"}`} />
+              </div>
             </button>
           </div>
         </div>
       </header>
+      
+      {/* FULL SCREEN OVERLAY */}
+      <div 
+        ref={overlayRef}
+        className="fixed inset-0 z-40 bg-ca-bg-deep text-ca-text flex flex-col"
+        style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" }}
+      >
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.75%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
 
-      {/* MOBILE MENU */}
-      <div className={`fixed inset-0 z-40 transition-all duration-500 lg:hidden ${
-        mobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-      }`}>
-        <div className="absolute inset-0 bg-brand-dark/97 backdrop-blur-xl" />
-        <div className="relative h-full flex flex-col items-center justify-center space-y-8">
-          {navItems.map((item) => {
-            const isActive = pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                href={item.path}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`text-lg md:text-xl font-sans font-light tracking-[0.2em] transition-colors uppercase ${
-                  isActive ? 'text-brand-gold font-medium' : 'text-brand-light hover:text-brand-gold'
-                }`}
-              >
-                <BrandText>{item.label}</BrandText>
-              </Link>
-            );
-          })}
-          <div className="h-[1px] w-12 bg-brand-gold/30 my-3" />
-          <Link
-            href="/configurador"
-            onClick={() => setMobileMenuOpen(false)}
-            className="px-8 py-3.5 text-xs tracking-[0.25em] font-sans font-light uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-300"
-          >
-            <BrandText>Diseñar Espacio</BrandText>
-          </Link>
+        <div className="flex-grow flex flex-col justify-center px-6 md:px-12 lg:px-24 max-w-[1600px] mx-auto w-full pt-32 pb-12 relative z-10">
+           <nav ref={linksContainerRef} className="flex flex-col space-y-6 md:space-y-10 items-start w-full">
+             {navItems.map((item, i) => (
+               <div key={item.path} className="overflow-hidden py-1">
+                 <Link href={item.path} className="menu-link-item inline-block text-4xl md:text-5xl lg:text-6xl font-display font-light uppercase tracking-[0.15em] leading-tight hover:text-ca-text-secondary transition-colors origin-left">
+                   <BrandText>{item.label}</BrandText>
+                 </Link>
+               </div>
+             ))}
+           </nav>
+           
+           <div className="menu-secondary mt-auto pt-16 flex flex-col md:flex-row justify-between items-start md:items-center border-t border-ca-border/40 text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-ca-text-secondary gap-6">
+              <p>Lima, Perú</p>
+              <a href="mailto:contacto@casaatenta.pe" className="hover:text-ca-text transition-colors border-b border-transparent hover:border-ca-text pb-1">contacto@casaatenta.pe</a>
+              <p>Arte + Automatización</p>
+           </div>
         </div>
       </div>
     </>
   );
 };
+
+export default Header;

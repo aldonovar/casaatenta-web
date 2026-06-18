@@ -1,65 +1,258 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════════
-   CASA ATENTA — Design System (Tailwind v4 CSS Theme)
-   ═══════════════════════════════════════════════════════════════ */
+:root {
+  --ca-night: #080807;
+  --ca-graphite: #111417;
+  --ca-mineral: #171511;
+  --ca-stone: #d8d2c7;
+  --ca-warm-white: #f4f0e8;
+  --ca-smoke: #b8ada0;
+  --ca-blue-gray: #607e92;
+  --ca-gold: #d8a85e;
+  --ca-soft-gold: #f2d38d;
+  --ca-line: rgba(244, 240, 232, 0.16);
+  --ca-line-strong: rgba(244, 240, 232, 0.34);
+  --ca-glass: rgba(244, 240, 232, 0.07);
+  --ca-shadow: rgba(0, 0, 0, 0.38);
+  --ca-focus: #f2d38d;
+}
 
 @theme {
-  /* Brand Colors */
-  --color-brand-dark: #0d0d0d;
-  --color-brand-dark-soft: #161616;
-  --color-brand-dark-card: #1e1e1e;
-  --color-brand-dark-border: #2a2a2a;
-  --color-brand-dark-text: #a0a0a0;
-
-  --color-brand-light: #f5f5f3;
-  --color-brand-light-soft: #e8e8e5;
-  --color-brand-light-card: #ffffff;
-  --color-brand-light-border: #e0e0dc;
-  --color-brand-light-text: #505050;
-
-  --color-brand-gold: #c5a880;
-  --color-brand-gold-dark: #b3946a;
-  --color-brand-gold-light: #e1d0ba;
-
-  /* Typography */
-  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-syne), sans-serif;
+  --color-ca-bg-deep: var(--ca-night);
+  --color-ca-bg-primary: var(--ca-graphite);
+  --color-ca-bg-surface: var(--ca-mineral);
+  --color-ca-bg-card: rgba(244, 240, 232, 0.07);
+  --color-ca-bg-elevated: #1d1a15;
+  --color-ca-text: var(--ca-warm-white);
+  --color-ca-text-secondary: var(--ca-smoke);
+  --color-ca-text-muted: rgba(184, 173, 160, 0.58);
+  --color-ca-border: var(--ca-line);
+  --color-ca-border-hover: var(--ca-line-strong);
+  --color-ca-glass-bg: rgba(8, 8, 7, 0.72);
+  --color-ca-glass-border: var(--ca-line);
+  --color-brand-dark: var(--ca-night);
+  --color-brand-light: var(--ca-warm-white);
+  --color-brand-gold: var(--ca-gold);
+  --color-brand-gold-dark: #bd8d45;
+  --color-brand-gold-light: var(--ca-soft-gold);
+  --font-sans: var(--font-inter), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-syne), "Helvetica Neue", Arial, sans-serif;
   --font-serif: var(--font-cormorant), Georgia, serif;
-
-  /* Letter Spacing */
-  --tracking-ultra: 0.3em;
-
-  /* Animations */
-  --animate-fade-in: fadeIn 1s ease-out forwards;
-
-  @keyframes fadeIn {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Base Styles
-   ═══════════════════════════════════════════════════════════════ */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  background: var(--ca-night);
+}
 
 body {
-  background-color: var(--color-brand-dark);
-  color: var(--color-brand-light);
-  font-family: var(--font-sans);
-  overflow-x: hidden;
+  min-height: 100vh;
   margin: 0;
-  padding: 0;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 72% 12%, rgba(216, 168, 94, 0.08), transparent 28%),
+    linear-gradient(180deg, var(--ca-night), #0b0c0b 42%, var(--ca-mineral));
+  color: var(--ca-warm-white);
+  font-family: var(--font-sans);
+  text-rendering: geometricPrecision;
 }
 
-h1, h2, h3, h4, h5, h6 {
+body::selection {
+  background: var(--ca-gold);
+  color: var(--ca-night);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 300;
+  letter-spacing: 0.02em;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Lenis Smooth Scroll
-   ═══════════════════════════════════════════════════════════════ */
+p {
+  color: var(--ca-smoke);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: var(--ca-focus);
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.architectural-grid,
+.cad-technical-grid {
+  background-image:
+    linear-gradient(to right, rgba(244, 240, 232, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244, 240, 232, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+.ca-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(5rem, 10vw, 9rem) clamp(1.25rem, 5vw, 7rem);
+}
+
+.ca-container {
+  width: min(100%, 1440px);
+  margin-inline: auto;
+}
+
+.ca-kicker {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ca-gold);
+}
+
+.ca-display {
+  font-family: var(--font-display);
+  font-size: clamp(3.6rem, 12vw, 11rem);
+  font-weight: 250;
+  line-height: 0.9;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+}
+
+.ca-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: 0.015em;
+  text-transform: uppercase;
+}
+
+.ca-body {
+  max-width: 42rem;
+  color: var(--ca-smoke);
+  font-size: clamp(0.98rem, 1.3vw, 1.14rem);
+  font-weight: 300;
+  line-height: 1.85;
+}
+
+.ca-rule {
+  height: 1px;
+  width: min(16rem, 45vw);
+  background: linear-gradient(90deg, var(--ca-gold), rgba(216, 168, 94, 0));
+}
+
+.ca-button {
+  display: inline-flex;
+  min-height: 3.35rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1px solid var(--ca-gold);
+  padding: 0.95rem 1.4rem;
+  color: var(--ca-night);
+  background: var(--ca-gold);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: transform 240ms ease, background 240ms ease, border-color 240ms ease, color 240ms ease;
+}
+
+.ca-button:hover {
+  transform: translateY(-2px);
+  background: var(--ca-soft-gold);
+  border-color: var(--ca-soft-gold);
+}
+
+.ca-button-secondary {
+  color: var(--ca-warm-white);
+  background: rgba(244, 240, 232, 0.04);
+  border-color: var(--ca-line-strong);
+}
+
+.ca-button-secondary:hover {
+  color: var(--ca-night);
+  background: var(--ca-warm-white);
+  border-color: var(--ca-warm-white);
+}
+
+.glass-panel,
+.glass-card {
+  background: rgba(244, 240, 232, 0.055);
+  border: 1px solid var(--ca-line);
+  box-shadow: 0 24px 70px var(--ca-shadow);
+  backdrop-filter: blur(18px);
+}
+
+.glass-card {
+  transition: transform 260ms ease, border-color 260ms ease, background 260ms ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(216, 168, 94, 0.35);
+  background: rgba(244, 240, 232, 0.075);
+}
+
+.tech-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ca-gold);
+}
+
+.custom-cursor,
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 999px;
+  will-change: transform;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--ca-gold);
+}
+
+.custom-cursor-dot {
+  width: 0.25rem;
+  height: 0.25rem;
+  background: var(--ca-gold);
+}
 
 html.lenis,
 html.lenis body {
@@ -82,97 +275,54 @@ html.lenis body {
   pointer-events: none;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Custom Scrollbar
-   ═══════════════════════════════════════════════════════════════ */
-
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-brand-dark);
+  background: var(--ca-night);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(197, 168, 128, 0.3);
-  border-radius: 3px;
+  background: rgba(216, 168, 94, 0.38);
+  border: 2px solid var(--ca-night);
+  border-radius: 999px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(197, 168, 128, 0.6);
+@keyframes caPulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.08);
+  }
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Premium Architectural & Technical UI Elements
-   ═══════════════════════════════════════════════════════════════ */
-
-.glass-panel {
-  background: rgba(13, 13, 13, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.ca-pulse {
+  animation: caPulse 2.2s ease-in-out infinite;
 }
 
-.gold-gradient-text {
-  background: linear-gradient(135deg, #e1d0ba 0%, #c5a880 50%, #b3946a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
-.tech-label {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 9px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
-}
+@media (max-width: 640px) {
+  .ca-section {
+    padding-block: 4.5rem;
+  }
 
-.architectural-grid {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Custom Cursor
-   ═══════════════════════════════════════════════════════════════ */
-
-.custom-cursor {
-  width: 22px;
-  height: 22px;
-  border: 1px solid var(--color-brand-gold);
-  border-radius: 50%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-.custom-cursor-dot {
-  width: 4px;
-  height: 4px;
-  background-color: var(--color-brand-gold);
-  border-radius: 50%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-/* Hide default scrollbar on chat */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  .ca-display {
+    font-size: clamp(3rem, 17vw, 5.8rem);
+  }
 }

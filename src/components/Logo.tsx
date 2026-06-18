@@ -7,7 +7,7 @@ interface LogoProps {
 }
 
 export const Logo: React.FC<LogoProps> = ({ className = '', iconOnly = false, light = true }) => {
-  const colorClass = light ? 'text-brand-light' : 'text-brand-dark';
+  const colorClass = light ? 'text-ca-text' : 'text-brand-dark';
 
   if (iconOnly) {
     return (
