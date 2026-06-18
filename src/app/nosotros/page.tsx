@@ -58,22 +58,22 @@ export default function NosotrosPage() {
     {
       number: "01",
       title: "Arquitectura que piensa",
-      body: "Cada muro, vano y material se diseña con intención climática, acústica y lumínica. La forma no es decoración: es función disuelta.",
+      body: "Cada espacio se diseña pensando en tu comodidad: temperatura ideal, buena acústica y la luz correcta en cada momento del día. El diseño no es solo estético, es funcional.",
     },
     {
       number: "02",
       title: "Tecnología que desaparece",
-      body: "No colocamos pantallas plásticas en tus paredes ni interruptores complejos. Integramos sensores de CO2, luz y presencia bajo el enlucido.",
+      body: "Nada de pantallas plásticas en tus paredes ni interruptores complicados. Integramos sensores de calidad de aire, luz natural y presencia de forma oculta bajo el acabado final.",
     },
     {
       number: "03",
       title: "Control conversacional",
-      body: "Tu casa responde por WhatsApp de forma natural. Sin aplicaciones dedicadas ni manuales técnicos. Hablas con tu espacio de forma natural.",
+      body: "Controla tu casa desde WhatsApp con mensajes simples como 'enciende la sala' o 'activa la escena cine'. Sin aplicaciones complicadas ni manuales técnicos.",
     },
     {
       number: "04",
       title: "Experiencia circadiana",
-      body: "Diseñamos atmósferas que acompañan tu rutina. La luz del sol y el clima se adaptan de forma autónoma al reloj biológico humano.",
+      body: "La iluminación de tu hogar cambia automáticamente durante el día: luz energizante por la mañana y luz cálida relajante por la noche, imitando el ciclo natural del sol.",
     },
   ];
 
@@ -220,7 +220,7 @@ export default function NosotrosPage() {
             </h2>
           </div>
           <p className="text-sm font-light text-brand-light/50 leading-relaxed max-w-md">
-            Un equipo de ingenieros, arquitectos y diseñadores que unen la rigurosidad espacial del diseño civil con el desarrollo de software y hardware de IoT.
+            Ingenieros y diseñadores especializados en hacer que la tecnología desaparezca dentro de tu hogar, combinando construcción de calidad con automatización inteligente.
           </p>
         </div>
 

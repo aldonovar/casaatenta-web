@@ -85,10 +85,7 @@ export const ManifestoSection: React.FC = () => {
           className="ca-body mx-auto text-center max-w-2xl"
           style={{ opacity: 0 }}
         >
-          Cada proyecto empieza con una pregunta: ¿cómo quieres vivir tu
-          espacio? A partir de ahí, combinamos diseño arquitectónico, tecnología
-          inteligente y ejecución cuidada para que tu hogar funcione como una
-          extensión de tu ritmo de vida.
+          Cada proyecto empieza con una visita técnica gratuita para entender tu espacio. A partir de ahí, diseñamos la iluminación, automatización y acabados ideales para que tu hogar en Lima funcione con inteligencia, comodidad y estilo.
         </p>
       </div>
     </section>

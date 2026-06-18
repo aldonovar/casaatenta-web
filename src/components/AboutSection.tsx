@@ -41,7 +41,7 @@ export const AboutSection: React.FC = () => {
           </p>
 
           <p className="text-sm font-sans font-light text-ca-text-muted leading-relaxed max-w-xl">
-            Colaboramos estrechamente con constructoras, diseñadores de interiores y propietarios desde la fase de planos. Aseguramos que la canalización, la carga estructural de las terrazas y el cableado técnico queden perfectamente resueltos antes de la fase de acabados finales.
+            "Trabajamos de la mano con tu arquitecto, constructora o directamente contigo. Nos involucramos desde los planos para que todo — iluminación, automatización, terrazas y cableado — quede resuelto antes de los acabados finales. Sin sorpresas."
           </p>
 
           {/* Social media presence links */}

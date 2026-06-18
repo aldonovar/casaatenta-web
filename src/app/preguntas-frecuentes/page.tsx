@@ -44,7 +44,7 @@ const faqCategories: FAQCategory[] = [
       {
         question: "¿Ofrecen garantía en sus trabajos?",
         answer:
-          "Sí. Todos nuestros proyectos incluyen garantía por materiales y mano de obra. El plazo de garantía varía según el tipo de servicio y se detalla en cada propuesta.",
+          "Sí. Ofrecemos hasta 1 año de garantía estructural en acabados y construcción. Además, incluimos plan de mantenimiento mensual para todo sistema de automatización del hogar, con soporte directo por WhatsApp.",
       },
       {
         question: "¿Pueden trabajar con mi arquitecto o diseñador?",
@@ -200,7 +200,7 @@ export default function PreguntasFrecuentesPage() {
             number="?"
             label="FAQ"
             title="Preguntas frecuentes"
-            subtitle="Resolvemos las dudas más comunes sobre nuestros servicios, proceso de trabajo y costos."
+            subtitle="Resolvemos las dudas más comunes sobre domótica, automatización del hogar, terrazas inteligentes y nuestros servicios de diseño residencial en Lima."
           />
         </div>
 
