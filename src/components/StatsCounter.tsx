@@ -9,9 +9,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 const statsData = [
   { value: 100, suffix: "%", label: "Diseños Personalizados" },
-  { value: 1, suffix: " Año", label: "Garantía Estructural" },
-  { value: 1, suffix: " / Mes", label: "Mantenimiento del Sistema" },
-  { value: 1, suffix: " Canal", label: "Control por WhatsApp" },
+  { value: 12, suffix: " Meses", label: "Garantía Estructural" },
+  { value: 1, suffix: " Visita / Mes", label: "Mantenimiento Preventivo" },
+  { value: 100, suffix: "%", label: "Control por WhatsApp" },
 ];
 
 export const StatsCounter: React.FC = () => {
