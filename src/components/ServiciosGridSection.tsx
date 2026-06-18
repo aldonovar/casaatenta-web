@@ -36,15 +36,6 @@ const serviceCards: ServiceCard[] = [
     tags: ["Distribución", "Exterior", "Mobiliario"],
   },
   {
-    slug: "pergolas",
-    title: "Pérgolas",
-    description:
-      "Estructuras que ordenan el espacio exterior con criterio arquitectónico.",
-    icon: "🪵",
-    image: "/backgrounds/casestudy.png",
-    tags: ["Estructura", "Madera", "Aluminio"],
-  },
-  {
     slug: "iluminacion-inteligente",
     title: "Iluminación Inteligente",
     description:
@@ -61,15 +52,6 @@ const serviceCards: ServiceCard[] = [
     icon: "🤖",
     image: "/backgrounds/specialties.png",
     tags: ["Domótica", "Rutinas", "Control"],
-  },
-  {
-    slug: "automatizacion-whatsapp",
-    title: "Automatización por WhatsApp",
-    description:
-      "Controla luces, escenas y rutinas desde la app que ya usas todos los días.",
-    icon: "📱",
-    image: "/backgrounds/specialties.png",
-    tags: ["WhatsApp", "Chatbot", "IA"],
   },
   {
     slug: "mantenimiento-general",
@@ -150,7 +132,7 @@ export const ServiciosGridSection: React.FC = () => {
 
         <div
           ref={gridRef}
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto justify-center"
         >
           {serviceCards.map((card) => (
             <Link

@@ -111,7 +111,7 @@ export const blogPosts: Record<string, BlogPost> = {
           "Depende del tipo de estructura y las regulaciones de tu municipalidad. Para estructuras livianas generalmente no se requiere, pero es recomendable consultar.",
       },
     ],
-    relatedServices: ["techos-sol-y-sombra", "diseno-terrazas", "pergolas"],
+    relatedServices: ["techos-sol-y-sombra", "diseno-terrazas"],
     relatedPosts: ["ideas-para-terrazas-modernas"],
   },
 
@@ -276,7 +276,7 @@ export const blogPosts: Record<string, BlogPost> = {
           "No. Las apps de control son intuitivas y los asistentes de voz hacen que la interacción sea natural. Con WhatsApp es aún más sencillo.",
       },
     ],
-    relatedServices: ["smart-homes", "iluminacion-inteligente", "automatizacion-whatsapp"],
+    relatedServices: ["smart-homes", "iluminacion-inteligente", "mantenimiento-general"],
     relatedPosts: ["controlar-luces-por-whatsapp", "casa-inteligente-en-lima"],
   },
 
@@ -368,7 +368,7 @@ export const blogPosts: Record<string, BlogPost> = {
           "Solo los números de teléfono autorizados pueden enviar comandos. El sistema tiene control de acceso.",
       },
     ],
-    relatedServices: ["automatizacion-whatsapp", "iluminacion-inteligente", "smart-homes"],
+    relatedServices: ["iluminacion-inteligente", "smart-homes", "mantenimiento-general"],
     relatedPosts: ["como-empezar-con-domotica", "casa-inteligente-en-lima"],
   },
 
@@ -462,7 +462,7 @@ export const blogPosts: Record<string, BlogPost> = {
           "Para lo básico puedes empezar solo. Para integración de escenas, sensores y control avanzado, un profesional asegura que todo funcione correctamente.",
       },
     ],
-    relatedServices: ["smart-homes", "automatizacion-whatsapp", "iluminacion-inteligente"],
+    relatedServices: ["smart-homes", "iluminacion-inteligente", "mantenimiento-general"],
     relatedPosts: ["como-empezar-con-domotica", "controlar-luces-por-whatsapp"],
   },
 };

@@ -10,10 +10,8 @@ const serviceOptions = [
   { value: "", label: "Selecciona un servicio" },
   { value: "techos-sol-y-sombra", label: "Techos Sol y Sombra" },
   { value: "diseno-terrazas", label: "Diseño de Terrazas" },
-  { value: "pergolas", label: "Pérgolas" },
   { value: "iluminacion-inteligente", label: "Iluminación Inteligente" },
-  { value: "smart-homes", label: "Smart Home" },
-  { value: "automatizacion-whatsapp", label: "Automatización por WhatsApp" },
+  { value: "smart-homes", label: "Smart Homes" },
   { value: "mantenimiento-general", label: "Mantenimiento General" },
   { value: "otro", label: "Otro / No estoy seguro" },
 ];

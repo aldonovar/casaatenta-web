@@ -18,10 +18,8 @@ gsap.registerPlugin(ScrollTrigger);
 const SERVICE_NAMES: Record<string, string> = {
   "techos-sol-y-sombra": "Techos Sol y Sombra",
   "diseno-terrazas": "Diseño de Terrazas",
-  pergolas: "Pérgolas",
   "iluminacion-inteligente": "Iluminación Inteligente",
   "smart-homes": "Smart Homes",
-  "automatizacion-whatsapp": "Automatización WhatsApp",
   "mantenimiento-general": "Mantenimiento General",
 };
 
@@ -86,6 +84,7 @@ export default function ServicePageLayout({
   const heroRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const benefitsRef = useRef<HTMLDivElement>(null);
+  const subServicesRef = useRef<HTMLDivElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
   const materialsRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
@@ -132,6 +131,7 @@ export default function ServicePageLayout({
       const revealSections = [
         introRef,
         benefitsRef,
+        subServicesRef,
         processRef,
         materialsRef,
         faqRef,
@@ -310,6 +310,64 @@ export default function ServicePageLayout({
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════
+          SUB-SERVICES (optional, specifically for Mantenimiento General)
+         ═══════════════════════════════════ */}
+      {data.subServices && data.subServices.length > 0 && (
+        <section
+          ref={subServicesRef}
+          className="ca-section bg-ca-bg-surface/10 relative overflow-hidden border-t border-b border-ca-border/30"
+        >
+          <div className="absolute inset-0 z-0 opacity-5 blueprint-grid pointer-events-none" />
+          <div className="ca-container relative z-10 space-y-12">
+            {/* Section heading */}
+            <div className="space-y-3">
+              <span className="ca-kicker block">Especialidades</span>
+              <div className="ca-rule" />
+              <h2 className="font-display text-2xl font-light uppercase tracking-wide text-ca-text md:text-4xl">
+                Nuestros campos de especialización
+              </h2>
+              <p className="max-w-2xl text-sm font-light leading-relaxed text-ca-text-secondary">
+                Abordamos cada mantenimiento técnico con la rigurosidad de un proyecto de arquitectura, garantizando precisión funcional y estética en cada detalle.
+              </p>
+            </div>
+
+            {/* Sub-services Grid */}
+            <div className="grid gap-6 md:grid-cols-2">
+              {data.subServices.map((sub, i) => (
+                <div
+                  key={i}
+                  className="group relative flex flex-col justify-between overflow-hidden border border-ca-border bg-ca-bg-card/50 p-8 transition-all duration-300 hover:border-brand-gold/50 rounded-sm"
+                >
+                  {/* Subtle grid pattern background on hover */}
+                  <div className="absolute inset-0 z-0 opacity-0 bg-[linear-gradient(to_right,rgba(216,179,106,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(216,179,106,0.03)_1px,transparent_1px)] bg-[size:14px_24px] transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+                  
+                  <div className="relative z-10 space-y-4">
+                    <span className="tech-label text-brand-gold/60 block">0{i + 1} // SUBSERVICIO</span>
+                    <h3 className="font-display text-xl font-light uppercase tracking-wide text-ca-text group-hover:text-brand-gold transition-colors duration-200">
+                      {sub.title}
+                    </h3>
+                    <p className="text-sm font-light leading-relaxed text-ca-text-secondary">
+                      {sub.description}
+                    </p>
+                    
+                    {/* List of details */}
+                    <ul className="space-y-2 pt-2">
+                      {sub.details.map((detail, j) => (
+                        <li key={j} className="flex items-center gap-2 text-xs text-ca-text-secondary font-mono">
+                          <span className="h-1 w-1 bg-brand-gold rounded-full" />
+                          <span>{detail}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══════════════════════════════════
           PROCESS

@@ -18,7 +18,7 @@ export const ServiceMotionGraphics: React.FC<ServiceMotionGraphicsProps> = ({ sl
     if (!el) return;
 
     const ctx = gsap.context(() => {
-      if (slug === "techos-sol-y-sombra" || slug === "pergolas") {
+      if (slug === "techos-sol-y-sombra") {
         // Louvre slats open/close rotation based on scroll position
         const slats = gsap.utils.toArray(".slat") as SVGLineElement[];
         gsap.to(slats, {
@@ -59,7 +59,7 @@ export const ServiceMotionGraphics: React.FC<ServiceMotionGraphicsProps> = ({ sl
           { r: 30, opacity: 0.8 },
           { r: 160, opacity: 0, duration: 3, repeat: -1, ease: "power1.out", stagger: 0.8 }
         );
-      } else if (slug === "smart-homes" || slug === "automatizacion-whatsapp") {
+      } else if (slug === "smart-homes") {
         // Technical connection line drawing
         const path = document.querySelector(".network-cable") as SVGPathElement;
         if (path) {
@@ -121,7 +121,6 @@ export const ServiceMotionGraphics: React.FC<ServiceMotionGraphicsProps> = ({ sl
   const renderSVG = () => {
     switch (slug) {
       case "techos-sol-y-sombra":
-      case "pergolas":
         return (
           <svg viewBox="0 0 400 300" className="w-full h-full stroke-brand-gold fill-none opacity-60">
             {/* Frame outline */}
@@ -167,7 +166,6 @@ export const ServiceMotionGraphics: React.FC<ServiceMotionGraphicsProps> = ({ sl
           </svg>
         );
       case "smart-homes":
-      case "automatizacion-whatsapp":
         return (
           <svg viewBox="0 0 400 300" className="w-full h-full stroke-brand-gold fill-none opacity-60">
             {/* Concentric Node Connections */}

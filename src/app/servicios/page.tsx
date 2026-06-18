@@ -6,17 +6,15 @@ import { servicePages, allServiceSlugs } from "@/data/services-pages";
 
 export const metadata: Metadata = {
   title:
-    "Servicios | Diseño, terrazas, pérgolas, iluminación y smart homes | Casa Atenta",
+    "Servicios | Techos, Terrazas, Iluminación Inteligente y Smart Homes | Casa Atenta",
   description:
-    "Conoce todos los servicios de Casa Atenta: techos sol y sombra, diseño de terrazas, pérgolas, iluminación inteligente, smart homes, automatización por WhatsApp y mantenimiento general en Lima.",
+    "Descubre los servicios de Casa Atenta: techos sol y sombra, diseño de terrazas, iluminación inteligente, smart homes y mantenimiento general con criterio estético y funcional.",
   keywords: [
     "servicios Casa Atenta",
     "diseño de terrazas Lima",
-    "pérgolas Lima",
     "techos sol y sombra Lima",
     "iluminación inteligente Lima",
     "smart homes Lima",
-    "automatización hogar Lima",
     "mantenimiento residencial Lima",
   ],
 };

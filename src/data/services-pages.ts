@@ -10,6 +10,12 @@ export interface ServiceBenefit {
   description: string;
 }
 
+export interface SubService {
+  title: string;
+  description: string;
+  details: string[];
+}
+
 export interface ServicePageData {
   slug: string;
   seo: {
@@ -31,6 +37,7 @@ export interface ServicePageData {
     steps: string[];
   };
   materials?: string[];
+  subServices?: SubService[];
   faqs: ServiceFAQ[];
   cta: {
     label: string;
@@ -44,8 +51,7 @@ export const servicePages: Record<string, ServicePageData> = {
   "techos-sol-y-sombra": {
     slug: "techos-sol-y-sombra",
     seo: {
-      title:
-        "Techos Sol y Sombra en Lima | Diseño e instalación para terrazas | Casa Atenta",
+      title: "Techos Sol y Sombra | Diseño e instalación para terrazas | Casa Atenta",
       description:
         "Diseñamos e instalamos techos sol y sombra para terrazas, patios y espacios exteriores en Lima. Mejora sombra, estética y confort con Casa Atenta.",
       keywords: [
@@ -113,7 +119,7 @@ export const servicePages: Record<string, ServicePageData> = {
     materials: [
       "Madera tratada",
       "Aluminio anodizado",
-      "Policarbonato",
+      "Policarbonato premium",
       "Acero estructural",
       "Bambú procesado",
       "Tela tensada UV",
@@ -165,7 +171,6 @@ export const servicePages: Record<string, ServicePageData> = {
     },
     relatedServices: [
       "diseno-terrazas",
-      "pergolas",
       "iluminacion-inteligente",
     ],
   },
@@ -173,8 +178,7 @@ export const servicePages: Record<string, ServicePageData> = {
   "diseno-terrazas": {
     slug: "diseno-terrazas",
     seo: {
-      title:
-        "Diseño de terrazas en Lima | Terrazas modernas y funcionales | Casa Atenta",
+      title: "Diseño de Terrazas | Terrazas modernas y funcionales | Casa Atenta",
       description:
         "Diseñamos terrazas modernas, cómodas y funcionales con iluminación, sombra, distribución y acabados a medida. Cotiza tu terraza con Casa Atenta.",
       keywords: [
@@ -277,119 +281,6 @@ export const servicePages: Record<string, ServicePageData> = {
     },
     relatedServices: [
       "techos-sol-y-sombra",
-      "pergolas",
-      "iluminacion-inteligente",
-    ],
-  },
-
-  pergolas: {
-    slug: "pergolas",
-    seo: {
-      title:
-        "Pérgolas en Lima | Diseño e instalación de pérgolas residenciales | Casa Atenta",
-      description:
-        "Diseñamos e instalamos pérgolas para terrazas, patios y jardines en Lima. Estructura, sombra y estética con criterio arquitectónico.",
-      keywords: [
-        "pérgolas Lima",
-        "pérgolas para terrazas",
-        "pérgolas de madera Lima",
-        "pérgolas de aluminio",
-        "estructuras exteriores Lima",
-        "pérgolas residenciales",
-      ],
-    },
-    hero: {
-      eyebrow: "Estructuras exteriores",
-      h1: "Pérgolas que ordenan el espacio y elevan tu exterior.",
-      subtitle:
-        "Creamos estructuras que generan sombra, definen zonas y elevan la presencia arquitectónica del ambiente exterior.",
-      image: "/backgrounds/casestudy.png",
-      imageAlt: "Pérgola residencial con estructura de madera e iluminación cálida.",
-    },
-    intro:
-      "Una pérgola no es solo una cubierta. Es una decisión arquitectónica que ordena el espacio, genera sombra útil y eleva la percepción visual de todo el exterior. En Casa Atenta diseñamos pérgolas con criterio estructural, estético y funcional.",
-    benefits: [
-      {
-        title: "Diseño con intención",
-        description:
-          "No solo instalamos. Diseñamos la pérgola como parte de la composición del espacio.",
-      },
-      {
-        title: "Sombra controlada",
-        description:
-          "Orientación y separación de lamas calculadas para el confort real del espacio.",
-      },
-      {
-        title: "Presencia arquitectónica",
-        description:
-          "Estructura que mejora la lectura visual del exterior y agrega carácter.",
-      },
-      {
-        title: "Materiales duraderos",
-        description:
-          "Madera tratada, aluminio o acero según el estilo y las condiciones del espacio.",
-      },
-      {
-        title: "Integración con iluminación",
-        description:
-          "Spots, tiras LED o luminarias colgantes para uso nocturno.",
-      },
-      {
-        title: "Preparada para automatización",
-        description:
-          "Estructura compatible con motorización futura o integración con sistemas inteligentes.",
-      },
-    ],
-    process: {
-      title: "Cómo diseñamos tu pérgola",
-      steps: [
-        "Visita técnica para evaluar el espacio y la estructura existente.",
-        "Propuesta de diseño con proporciones, materiales y acabados.",
-        "Cotización detallada con desglose completo.",
-        "Fabricación e instalación coordinada.",
-        "Entrega con revisión de acabados y recomendaciones.",
-      ],
-    },
-    materials: [
-      "Madera tornillo tratada",
-      "Aluminio anodizado",
-      "Acero con acabado anticorrosivo",
-      "Madera plástica (WPC)",
-      "Policarbonato alveolar",
-    ],
-    faqs: [
-      {
-        question: "¿Qué diferencia hay entre una pérgola y un techo sol y sombra?",
-        answer:
-          "Una pérgola es una estructura más abierta, con vigas y lamas que filtran la luz. Un techo sol y sombra puede incluir cubiertas más cerradas. Ambos se diseñan según el uso y la orientación del espacio.",
-      },
-      {
-        question: "¿Cuánto dura la instalación de una pérgola?",
-        answer:
-          "Generalmente entre 5 y 10 días hábiles, dependiendo del tamaño, material y complejidad del diseño.",
-      },
-      {
-        question: "¿Pueden motorizar la pérgola?",
-        answer:
-          "Sí, ofrecemos opciones de motorización para lamas y cubiertas, con integración a control remoto o automatización.",
-      },
-      {
-        question: "¿Trabajan en azoteas y balcones?",
-        answer:
-          "Sí, evaluamos las condiciones estructurales del espacio para proponer una solución segura y estética.",
-      },
-    ],
-    cta: {
-      label: "Cotizar mi pérgola",
-      whatsappMessage:
-        "Hola Casa Atenta, quiero cotizar una pérgola para mi espacio exterior. Me gustaría agendar una visita técnica.",
-      href: createWhatsAppLink(
-        "Hola Casa Atenta, quiero cotizar una pérgola para mi espacio exterior. Me gustaría agendar una visita técnica."
-      ),
-    },
-    relatedServices: [
-      "techos-sol-y-sombra",
-      "diseno-terrazas",
       "iluminacion-inteligente",
     ],
   },
@@ -397,8 +288,7 @@ export const servicePages: Record<string, ServicePageData> = {
   "iluminacion-inteligente": {
     slug: "iluminacion-inteligente",
     seo: {
-      title:
-        "Iluminación Inteligente en Lima | Luces inteligentes y escenas | Casa Atenta",
+      title: "Iluminación Inteligente | Luces inteligentes y escenas | Casa Atenta",
       description:
         "Instalamos y configuramos luces inteligentes para crear escenas, ambientes y rutinas controlables desde el celular o asistentes. Casa Atenta, Lima.",
       keywords: [
@@ -448,9 +338,9 @@ export const servicePages: Record<string, ServicePageData> = {
           "Compatible con Alexa, Google Home y asistentes de voz populares.",
       },
       {
-        title: "Posibilidad de control por WhatsApp",
+        title: "Confort visual y circadiano",
         description:
-          "Integración con nuestro sistema de automatización conversacional.",
+          "Alineamos la iluminación con tu ritmo biológico para mejorar el descanso y la productividad.",
       },
     ],
     process: {
@@ -472,7 +362,7 @@ export const servicePages: Record<string, ServicePageData> = {
       {
         question: "¿Qué marcas de luminarias usan?",
         answer:
-          "Trabajamos con marcas reconocidas como Philips Hue, LIFX, Yeelight y otras según disponibilidad y compatibilidad con tu sistema.",
+          "Trabajamos con marcas reconocidas como Philips Hue, Lutron, Yeelight y otras según disponibilidad y compatibilidad con tu sistema.",
       },
       {
         question: "¿Puedo controlar las luces por voz?",
@@ -500,16 +390,15 @@ export const servicePages: Record<string, ServicePageData> = {
     },
     relatedServices: [
       "smart-homes",
-      "automatizacion-whatsapp",
       "diseno-terrazas",
+      "mantenimiento-general",
     ],
   },
 
   "smart-homes": {
     slug: "smart-homes",
     seo: {
-      title:
-        "Smart Homes en Lima | Automatización del hogar y luces inteligentes | Casa Atenta",
+      title: "Smart Homes | Automatización del hogar y luces inteligentes | Casa Atenta",
       description:
         "Automatiza tu hogar con luces inteligentes, sensores, escenas, asistentes y control desde el celular. Casa Atenta integra diseño y domótica.",
       keywords: [
@@ -559,19 +448,9 @@ export const servicePages: Record<string, ServicePageData> = {
           "Sensores de movimiento, apertura y presencia para mayor tranquilidad.",
       },
       {
-        title: "Escalabilidad",
+        title: "Escalabilidad por fases",
         description:
-          "Empieza con una habitación y expande la automatización gradualmente.",
-      },
-      {
-        title: "Integración con asistentes",
-        description:
-          "Compatible con Alexa, Google Home y otros asistentes de voz.",
-      },
-      {
-        title: "Control por WhatsApp",
-        description:
-          "Posibilidad de integrar control conversacional desde WhatsApp.",
+          "Empieza con una sola habitación y expande la automatización gradualmente a todo tu hogar.",
       },
     ],
     process: {
@@ -621,118 +500,7 @@ export const servicePages: Record<string, ServicePageData> = {
     },
     relatedServices: [
       "iluminacion-inteligente",
-      "automatizacion-whatsapp",
       "diseno-terrazas",
-    ],
-  },
-
-  "automatizacion-whatsapp": {
-    slug: "automatizacion-whatsapp",
-    seo: {
-      title:
-        "Automatización del hogar por WhatsApp | Casa inteligente conversacional | Casa Atenta",
-      description:
-        "Controla luces, escenas y rutinas de tu hogar desde WhatsApp. Casa Atenta desarrolla automatización conversacional para hogares inteligentes.",
-      keywords: [
-        "automatización por WhatsApp",
-        "control de luces por WhatsApp",
-        "domótica WhatsApp",
-        "casa inteligente WhatsApp",
-        "chatbot domótica",
-        "automatización conversacional hogar",
-      ],
-    },
-    hero: {
-      eyebrow: "Innovación Casa Atenta",
-      h1: "Controla tu hogar desde WhatsApp.",
-      subtitle:
-        "Tu hogar no necesita otra app olvidada en el teléfono. Puede responder desde el canal que ya usas todos los días.",
-      image: "/backgrounds/specialties.png",
-      imageAlt:
-        "Interfaz de control de hogar inteligente desde conversación de WhatsApp.",
-    },
-    intro:
-      "Llevamos el control del hogar a una interfaz que ya usas todos los días: WhatsApp. Activa escenas, consulta estados y controla dispositivos mediante mensajes simples. Sin apps adicionales, sin complicaciones.",
-    benefits: [
-      {
-        title: "Sin apps adicionales",
-        description:
-          "Controla tu hogar desde WhatsApp, la app que ya usas todos los días.",
-      },
-      {
-        title: "Comandos naturales",
-        description:
-          "Escribe como hablas: 'Enciende la sala', 'Activa modo noche'.",
-      },
-      {
-        title: "Escenas completas",
-        description:
-          "Activa ambientes completos con un solo mensaje.",
-      },
-      {
-        title: "Consulta de estados",
-        description:
-          "Pregunta si hay movimiento, si las luces están encendidas o la temperatura actual.",
-      },
-      {
-        title: "Programación de rutinas",
-        description:
-          "Programa las luces a las 7 pm o activa la seguridad al salir.",
-      },
-      {
-        title: "Acceso remoto",
-        description:
-          "Controla tu casa desde cualquier lugar con conexión a internet.",
-      },
-    ],
-    process: {
-      title: "Cómo funciona la automatización por WhatsApp",
-      steps: [
-        "Evaluamos tus dispositivos inteligentes instalados o por instalar.",
-        "Configuramos el sistema de integración y el chatbot conversacional.",
-        "Definimos escenas, comandos y rutinas según tu uso real.",
-        "Activamos el control y te capacitamos en los comandos disponibles.",
-        "Acompañamiento para ajustar y expandir funcionalidades.",
-      ],
-    },
-    faqs: [
-      {
-        question: "¿Qué puedo controlar desde WhatsApp?",
-        answer:
-          "Luces, escenas, sensores de movimiento, estados de dispositivos y rutinas programadas. Las funcionalidades dependen de los dispositivos instalados en tu hogar.",
-      },
-      {
-        question: "¿Es seguro controlar mi casa por WhatsApp?",
-        answer:
-          "Sí. El sistema utiliza autenticación y encriptación. Solo los números autorizados pueden enviar comandos al hogar.",
-      },
-      {
-        question: "¿Funciona con cualquier dispositivo inteligente?",
-        answer:
-          "Funciona con dispositivos compatibles con los protocolos de integración que manejamos. Evaluamos la compatibilidad en la visita técnica.",
-      },
-      {
-        question: "¿Necesito tener internet en mi casa?",
-        answer:
-          "Sí, el control por WhatsApp requiere una conexión a internet estable en el hogar.",
-      },
-      {
-        question: "¿Qué pasa si envío un comando incorrecto?",
-        answer:
-          "El chatbot te responde con opciones válidas y confirmaciones antes de ejecutar acciones críticas.",
-      },
-    ],
-    cta: {
-      label: "Explorar automatización por WhatsApp",
-      whatsappMessage:
-        "Hola Casa Atenta, me interesa controlar mi hogar desde WhatsApp. Quiero saber qué opciones tienen disponibles.",
-      href: createWhatsAppLink(
-        "Hola Casa Atenta, me interesa controlar mi hogar desde WhatsApp. Quiero saber qué opciones tienen disponibles."
-      ),
-    },
-    relatedServices: [
-      "smart-homes",
-      "iluminacion-inteligente",
       "mantenimiento-general",
     ],
   },
@@ -740,7 +508,7 @@ export const servicePages: Record<string, ServicePageData> = {
   "mantenimiento-general": {
     slug: "mantenimiento-general",
     seo: {
-      title: "Mantenimiento general para hogares en Lima | Casa Atenta",
+      title: "Mantenimiento General | Cuidado continuo para hogares y terrazas | Casa Atenta",
       description:
         "Servicio de mantenimiento general para hogares, terrazas y espacios residenciales con atención ordenada, criterio técnico y cuidado visual.",
       keywords: [
@@ -767,64 +535,110 @@ export const servicePages: Record<string, ServicePageData> = {
       {
         title: "Criterio técnico y visual",
         description:
-          "No solo reparamos. Cuidamos que cada intervención mantenga la estética del espacio.",
+          "No solo reparamos. Cuidamos que cada intervención mantenga la estética y el diseño del espacio.",
       },
       {
         title: "Atención ordenada",
         description:
-          "Diagnóstico claro, propuesta con alcance definido y ejecución organizada.",
+          "Diagnóstico claro, propuesta con alcance definido y ejecución organizada sin molestias.",
       },
       {
-        title: "Versatilidad",
+        title: "Versatilidad profesional",
         description:
-          "Desde resane y pintura hasta ajustes eléctricos, carpintería y acabados.",
+          "Desde calibración de luminarias y pintura premium hasta acabados finos y mueblería.",
       },
       {
         title: "Protección del entorno",
         description:
-          "Trabajamos con protección de pisos, muebles y superficies durante la intervención.",
+          "Trabajamos con rigurosa protección de pisos, muebles y superficies durante la intervención.",
       },
       {
-        title: "Transparencia",
+        title: "Transparencia sin sorpresas",
         description:
-          "Cotizaciones claras con desglose de materiales, mano de obra y tiempos.",
+          "Cotizaciones claras con desglose de materiales, mano de obra y tiempos de entrega.",
       },
       {
-        title: "Acompañamiento",
+        title: "Acompañamiento post-servicio",
         description:
-          "Seguimiento post-intervención para asegurar la calidad del trabajo.",
+          "Seguimiento pos-intervención para asegurar la calidad y satisfacción absoluta.",
       },
     ],
     process: {
       title: "Cómo atendemos tu mantenimiento",
       steps: [
-        "Diagnóstico del espacio y las necesidades reportadas.",
-        "Propuesta con alcance, materiales y cronograma.",
-        "Cotización clara y aprobación.",
-        "Ejecución con protección y orden.",
-        "Entrega con revisión y recomendaciones de cuidado.",
+        "Diagnóstico detallado del espacio y las necesidades reportadas.",
+        "Propuesta con alcance técnico, materiales y cronograma.",
+        "Cotización transparente y aprobación formal del plan.",
+        "Ejecución con protección exhaustiva, orden y limpieza diaria.",
+        "Entrega formal con revisión final y recomendaciones de cuidado.",
       ],
     },
+    subServices: [
+      {
+        title: "Configuración de luminarias",
+        description:
+          "Calibración e instalación de sistemas de iluminación residencial. Ajustamos la temperatura, intensidad y ubicación de cada punto de luz para crear atmósferas que resalten la arquitectura de tu hogar.",
+        details: [
+          "Instalación de luminarias LED técnicas y decorativas",
+          "Calibración y homologación de temperatura de color",
+          "Configuración de switches, dimmers y escenas base",
+          "Optimización de circuitos y consumo energético",
+        ],
+      },
+      {
+        title: "Pintura",
+        description:
+          "Aplicación premium de pintura en interiores y exteriores. Utilizamos técnicas avanzadas de preparación de superficies y pinturas de alta calidad resistentes a la humedad y el clima para asegurar acabados impecables.",
+        details: [
+          "Preparación y resane profundo de muros y techos",
+          "Aplicación de pintura lavable de alto tránsito y gran acabado",
+          "Tratamientos preventivos antihumedad y sellado acrílico",
+          "Asesoría en combinación cromática arquitectónica",
+        ],
+      },
+      {
+        title: "Acabados y detalles",
+        description:
+          "Refinamiento y reparación de superficies, molduras, zócalos y revestimientos. Cuidamos cada encuentro de material, asegurando juntas limpias y transiciones perfectas en pisos, paredes y techos.",
+        details: [
+          "Reparación de juntas, fraguas y encuentros de muros",
+          "Instalación y reparación de zócalos, molduras y perfiles",
+          "Tratamiento y sellado de superficies de piedra y terrazo",
+          "Detalles estéticos finos en uniones y remates",
+        ],
+      },
+      {
+        title: "Mueblería y mobiliario",
+        description:
+          "Ajuste, restauración y mantenimiento de carpintería y mobiliario fijo o móvil. Mantenemos la madera, cerrajería y herrajes en óptimo estado de funcionamiento y presentación.",
+        details: [
+          "Ajuste, calibración y cambio de bisagras y correderas",
+          "Mantenimiento y laqueado de decks y muebles de madera",
+          "Restauración de acabados superficiales y pulido",
+          "Instalación y ajuste de cerrajería y tiradores premium",
+        ],
+      },
+    ],
     faqs: [
       {
         question: "¿Qué tipo de mantenimiento ofrecen?",
         answer:
-          "Pintura, resane, carpintería básica, ajustes eléctricos, plomería menor, limpieza de superficies y mejoras estéticas generales.",
+          "Ofrecemos configuración de luminarias, pintura arquitectónica, acabados y detalles de revestimientos, así como mantenimiento y ajuste de carpintería y mueblería fina.",
       },
       {
         question: "¿Tienen un monto mínimo de servicio?",
         answer:
-          "Evaluamos cada caso. Para intervenciones muy pequeñas, podemos agrupar necesidades en una sola visita técnica.",
+          "Evaluamos cada caso. Para intervenciones muy pequeñas, podemos agrupar necesidades en una sola visita técnica para hacer el servicio eficiente.",
       },
       {
-        question: "¿Trabajan los fines de semana?",
+        question: "¿Coordinan horarios especiales?",
         answer:
-          "Coordinamos horarios según disponibilidad y necesidades del cliente, incluyendo fines de semana cuando es necesario.",
+          "Sí. Coordinamos los horarios según disponibilidad y necesidades del cliente para interferir lo menos posible con la rutina de tu hogar.",
       },
       {
-        question: "¿Pueden hacer mantenimiento preventivo recurrente?",
+        question: "¿Ofrecen planes de mantenimiento preventivo?",
         answer:
-          "Sí, ofrecemos planes de mantenimiento periódico para mantener tu hogar en óptimas condiciones.",
+          "Sí, diseñamos planes de mantenimiento periódico semestral o anual para asegurar que las instalaciones y acabados de tu hogar se mantengan impecables.",
       },
     ],
     cta: {

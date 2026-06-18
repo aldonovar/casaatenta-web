@@ -137,11 +137,9 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
   const serviceNames: Record<string, string> = {
     "techos-sol-y-sombra": "Techos sol y sombra",
     "diseno-terrazas": "Diseño de terrazas",
-    pergolas: "Pérgolas",
     "smart-homes": "Smart homes",
     "iluminacion-inteligente": "Iluminación inteligente",
-    "automatizacion-whatsapp": "Automatización por WhatsApp",
-    "acabados-residenciales": "Acabados residenciales",
+    "mantenimiento-general": "Mantenimiento general",
   };
 
   const whatsAppMessage = `Hola Casa Atenta, acabo de leer su artículo "${post.hero.h1}" y me gustaría más información.`;
