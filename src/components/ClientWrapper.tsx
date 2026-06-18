@@ -113,7 +113,7 @@ export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
       <WhatsAppButton variant="floating" label="Agendar visita técnica" />
 
       {/* Navigation menu */}
-      <Header />
+      {pathname !== "/about/conexiones" && <Header />}
 
       {/* Scroll Charge section indicator (Home page only) */}
       {pathname === "/" && <ScrollChargeNav />}
@@ -124,7 +124,7 @@ export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <Footer />
+      {pathname !== "/about/conexiones" && <Footer />}
     </div>
   );
 };
