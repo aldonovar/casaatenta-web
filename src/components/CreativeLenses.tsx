@@ -50,7 +50,7 @@ export const CreativeLenses: React.FC = () => {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-20">
           <SectionHeading
-            number="02"
+            number="03"
             label={homeCopy.lenses.label}
             title={homeCopy.lenses.title}
             subtitle={homeCopy.lenses.subtitle}

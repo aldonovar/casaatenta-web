@@ -1,13 +1,11 @@
 import React from "react";
 import { HeroSection } from "@/components/HeroSection";
-import { PhilosophySection } from "@/components/PhilosophySection";
 import { CinematicWalk } from "@/components/CinematicWalk";
 import { CreativeLenses } from "@/components/CreativeLenses";
 import { ServicesGallery } from "@/components/ServicesGallery";
 import { SceneController } from "@/components/SceneController";
 import { HalfRenderReality } from "@/components/HalfRenderReality";
 import { ProjectsShowcase } from "@/components/ProjectsShowcase";
-import { ProcessTimeline } from "@/components/ProcessTimeline";
 import { AboutSection } from "@/components/AboutSection";
 import { StatsCounter } from "@/components/StatsCounter";
 import { CTAFinal } from "@/components/CTAFinal";
@@ -17,9 +15,6 @@ export default function HomePage() {
     <>
       {/* CAPÍTULO 01: HERO / LA CASA RESPONDE */}
       <HeroSection />
-
-      {/* CAPÍTULO 01.5: FILOSOFÍA */}
-      <PhilosophySection />
 
       {/* CAPÍTULO 02: CINEMATIC WALK */}
       <CinematicWalk />
@@ -39,13 +34,10 @@ export default function HomePage() {
       {/* CAPÍTULO 07: CASOS / PROYECTOS */}
       <ProjectsShowcase />
 
-      {/* CAPÍTULO 08: MÉTODO CASA ATENTA */}
-      <ProcessTimeline />
-
-      {/* CAPÍTULO 09: ABOUT / FUNDADORES */}
+      {/* CAPÍTULO 08: ABOUT / FUNDADORES */}
       <AboutSection />
 
-      {/* CAPÍTULO 09.5: TELEMETRÍA DE ESTADÍSTICAS */}
+      {/* CAPÍTULO 09: TELEMETRÍA DEL SISTEMA */}
       <StatsCounter />
 
       {/* CAPÍTULO 10: CTA FINAL Y CONVERSIÓN */}

@@ -170,7 +170,7 @@ export const Header: React.FC = () => {
            
            <div className="menu-secondary mt-auto pt-16 flex flex-col md:flex-row justify-between items-start md:items-center border-t border-ca-border/40 text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-ca-text-secondary gap-6">
               <p>Lima, Perú</p>
-              <a href="mailto:contacto@casaatenta.pe" className="hover:text-ca-text transition-colors border-b border-transparent hover:border-ca-text pb-1">contacto@casaatenta.pe</a>
+              <a href="mailto:contacto@casa-atenta.com" className="hover:text-ca-text transition-colors border-b border-transparent hover:border-ca-text pb-1">contacto@casa-atenta.com</a>
               <p>Arte + Automatización</p>
            </div>
         </div>

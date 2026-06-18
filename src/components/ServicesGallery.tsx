@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { servicesData } from "@/data/site";
+import { servicesData, homeCopy } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
 import { BrandText } from "./BrandText";
 import { WHATSAPP_LINK } from "@/constants/contact";
@@ -68,10 +68,10 @@ export const ServicesGallery: React.FC = () => {
       {/* Title block */}
       <div className="mx-auto max-w-7xl px-6 pt-32 pb-16 md:px-16 lg:px-28">
         <SectionHeading
-          number="02"
-          label="Líneas de Diseño"
-          title="ESPECIALIDADES HABITABLES"
-          subtitle="Intervenimos y ordenamos tu espacio en cinco áreas críticas para asegurar el control técnico y estético total de tu hogar."
+          number="04"
+          label={homeCopy.services.label}
+          title={homeCopy.services.title}
+          subtitle={homeCopy.services.subtitle}
         />
       </div>
 

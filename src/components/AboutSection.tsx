@@ -18,7 +18,7 @@ export const AboutSection: React.FC = () => {
         {/* Left column: display quotes */}
         <div className="lg:col-span-5 space-y-6">
           <SectionHeading
-            number="05"
+            number="08"
             label={homeCopy.about.label}
             title="FUNDADORES"
           />

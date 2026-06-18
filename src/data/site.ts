@@ -83,25 +83,25 @@ export const walkSteps = [
     number: "01",
     title: "Entrada",
     text: "La llegada empieza antes del timbre.",
-    image: "/backgrounds/manifesto.png",
+    image: "/media/cinematic-walk/entrada-01.png",
   },
   {
     number: "02",
     title: "Luz",
     text: "La luz reconoce el momento.",
-    image: "/backgrounds/circadian.png",
+    image: "/media/cinematic-walk/luz-03.png",
   },
   {
     number: "03",
     title: "Sombra",
     text: "La sombra también se diseña.",
-    image: "/backgrounds/casestudy.png",
+    image: "/media/cinematic-walk/terraza-02.png",
   },
   {
     number: "04",
     title: "Escena",
     text: "La tecnología desaparece. La experiencia queda.",
-    image: "/backgrounds/cta.png",
+    image: "/media/cinematic-walk/escena-04.png",
   },
 ];
 
@@ -109,22 +109,22 @@ export const lenses = [
   {
     title: "Half-render / half-reality",
     text: "Una mitad propone. La otra prueba.",
-    image: "/backgrounds/beforeafter.png",
+    image: "/media/creative-lenses/half-render-reality-01.png",
   },
   {
     title: "Plano cenital",
     text: "El recorrido se entiende desde arriba.",
-    image: "/backgrounds/manifesto.png",
+    image: "/media/creative-lenses/plano-cenital-01.png",
   },
   {
     title: "Perspectiva baja",
     text: "La estructura se lee desde el cuerpo.",
-    image: "/backgrounds/hero.png",
+    image: "/media/creative-lenses/perspectiva-baja-01.png",
   },
   {
     title: "Macro detalle",
     text: "El detalle sostiene la escena.",
-    image: "/backgrounds/specialties.png",
+    image: "/media/creative-lenses/macro-detalle-01.png",
   },
 ];
 
@@ -138,7 +138,7 @@ export const servicesData = [
     href: createWhatsAppLink(
       "Hola Casa Atenta, quiero diseñar iluminación y escenas inteligentes para mi casa."
     ),
-    image: "/backgrounds/circadian.png",
+    image: "/media/creative-lenses/luz-sombra-01.png",
   },
   {
     id: "terrazas",
@@ -149,7 +149,7 @@ export const servicesData = [
     href: createWhatsAppLink(
       "Hola Casa Atenta, quiero cotizar una terraza o pérgola y agendar visita técnica."
     ),
-    image: "/backgrounds/casestudy.png",
+    image: "/media/cinematic-walk/terraza-02.png",
   },
   {
     id: "accesos",
@@ -160,7 +160,7 @@ export const servicesData = [
     href: createWhatsAppLink(
       "Hola Casa Atenta, quiero revisar accesos, seguridad o fachada de mi hogar."
     ),
-    image: "/backgrounds/specialties.png",
+    image: "/media/cinematic-walk/entrada-01.png",
   },
   {
     id: "superficies",
@@ -171,7 +171,7 @@ export const servicesData = [
     href: createWhatsAppLink(
       "Hola Casa Atenta, quiero cotizar pintura, superficies o acabados."
     ),
-    image: "/backgrounds/beforeafter.png",
+    image: "/media/creative-lenses/material-encuentro-01.png",
   },
   {
     id: "conectividad",
@@ -182,7 +182,7 @@ export const servicesData = [
     href: createWhatsAppLink(
       "Hola Casa Atenta, quiero planificar automatización por etapas para mi hogar."
     ),
-    image: "/backgrounds/hero.png",
+    image: "/media/creative-lenses/half-render-reality-01.png",
   },
 ];
 
@@ -211,7 +211,7 @@ export const sceneModes = [
     id: "noche",
     label: "Noche",
     title: "Pausa exterior",
-    text: "Spots, jardineras y apliques definen recorridos y permanencia.",
+    text: "Spots, jardineras and apliques definen recorridos y permanencia.",
     temp: "19.8°C",
     lux: "8 lx",
     audio: "Audio por Resonancia",
@@ -236,26 +236,26 @@ export const caseStudies = [
     problem: "El espacio exterior existía, pero no respondía al uso nocturno ni a reuniones.",
     decision: "Integrar sombra, luz cálida, jardineras, escenas y control de ambiente.",
     result: "Un exterior que funciona para pausa, reunión y noche.",
-    image: "/backgrounds/casestudy.png",
+    image: "/media/cases/terraza-inteligente/after.png",
     services: ["Iluminación exterior", "Pérgola", "Escenas"],
   },
   {
-    title: "La superficie también comunica.",
-    type: "Caso de estudio / acabados",
-    problem: "Muros y frentes se veían cansados aunque la distribución aún funcionaba.",
-    decision: "Preparar superficie, definir acabado y renovar sin rehacer todo.",
-    result: "Una lectura más limpia del mismo espacio.",
-    image: "/backgrounds/beforeafter.png",
-    services: ["Pintura", "Madera", "Metal"],
+    title: "La cocina como centro visual.",
+    type: "Caso de estudio / cocina inteligente",
+    problem: "La iluminación de la cocina era plana, sin jerarquía entre preparación y permanencia.",
+    decision: "Integrar luz lineal bajo reposteros, automatizar sensores y regular escenas de cocción/cena.",
+    result: "Una atmósfera dinámica que transiciona de zona técnica a espacio de convivencia.",
+    image: "/media/cases/cocina-renovada/after.png",
+    services: ["Iluminación lineal", "Sensores de presencia", "Automatización"],
   },
   {
-    title: "La luz reconoce el momento.",
-    type: "Caso de estudio / escena interior",
-    problem: "El ambiente tenía una sola intensidad para usos distintos.",
-    decision: "Separar llegada, descanso, reunión y seguridad con escenas simples.",
-    result: "Un espacio que cambia sin cambiar de forma.",
-    image: "/backgrounds/circadian.png",
-    services: ["Dicroicos", "Apliques", "Sensores"],
+    title: "Accesos y presencia exterior.",
+    type: "Caso de estudio / fachada y acceso",
+    problem: "La llegada se sentía desconectada del interior, requiriendo llaves físicas en zonas oscuras.",
+    decision: "Integrar cerradura biométrica, iluminación de bienvenida perimetral y cámara discreta.",
+    result: "Un acceso fluido que reconoce a los habitantes y resalta la volumetría de la fachada.",
+    image: "/media/cases/fachada-acceso/after.png",
+    services: ["Cerraduras biométricas", "Iluminación perimetral", "Cámaras discretas"],
   },
 ];
 

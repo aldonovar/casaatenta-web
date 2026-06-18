@@ -34,7 +34,7 @@ const solutionsData: SolutionItem[] = [
       "Controladores de atenuación profunda (hasta 0.1%) para transiciones fluidas sin parpadeos.",
       "Sensores de luminosidad exterior ocultos en fachadas para calibrar la luz interna."
     ],
-    imageSrc: "/backgrounds/circadian.png",
+    imageSrc: "/media/cinematic-walk/luz-03.png",
     plano: "Plano de Techo / Reflected Ceiling Plan",
     requirements: "Plano arquitectónico de techo detallando la junta oculta de yeso de 15mm donde van empotradas las luminarias lineales y los drivers LED invisibles."
   },
@@ -50,7 +50,7 @@ const solutionsData: SolutionItem[] = [
       "Módulos de sensado de temperatura y calidad de aire (CO2/VOC) embebidos bajo el revoque.",
       "Suelo y paredes radiantes en espacios húmedos e interiores de concreto."
     ],
-    imageSrc: "/backgrounds/beforeafter.png",
+    imageSrc: "/media/creative-lenses/half-render-reality-01.png",
     plano: "Detalle Constructivo Termomecánico",
     requirements: "Plano de detalle a escala 1:5 que muestra el pleno del cielorraso con inyección de aire lineal, la caja de plenitud acústica con aislamiento, y la ranura arquitectónica de 12mm."
   },
@@ -66,7 +66,7 @@ const solutionsData: SolutionItem[] = [
       "Calibración acústica asistida por DSP para compensar la masa del acabado de yeso.",
       "Subwoofers estructurales pasivos ocultos bajo el mobiliario fijo de madera."
     ],
-    imageSrc: "/backgrounds/casestudy.png",
+    imageSrc: "/media/creative-lenses/perspectiva-baja-01.png",
     plano: "Elevación de Estructura Acústica",
     requirements: "Dibujo técnico de elevación de pared que muestra el transductor electroacústico fijado entre montantes de acero, con la malla de enlucido y la capa final de yeso de 2mm cubriéndolo."
   },
@@ -82,7 +82,7 @@ const solutionsData: SolutionItem[] = [
       "Detección volumétrica por radar de ultra-frecuencia oculta detrás del concreto.",
       "Integración con software de análisis de IA para evitar falsas alarmas de mascotas."
     ],
-    imageSrc: "/backgrounds/cta.png",
+    imageSrc: "/media/cinematic-walk/entrada-01.png",
     plano: "Esquema de Seguridad del Terreno",
     requirements: "Esquema técnico de planta del terreno que muestra el rango de escaneo de los sensores térmicos ocultos en los muros de piedra exterior y los límites perimetrales de seguridad."
   }
@@ -90,32 +90,32 @@ const solutionsData: SolutionItem[] = [
 
 const projectsData = [
   {
-    id: "pabellon-del-agua",
-    title: "Pabellón del Agua",
-    category: "pabellones",
-    location: "Cieneguilla, Lima",
-    area: "450 m²",
-    year: "2025",
-    intro: "Una estructura minimalista de concreto visto y vidrio templado. El pabellón se integra al entorno mediante el reflejo en un gran espejo de agua exterior, mientras el interior disuelve todo rastro técnico para priorizar la contemplación silenciosa.",
-    integrations: ["Iluminación Circadiana", "Clima Invisible", "Acústica Invisible"],
-    quote: '"El sonido y el aire simplemente existen. No hay parlantes ni termostatos en ningún muro. La casa se siente completamente natural y en calma."',
-    imageSrc: "/backgrounds/manifesto.png",
-    plano: "Elevación Norte - Atardecer",
-    requirements: "Pabellón minimalista de concreto visto reflejado en espejo de agua exterior."
+    id: "propuesta-cocina",
+    title: "Propuesta Cocina Integrada",
+    category: "interiores",
+    location: "Diseño Conceptual / Lima",
+    area: "45 m²",
+    year: "2026",
+    intro: "Estudio tridimensional de una cocina moderna con automatización de iluminación lineal, encendido regulado por presencia y transiciones de escena. La propuesta demuestra cómo el espacio cambia de una zona técnica y de trabajo a un ambiente cálido de convivencia nocturna.",
+    integrations: ["Iluminación Circadiana", "Clima Invisible", "Acústica de Resonancia"],
+    quote: '"El flujo de luz se ajusta solo cuando la cocina se convierte en un área de descanso social, permitiendo que la arquitectura tome el protagonismo."',
+    imageSrc: "/media/cases/cocina-renovada/after.png",
+    plano: "Detalle Constructivo Lumínico",
+    requirements: "Sección constructiva que detalla los perfiles de aluminio para LED de 15mm empotrados al ras en los reposteros de madera."
   },
   {
-    id: "casa-travertino",
-    title: "Casa Travertino",
+    id: "propuesta-acceso",
+    title: "Propuesta Fachada y Acceso",
     category: "residencial",
-    location: "La Molina, Lima",
-    area: "720 m²",
-    year: "2024",
-    intro: "Una residencia familiar esculpida en piedra travertino y concreto. La obra destaca por la continuidad de sus texturas naturales y la total invisibilización de los sistemas mecánicos e interruptores eléctricos convencionales.",
-    integrations: ["Iluminación Circadiana", "Clima Invisible", "Seguridad Discreta"],
-    quote: '"La casa sabe qué hacer según la hora. Al anochecer, las luces se atenúan y el clima se calienta de forma autónoma. No tocamos un solo botón."',
-    imageSrc: "/backgrounds/hero.png",
-    plano: "Elevación Principal - Noche",
-    requirements: "Fachada de mármol travertino con iluminación rasante oculta que destaca las vetas de la piedra."
+    location: "Diseño Conceptual / Lima",
+    area: "120 m²",
+    year: "2026",
+    intro: "Estudio de conectividad exterior que integra accesos biométricos y control perimetral pasivo con un sistema de iluminación de cortesía. Las luminarias rasantes destacan la textura natural de los acabados de piedra mientras guían el recorrido del habitante de forma autónoma.",
+    integrations: ["Iluminación Circadiana", "Seguridad Discreta"],
+    quote: '"El acceso de la casa te reconoce al aproximarte y activa una iluminación rasante sutil sobre la piedra travertino, eliminando interruptores mecánicos."',
+    imageSrc: "/media/cases/fachada-acceso/after.png",
+    plano: "Detalle de Conectividad y Accesos",
+    requirements: "Plano de elevación del portón exterior integrando la cerradura electromecánica en el interior del perfil metálico estructural."
   }
 ];
 
@@ -311,10 +311,10 @@ export default function DisenoPage() {
               [ Selección de Casos ]
             </span>
             <h2 className="text-4xl md:text-5xl font-display font-light text-ca-text uppercase tracking-wide">
-              <BrandText>Proyectos en Obra</BrandText>
+              <BrandText>Escenarios de Integración</BrandText>
             </h2>
             <p className="text-sm md:text-base font-light text-ca-text-secondary leading-relaxed">
-              Obras residenciales terminadas en Lima donde coordinamos directamente la integración técnica con estudios de arquitectura de primer nivel.
+              Propuestas de integración y escenarios de concepto técnico creados para visualizar la automatización e iluminación antes de la obra final.
             </p>
           </div>
 

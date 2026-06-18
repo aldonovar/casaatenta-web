@@ -25,10 +25,11 @@ export const CinematicWalk: React.FC = () => {
       const totalPanels = panels.length;
 
       // Pin the section and scroll the panels horizontally
-      gsap.to(scrollSection, {
+      const mainAnim = gsap.to(scrollSection, {
         xPercent: -100 * (totalPanels - 1),
         ease: "none",
         scrollTrigger: {
+          id: "horizontal-scroll",
           trigger: container,
           pin: true,
           scrub: 1,
@@ -44,14 +45,29 @@ export const CinematicWalk: React.FC = () => {
         const desc = panel.querySelector(".walk-desc");
         const img = panel.querySelector(".walk-img");
 
-        gsap.timeline({
+        const tl = gsap.timeline({
           scrollTrigger: {
             trigger: panel,
-            containerAnimation: gsap.getById("horizontal-scroll") || undefined, // fallback or direct start/end triggers
+            containerAnimation: mainAnim,
             start: "left 70%",
             toggleActions: "play none none reverse",
           }
         });
+
+        if (title) {
+          tl.fromTo(title,
+            { opacity: 0, x: 40 },
+            { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }
+          );
+        }
+
+        if (desc) {
+          tl.fromTo(desc,
+            { opacity: 0, y: 15 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
+            "-=0.4"
+          );
+        }
 
         // Parallax image movement inside its frame
         if (img) {
@@ -89,7 +105,7 @@ export const CinematicWalk: React.FC = () => {
       {/* Chapter header */}
       <div className="mx-auto max-w-7xl px-6 pt-32 pb-16 md:px-16 lg:px-28 relative z-10">
         <SectionHeading
-          number="01"
+          number="02"
           label={homeCopy.walk.label}
           title={homeCopy.walk.title}
           subtitle={homeCopy.walk.subtitle}

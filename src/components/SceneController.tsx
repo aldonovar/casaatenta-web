@@ -10,10 +10,10 @@ export const SceneController: React.FC = () => {
 
   // Images mapping to reflect each mode visually
   const modeImages: { [key: string]: string } = {
-    dia: "/backgrounds/casestudy.png",
-    tarde: "/backgrounds/beforeafter.png",
-    noche: "/backgrounds/circadian.png",
-    seguridad: "/backgrounds/specialties.png",
+    dia: "/media/cinematic-walk/entrada-01.png",
+    tarde: "/media/cinematic-walk/terraza-02.png",
+    noche: "/media/cinematic-walk/luz-03.png",
+    seguridad: "/media/cinematic-walk/escena-04.png",
   };
 
   return (
@@ -26,7 +26,7 @@ export const SceneController: React.FC = () => {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-20">
           <SectionHeading
-            number="03"
+            number="05"
             label={homeCopy.controller.label}
             title={homeCopy.controller.title}
             subtitle={homeCopy.controller.subtitle}

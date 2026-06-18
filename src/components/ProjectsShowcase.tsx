@@ -12,31 +12,31 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projectsData = [
   {
-    imageSrc: "/backgrounds/manifesto.png",
-    title: "Pabellón Terraza",
-    location: "SAN ISIDRO",
-    size: "120 m²",
-    tags: ["Exterior", "Luz"],
+    imageSrc: "/media/cases/terraza-inteligente/after.png",
+    title: "Propuesta Terraza",
+    location: "DISEÑO CONCEPTUAL / LIMA",
+    size: "Pérgola + Escenas",
+    tags: ["Pérgolas", "Luz", "Sombra"],
     aspectRatio: "aspect-[4/5] md:aspect-[3/4] lg:aspect-[4/5]",
-    gridSpan: "lg:col-span-6 lg:row-span-2",
+    gridSpan: "lg:col-span-4",
   },
   {
-    imageSrc: "/backgrounds/casestudy.png",
-    title: "Penthouse Automatizado",
-    location: "MIRAFLORES",
-    size: "280 m²",
-    tags: ["Smart", "Luz"],
-    aspectRatio: "aspect-[4/5] md:aspect-[3/4]",
-    gridSpan: "lg:col-span-6",
+    imageSrc: "/media/cases/cocina-renovada/after.png",
+    title: "Atmósfera Cocina",
+    location: "DISEÑO CONCEPTUAL / LIMA",
+    size: "Luz lineal + Control",
+    tags: ["Cocina", "Luz", "Escenas"],
+    aspectRatio: "aspect-[4/5] md:aspect-[3/4] lg:aspect-[4/5]",
+    gridSpan: "lg:col-span-4",
   },
   {
-    imageSrc: "/backgrounds/circadian.png",
-    title: "Residencia Las Casuarinas",
-    location: "SURCO",
-    size: "620 m²",
-    tags: ["Acabados", "Smart"],
-    aspectRatio: "aspect-[4/5] md:aspect-[3/4]",
-    gridSpan: "lg:col-span-6",
+    imageSrc: "/media/cases/fachada-acceso/after.png",
+    title: "Fachada y Acceso",
+    location: "DISEÑO CONCEPTUAL / LIMA",
+    size: "Seguridad + Presencia",
+    tags: ["Accesos", "Cerraduras", "Seguridad"],
+    aspectRatio: "aspect-[4/5] md:aspect-[3/4] lg:aspect-[4/5]",
+    gridSpan: "lg:col-span-4",
   },
 ];
 
@@ -81,10 +81,10 @@ export const ProjectsShowcase: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-20">
           <div className="lg:col-span-8">
             <SectionHeading
-              number="03"
-              label="Proyectos"
-              title="CASOS DE ESTUDIO"
-              subtitle="Nuestra práctica integra ingeniería precisa y sensibilidad espacial en residencias destacadas en Lima."
+              number="07"
+              label="Propuestas"
+              title="ESCENARIOS DE INTERVENCIÓN"
+              subtitle="Propuestas conceptuales tridimensionales para la automatización, iluminación y habitabilidad de espacios residenciales en Lima."
             />
           </div>
           <div className="lg:col-span-4 lg:justify-self-end">
@@ -92,7 +92,7 @@ export const ProjectsShowcase: React.FC = () => {
               href="/diseno"
               className="inline-flex min-h-14 items-center justify-center gap-3 border border-ca-text bg-ca-text px-8 py-4 text-[11px] font-mono uppercase tracking-[0.25em] text-ca-bg-deep transition-all duration-300 font-semibold hover:bg-transparent hover:text-ca-text"
             >
-              <BrandText>Ver proyectos</BrandText>
+              <BrandText>Ver propuestas</BrandText>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -117,8 +117,7 @@ export const ProjectsShowcase: React.FC = () => {
             {projectsData.map((project) => (
               <div
                 key={project.title}
-                className="project-card-wrapper opacity-0 lg:col-span-6 lg:row-span-1"
-                style={{ gridColumn: project.gridSpan.includes("lg:col-span-6") ? "span 6 / span 6" : "span 12 / span 12" }}
+                className="project-card-wrapper opacity-0 lg:col-span-4"
               >
                 <ProjectCard
                   imageSrc={project.imageSrc}

@@ -165,8 +165,8 @@ export const HeroSection: React.FC = () => {
       {/* Background visual render overlay */}
       <div
         ref={bgImageRef}
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-25 scale-102"
-        style={{ backgroundImage: `url('/backgrounds/hero.png')` }}
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-20 scale-102"
+        style={{ backgroundImage: `url('/media/hero/bg-hero.png')` }}
       />
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-ca-bg-deep/90 via-ca-bg-deep/80 to-ca-bg-deep" />
       <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_50%_45%,transparent_20%,var(--color-ca-bg-deep)_85%)]" />
@@ -204,29 +204,29 @@ export const HeroSection: React.FC = () => {
           
           {/* Eyebrow */}
           <div className="hero-animate-fade flex items-center">
-            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.4em] text-ca-text/50">
-              CASA ATENTA // DISEÑO Y AUTOMATIZACIÓN RESIDENCIAL
+            <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.4em] text-ca-gold">
+              CASA ATENTA // INTEGRACIÓN DE TECNOLOGÍA SILENCIOSA
             </span>
           </div>
 
           {/* Epic scale title */}
           <h1
             ref={titleRef}
-            className="text-5xl font-display font-light uppercase leading-[1.02] tracking-[0.02em] text-ca-text sm:text-7xl md:text-8xl lg:text-9.5xl max-w-6xl"
+            className="text-5xl font-display font-black uppercase leading-[0.95] tracking-[0.04em] text-ca-text sm:text-7xl md:text-8xl lg:text-9.5xl max-w-6xl"
           >
-            Estructura, luz y clima <br />
-            <span className="font-serif italic lowercase tracking-normal text-ca-text-secondary/85">
-              disueltos en la arquitectura.
+            LA CASA <br />
+            <span className="font-light text-ca-gold">
+              RESPONDE.
             </span>
           </h1>
 
           {/* Elegant horizontal line */}
           <div className="hero-animate-fade relative h-[1px] w-48 overflow-hidden my-4">
-            <div className="absolute inset-0 bg-gradient-to-r from-ca-text via-ca-text/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-ca-gold via-ca-gold/20 to-transparent" />
           </div>
 
           {/* Expanded readable subtext */}
-          <p className="hero-animate-fade max-w-2xl text-base md:text-lg font-light leading-relaxed text-ca-text-secondary/80">
+          <p className="hero-animate-fade max-w-2xl text-base md:text-lg font-light leading-relaxed text-ca-blue-gray">
             Diseñamos pérgolas bioclimáticas, acabados continuos de travertino, audio de resonancia e iluminación circadiana que se disuelven de forma invisible en tus espacios.
           </p>
 

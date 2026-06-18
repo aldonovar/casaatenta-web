@@ -1,99 +1,80 @@
-# Plan de Implementación: Optimización y Alineación Completa de Toda la Web (Casa Atenta)
+# Plan de Implementación: Reconstrucción e Identidad Honesta (Casa Atenta)
 
-Este plan describe las acciones técnicas y de diseño para optimizar y alinear al 100% todas las páginas de la web de **Casa Atenta** según la especificación de marca y el libro de prompts del usuario.
-
----
-
-## 1. Breve Auditoría de Gaps en Páginas Secundarias
-
-Tras revisar el estado actual del repositorio, hemos detectado discrepancias menores pero críticas en la consistencia de datos y campos que deben corregirse:
-
-1. **Contacto (`/contacto`)**: El formulario actual es muy simple (5 campos básicos). Falta integrar preguntas específicas solicitadas en el prompt para calificar los leads antes de agendar la visita técnica.
-2. **Nosotros (`/nosotros`)**: La sección de equipo muestra perfiles ficticios/provisionales (Alexis Falcon, Carlos Mendoza, Diana Valdivia) en lugar de documentar a los fundadores reales: **Jhon Febres** (Propietario y Gerente General) y **Alexis Espíritu** (Cofundador y Director Técnico/Visual).
-3. **Servicios en Home (`ServicesGallery.tsx`)**: Muestra solo 4 servicios importados de un archivo viejo en lugar de las 5 especialidades oficiales declaradas en `src/data/site.ts` (`servicesData`), y el ancho de la sección horizontal está bloqueado a `400vw`.
-4. **Método en Home (`ProcessTimeline.tsx`)**: Muestra 4 fases genéricas en lugar de las 6 fases del Método oficial de Casa Atenta (Diagnóstico, Propuesta visual, Integración, Ejecución, Activación, Acompañamiento).
-5. **Configurador (`Configurator.tsx`)**: El enlace de redirección final a WhatsApp tiene el número de teléfono quemado directamente en el componente en lugar de importar la constante centralizada `WHATSAPP_NUMBER`.
-6. **Ortografía**: Corrección de tildes menores en mensajes por defecto en constantes de contacto (`visita tecnica` -> `visita técnica`).
+Este plan detalla el rediseño absoluto de **Casa Atenta**. Basándonos en tu guía de estilo (A1 a A9) y en tus respuestas, reconstruiremos la web bajo un enfoque **honesto, técnico y sin pretensiones falsas**, eliminando métricas ficticias y presentando la marca con total transparencia.
 
 ---
 
-## 2. Cambios Propuestos por Componente
+## User Review Required
 
-### [Componente: Servicios y Galería Horizontal]
+### 1. Enfoque de Proyectos ("Casos Conceptuales")
+Dado que la firma se encuentra en su fase de lanzamiento y no cuenta aún con portafolio histórico de clientes:
+*   **Decisión:** Cambiaremos el enfoque de "Casos de Éxito / Proyectos Realizados" por **"Propuestas de Integración / Escenarios de Concepto"**.
+*   Mostraremos los 3 casos (Terraza, Cocina, Acceso) como ejercicios de diseño tridimensional y blueprint técnico que ilustran cómo resolvemos problemas espaciales reales.
+*   Esto mantiene la honestidad brutal de la marca (criterio de aceptación clave) a la vez que demuestra dominio técnico y visual.
 
-#### [MODIFY] [ServicesGallery.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/components/ServicesGallery.tsx)
-* Reemplazar la importación de `services` de `constants/services` por `servicesData` de `@/data/site`.
-* Modificar el scroll horizontal para adaptarlo a 5 paneles dinámicos en lugar de 4.
-* Reemplazar la clase de ancho fijo `lg:w-[400vw]` por una propiedad de estilo en línea dinámica: `style={{ width: `${servicesData.length * 100}vw` }}`.
-* Utilizar directamente la propiedad `image` y `includes` de los datos de servicio para renderizar la imagen y los bullets.
-* Agregar un quinto SVG lineal de enlucido/rejilla técnica para el servicio de Conectividad Invisible.
-
----
-
-### [Componente: Proceso y Método]
-
-#### [MODIFY] [ProcessTimeline.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/components/ProcessTimeline.tsx)
-* Reemplazar la importación de `processSteps` por `methodSteps` de `@/data/site` (que contiene las 6 fases reales).
-* Importar e integrar los 6 iconos correspondientes desde `lucide-react` para las 6 fases:
-  1. `Eye` (Diagnóstico)
-  2. `Layers` (Propuesta visual)
-  3. `Cpu` (Integración)
-  4. `Ruler` (Ejecución)
-  5. `Sliders` (Activación)
-  6. `ShieldCheck` (Acompañamiento)
-* Ajustar la longitud de la animación vertical del SVG en desktop para cubrir los 6 nodos de forma fluida.
+### 2. Eliminación de Telemetría Falsa (Stats)
+*   **Decisión:** Eliminaremos por completo el contador de estadísticas (`StatsCounter.tsx`) que mostraba cifras ficticias de casas automatizadas o metros construidos.
+*   En su lugar, crearemos un panel de **"Telemetría del Sistema"** sutil y puramente técnico (latencia de red local, estado de drivers de iluminación y lecturas de sensores de simulación), lo cual encaja perfectamente con el estilo técnico de Aether 1.
 
 ---
 
-### [Página: Nosotros]
+## Proposed Changes
 
-#### [MODIFY] [page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/nosotros/page.tsx)
-* Reemplazar los perfiles de equipo genéricos por perfiles detallados alineaos a los fundadores reales:
-  * **Jhon Febres**: Propietario & Gerente General.
-  * **Alexis Espíritu**: Cofundador & Director Técnico Visual.
-* Mantener la estética premium y sobria sin retratos corporativos ruidosos, usando iconos lineales elegantes de especialidad.
+### [Infraestructura y Configuración]
 
----
+#### [MODIFY] [globals.css](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/globals.css)
+*   **Paleta Blue Night / Gold:**
+    *   Fondo Principal: `--ca-night: #07111D` (Azul noche profundo) y `--ca-deep-blue: #0C2742`
+    *   Textos: `--ca-warm-white: #F4F0E8` y `--ca-blue-gray: #6F8496`
+    *   Acentos: `--ca-gold: #D8B36A` y `--ca-soft-gold: #F2D38D`
+    *   Líneas finas: `rgba(255, 255, 255, 0.12)`
+*   **Tipografía:** Syne para títulos modernos de displays, Cormorant Garamond para cursivas y citas literarias, e Inter para cuerpo de texto legible y sobrio.
 
-### [Página: Contacto]
-
-#### [MODIFY] [page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/contacto/page.tsx)
-* Reestructurar el formulario interactivo para incluir todos los campos del guiado oficial:
-  1. **Nombre completo** (Text)
-  2. **WhatsApp / Teléfono** (Tel)
-  3. **Correo Electrónico** (Email)
-  4. **Distrito / Ciudad** (Text)
-  5. **Tipo de Espacio** (Select: Terraza, Casa Completa, Departamento, Oficina, Fachada, Cocina, Otro)
-  6. **Servicio de Interés** (Select: Automatización, Iluminación Circadiana, Terraza/Pérgola, Accesos/Seguridad, Acabados/Superficies, Renovación, Diagnóstico Integral)
-  7. **Estado de la obra** (Radio/Select: El espacio ya existe / Está en proyecto de planos)
-  8. **Alcance deseado** (Radio/Select: Automatización inteligente / Acabados y superficies / Ambos)
-  9. **Mensaje / Notas adicionales** (Textarea)
-* Estilizar el grid del formulario para que sea limpio, legible y visualmente simétrico.
+#### [NEW] [.env.example](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/.env.example)
+*   Variables de entorno:
+    ```env
+    NEXT_PUBLIC_WHATSAPP_NUMBER=51908550942
+    NEXT_PUBLIC_CONTACT_EMAIL=contacto@casa-atenta.com
+    RESEND_API_KEY=
+    ```
 
 ---
 
-### [Componente: Configurador]
+### [Reconstrucción de Rutas y Páginas]
 
-#### [MODIFY] [Configurator.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/components/Configurator.tsx)
-* Importar la constante `WHATSAPP_NUMBER` desde `@/constants/contact`.
-* Reemplazar la URL dura `wa.me/51908550942` por una plantilla de cadena dinámica utilizando la constante centralizada.
+#### [MODIFY] [page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/page.tsx)
+*   Secuencia final del Home (10 Capítulos):
+    1.  `Preloader` (Logo y línea de carga fina).
+    2.  `Hero` (Claim "LA CASA RESPONDE").
+    3.  `CinematicWalk` (Scroll vertical con paneles de Entrada, Luz, Sombra, Escena).
+    4.  `CreativeLenses` (Lentes técnicos e interactivos con microdatos).
+    5.  `ServicesGallery` (Las 5 especialidades: Atmósferas, Terrazas, Accesos, Superficies, Conectividad).
+    6.  `SceneController` (Módulo interactivo de 4 modos: Día, Tarde, Noche, Seguridad).
+    7.  `HalfRenderReality` (Desplazamiento horizontal entre blueprint y render).
+    8.  `CaseStudies` (Presentado como "Escenarios de Intervención").
+    9.  `About` (Presentación de Jhon Febres y Alexis Espíritu).
+    10. `FinalCTA` + `Footer` (Registro a API de Resend, sin oficina física listada).
+
+#### [NEW] [api/contact/route.ts](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/api/contact/route.ts)
+*   Crear una API Route en Next.js para procesar los leads de `/contacto` enviándolos a `contacto@casa-atenta.com` usando la librería de **Resend**. Si la API key no está configurada localmente, simulará un éxito y registrará en consola para desarrollo seguro.
+
+#### [MODIFY] [contacto/page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/contacto/page.tsx)
+*   Rediseñar el formulario con campos de calificación de leads. El envío apuntará directamente a nuestra nueva API de Resend y mostrará un modal de éxito estilizado en azul noche y oro.
+
+#### [MODIFY] [nosotros/page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/nosotros/page.tsx)
+*   Alinear la página a los fundadores reales Jhon Febres y Alexis Espíritu bajo la estética editorial slow-luxury.
+
+#### [MODIFY] [diseno/page.tsx](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/app/diseno/page.tsx)
+*   Reconstruir el visualizador y corregir potenciales problemas de hidratación en Brave removiendo imports estáticos de `split-type` fuera de `useEffect`.
 
 ---
 
-### [Constantes de Contacto]
+## Verification Plan
 
-#### [MODIFY] [contact.ts](file:///c:/Users/Alexis/Documents/ALLYX/DevStreams/Casa%20Atenta/src/constants/contact.ts)
-* Corregir el typo de ortografía en la constante `DEFAULT_WHATSAPP_MESSAGE`: `visita tecnica` -> `visita técnica`.
+### Automated Build Checks
+*   Ejecutar `npm run build` localmente para garantizar que no existan errores de rutas ni problemas de compilación estática.
+*   Ejecutar `npm run lint` para depurar el código.
 
----
-
-## 3. Plan de Verificación
-
-### Pruebas de Compilación y Calidad de Código
-* Ejecutar `npm run build` para asegurar que las modificaciones no rompan el tipado TypeScript ni la compilación de rutas estáticas de Next.js.
-* Validar que el servidor de desarrollo (`http://localhost:3000`) responda correctamente.
-
-### Pruebas Visuales y de UX
-* Validar que el formulario de contacto muestre y valide todos los campos en mobile y desktop.
-* Validar que el slider de servicios horizontales en Home se desplace de forma suave mostrando los 5 paneles.
-* Verificar que el timeline de 6 pasos en Home funcione con ScrollTrigger dibujando el trazo en la secuencia correcta.
+### Manual Verification
+*   Verificar que las imágenes de `public/media/` se rendericen en alta resolución sobre el fondo azul noche profundo.
+*   Confirmar que el timeline del proceso y las animaciones de scroll de GSAP funcionen de forma suave (60fps) usando Lenis.

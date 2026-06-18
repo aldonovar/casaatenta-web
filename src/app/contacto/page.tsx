@@ -21,6 +21,8 @@ export default function ContactoPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -42,23 +44,30 @@ export default function ContactoPage() {
     { name: "Facebook", handle: "casaatenta", url: "https://www.facebook.com/casaatenta" },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        city: "",
-        spaceType: "terraza",
-        serviceOfInterest: "automatizacion",
-        spaceStatus: "proyecto",
-        scope: "ambos",
-        message: "",
+    setIsLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-    }, 4000);
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Ocurrió un error al enviar el formulario.");
+      }
+
+      setSubmitted(true);
+    } catch (err: any) {
+      setError(err.message || "No se pudo enviar el mensaje. Por favor intente más tarde.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -71,7 +80,7 @@ export default function ContactoPage() {
         {/* Header */}
         <div className="max-w-3xl mb-16 contact-reveal">
           <SectionHeading
-            number="05"
+            number="09"
             label="Contacto"
             title="AGENDA TU CITA Y EVALÚA TU OBRA"
             subtitle="Escríbenos para agendar una sesión virtual de revisión de planos o una reunión presencial en obra."
@@ -142,7 +151,7 @@ export default function ContactoPage() {
                     <input
                       type="email"
                       required
-                      placeholder="Ej. contacto@casaatenta.pe"
+                      placeholder="Ej. contacto@casa-atenta.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3.5 text-xs font-mono text-ca-text outline-none transition-all duration-300"
@@ -255,14 +264,21 @@ export default function ContactoPage() {
                   />
                 </div>
 
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-mono p-4 rounded uppercase tracking-wider">
+                    Error: {error}
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="glow-btn w-full py-4 text-[10px] tracking-widest font-mono uppercase border border-brand-gold bg-brand-gold text-brand-dark hover:bg-brand-gold-dark transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer font-semibold"
+                  disabled={isLoading}
+                  className="glow-btn w-full py-4 text-[10px] tracking-widest font-mono uppercase border border-brand-gold bg-brand-gold text-brand-dark hover:bg-brand-gold-dark transition-all duration-300 flex items-center justify-center space-x-2 cursor-pointer font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span>
-                    <BrandText>Enviar Propuesta de Consulta</BrandText>
+                    <BrandText>{isLoading ? "Enviando..." : "Enviar Propuesta de Consulta"}</BrandText>
                   </span>
-                  <ArrowRight size={13} />
+                  {!isLoading && <ArrowRight size={13} />}
                 </button>
               </form>
             )}
@@ -315,7 +331,7 @@ export default function ContactoPage() {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail size={12} className="text-brand-gold" />
-                  <span>CORREO: CONTACTO@CASAATENTA.PE</span>
+                  <span>CORREO: CONTACTO@CASA-ATENTA.COM</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Clock size={12} className="text-brand-gold" />

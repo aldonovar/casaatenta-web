@@ -57,7 +57,7 @@ export const HalfRenderReality: React.FC = () => {
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="mb-20">
           <SectionHeading
-            number="04"
+            number="06"
             label={homeCopy.halfReality.label}
             title={homeCopy.halfReality.title}
             subtitle={homeCopy.halfReality.subtitle}
@@ -74,7 +74,7 @@ export const HalfRenderReality: React.FC = () => {
           {/* LADO B: REALIDAD TERMINADA (Fondo completo, se revela recortando el Lado A) */}
           <div className="absolute inset-0 w-full h-full">
             <img
-              src="/backgrounds/beforeafter.png"
+              src="/media/cases/terraza-inteligente/after.png"
               alt="Realidad terminada Casa Atenta"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -82,8 +82,8 @@ export const HalfRenderReality: React.FC = () => {
             <div className="absolute inset-0 bg-brand-dark/30" />
             
             {/* Label lower right */}
-            <span className="absolute bottom-6 right-6 font-mono text-[9px] text-ca-text uppercase tracking-widest bg-ca-bg-deep/80 px-3 py-1.5 border border-ca-border rounded">
-              REALIDAD / OBRA TERMINADA
+            <span className="absolute bottom-6 right-6 font-mono text-[9px] text-ca-text uppercase tracking-[0.25em] bg-ca-bg-deep/80 px-3 py-1.5 border border-ca-border rounded">
+              FOTOGRAFÍA / CASO TERMINADO
             </span>
           </div>
 
@@ -96,7 +96,7 @@ export const HalfRenderReality: React.FC = () => {
           >
             {/* Blueprint image (we apply filters to look like a blueprint sketch) */}
             <img
-              src="/backgrounds/beforeafter.png"
+              src="/media/cases/terraza-inteligente/before.png"
               alt="Esquema propuesta Casa Atenta"
               className="absolute inset-0 w-full h-full object-cover filter grayscale invert contrast-125 brightness-75 opacity-70"
             />
@@ -109,8 +109,8 @@ export const HalfRenderReality: React.FC = () => {
             <div className="absolute inset-0 opacity-15 cad-technical-grid pointer-events-none" />
 
             {/* Label lower left */}
-            <span className="absolute bottom-6 left-6 font-mono text-[9px] text-brand-gold uppercase tracking-widest bg-ca-bg-deep/80 px-3 py-1.5 border border-ca-border rounded">
-              PROPUESTA VISUAL / RENDER
+            <span className="absolute bottom-6 left-6 font-mono text-[9px] text-brand-gold uppercase tracking-[0.25em] bg-ca-bg-deep/80 px-3 py-1.5 border border-ca-border rounded">
+              PROPUESTA TÉCNICA / ANTES
             </span>
           </div>
 
