@@ -81,29 +81,20 @@ export const ScrollChargeNav: React.FC = () => {
   };
 
   return (
-    <div className="fixed right-5 xl:right-8 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-row items-center select-none pointer-events-auto">
-      {/* Scroll Charge Line and Dots Container */}
-      <div className="relative flex flex-col items-center py-4">
-        {/* Track Line */}
-        <div className="absolute top-0 bottom-0 w-[1px] bg-ca-border/20 transition-colors duration-500" />
+    <div className="fixed right-6 xl:right-10 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-row items-center select-none pointer-events-auto">
+      {/* Scroll Charge Line and Ticks Container */}
+      <div className="relative flex flex-col items-end py-4 h-[380px]">
+        {/* Subtle vertical track line matching brand styling */}
+        <div className="absolute right-0 top-4 bottom-4 w-[1px] bg-white/10" />
         
-        {/* Fill Line (Scroll Charge) */}
-        <div 
-          className="absolute top-0 w-[1.5px] bg-brand-gold rounded-full transition-all duration-150 ease-out" 
-          style={{ 
-            height: `${scrollProgress}%`,
-            maxHeight: "100%"
-          }} 
-        />
-        
-        {/* Navigation Dot Indicators */}
-        <div className="relative z-10 flex flex-col justify-between h-[360px] py-1">
+        {/* Navigation Dot/Tick Indicators */}
+        <div className="relative z-10 flex flex-col justify-between h-full py-1 items-end pr-[2px]">
           {sections.map((section) => {
             const isActive = activeSection === section.id;
             return (
               <div 
                 key={section.id} 
-                className="group/dot relative flex items-center justify-center cursor-pointer w-6 h-6"
+                className="group/dot relative flex items-center justify-end cursor-pointer h-6 py-1"
                 onClick={() => scrollToSection(section.id)}
               >
                 {/* Floating Glassmorphic Label (Left side) */}
@@ -113,12 +104,12 @@ export const ScrollChargeNav: React.FC = () => {
                   <span className="font-sans text-[10px] uppercase tracking-wider text-ca-text font-light">{section.label}</span>
                 </div>
 
-                {/* Interactive Dot */}
+                {/* Technical Blueprint-style Dash Tick */}
                 <div 
-                  className={`rounded-full transition-all duration-500 ease-out ${
+                  className={`transition-all duration-500 ease-out rounded-full ${
                     isActive 
-                      ? "w-2.5 h-2.5 bg-brand-gold ring-4 ring-brand-gold/15 scale-110" 
-                      : "w-1.5 h-1.5 bg-ca-text-secondary/40 hover:bg-brand-gold/80 hover:scale-125"
+                      ? "w-5 h-[2px] bg-brand-gold shadow-[0_0_8px_rgba(216,179,106,0.6)]" 
+                      : "w-2 h-[1px] bg-white/20 group-hover/dot:w-4 group-hover/dot:bg-brand-gold/60"
                   }`}
                 />
               </div>
@@ -131,3 +122,4 @@ export const ScrollChargeNav: React.FC = () => {
 };
 
 export default ScrollChargeNav;
+
