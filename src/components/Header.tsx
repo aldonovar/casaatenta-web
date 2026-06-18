@@ -12,6 +12,20 @@ export const Header: React.FC = () => {
   const pathname = usePathname();
   const [isLight, setIsLight] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Detect scroll to style navbar dynamically
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   const overlayRef = useRef<HTMLDivElement>(null);
   const linksContainerRef = useRef<HTMLDivElement>(null);
   
@@ -121,7 +135,11 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full z-50 py-8 px-6 md:px-12 lg:px-24 transition-colors duration-500 text-ca-text`}>
+      <header className={`fixed top-0 left-0 w-full z-50 px-6 md:px-12 lg:px-24 transition-all duration-500 text-ca-text ${
+        scrolled 
+          ? "bg-ca-glass-bg/90 backdrop-blur-md border-b border-ca-border/20 py-4 shadow-[0_10px_30px_rgba(0,0,0,0.15)]" 
+          : "bg-transparent border-b border-transparent py-8"
+      }`}>
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <Link href="/" className="relative z-[60] group" onClick={() => setMenuOpen(false)}>
             <Logo className="h-10 md:h-12 lg:h-14 w-auto transition-transform duration-500 group-hover:scale-105" />
