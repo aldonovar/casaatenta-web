@@ -17,43 +17,54 @@ export const Footer: React.FC = () => {
     const el = containerRef.current;
     if (!el) return;
 
+    let observer: IntersectionObserver;
+
     const ctx = gsap.context(() => {
-      // Animate monumental text characters up
-      gsap.fromTo(
-        ".footer-char",
-        { yPercent: 120, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "power4.out",
-          stagger: 0.05,
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-          },
-        }
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            // Animate monumental text characters up
+            gsap.fromTo(
+              ".footer-char",
+              { yPercent: 120, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 1.2,
+                ease: "power4.out",
+                stagger: 0.05,
+              }
+            );
+            
+            // Animate the upper grid elements
+            gsap.fromTo(
+              ".footer-fade-in",
+              { opacity: 0, y: 30 },
+              {
+                 opacity: 1,
+                 y: 0,
+                 duration: 1.2,
+                 stagger: 0.1,
+                 ease: "power3.out",
+              }
+            );
+
+            // Disconnect observer after triggering once
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.02 } // Trigger as soon as the footer starts entering
       );
-      
-      // Animate the upper grid elements
-      gsap.fromTo(
-        ".footer-fade-in",
-        { opacity: 0, y: 40 },
-        {
-           opacity: 1,
-           y: 0,
-           duration: 1.2,
-           stagger: 0.1,
-           ease: "power3.out",
-           scrollTrigger: {
-             trigger: el,
-             start: "top 90%",
-           }
-        }
-      )
+
+      observer.observe(el);
     }, el);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, []);
 
   return (

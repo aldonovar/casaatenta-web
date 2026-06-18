@@ -18,23 +18,31 @@ export const CTAFinal: React.FC = () => {
     const card = cardRef.current;
     if (!el || !card) return;
 
+    let observer: IntersectionObserver;
+
     const ctx = gsap.context(() => {
-      // Scale-in transition for the main glass card
-      gsap.fromTo(
-        card,
-        { scale: 0.96, opacity: 0, y: 50 },
-        {
-          scale: 1,
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-          },
-        }
+      // Scale-in transition using IntersectionObserver to prevent scroll loop issues at the bottom
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            gsap.fromTo(
+              card,
+              { scale: 0.96, opacity: 0, y: 30 },
+              {
+                scale: 1,
+                opacity: 1,
+                y: 0,
+                duration: 1.2,
+                ease: "power3.out",
+              }
+            );
+            observer.disconnect();
+          }
+        },
+        { threshold: 0.08 }
       );
+
+      observer.observe(el);
 
       // Pulsing subtle ambient glow
       gsap.to(bgGlowRef.current, {
@@ -47,7 +55,12 @@ export const CTAFinal: React.FC = () => {
       });
     }, el);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, []);
 
   return (
