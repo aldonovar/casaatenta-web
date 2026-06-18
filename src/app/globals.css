@@ -1,5 +1,62 @@
 @import "tailwindcss";
 
+/* Register custom properties to enable smooth CSS gradient transitions */
+@property --bg-deep {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #07111D;
+}
+@property --bg-primary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0C2742;
+}
+@property --bg-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #07111D;
+}
+@property --bg-elevated {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0C2742;
+}
+@property --text-main {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #F4F0E8;
+}
+@property --text-secondary {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #6F8496;
+}
+@property --text-muted {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(111, 132, 150, 0.58);
+}
+@property --border-line {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0.12);
+}
+@property --border-hover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(255, 255, 255, 0.24);
+}
+@property --glass-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(7, 17, 29, 0.82);
+}
+@property --radial-glow {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: rgba(216, 168, 94, 0.08);
+}
+
 :root {
   --ca-night: #07111D;
   --ca-deep-blue: #0C2742;
@@ -100,29 +157,49 @@ svg,
 input,
 select,
 textarea {
-  transition: background-color 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-              color 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-              border-color 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-              fill 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-              stroke 0.8s cubic-bezier(0.25, 1, 0.5, 1),
-              box-shadow 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              fill 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html {
   scroll-behavior: auto;
-  background: var(--bg-deep);
+  background-color: var(--bg-deep);
+  transition: --bg-deep 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --bg-primary 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --bg-surface 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --bg-elevated 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --text-main 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --text-secondary 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --text-muted 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --border-line 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --border-hover 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --glass-bg 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              --radial-glow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
   min-height: 100vh;
   margin: 0;
   overflow-x: hidden;
-  background:
+  background-color: var(--bg-deep);
+  background-image:
     radial-gradient(circle at 72% 12%, var(--radial-glow), transparent 28%),
     linear-gradient(180deg, var(--bg-deep), var(--bg-primary) 42%, var(--bg-deep));
   color: var(--text-main);
   font-family: var(--font-sans);
   text-rendering: geometricPrecision;
+}
+
+/* Explicit high-contrast utilities to fix parser bugs in complex classes */
+.text-ca-bg-deep {
+  color: var(--bg-deep) !important;
+}
+.bg-ca-bg-deep {
+  background-color: var(--bg-deep) !important;
 }
 
 body::selection {
