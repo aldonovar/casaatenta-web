@@ -114,6 +114,42 @@ video {
   background-size: 72px 72px;
 }
 
+@keyframes driftOne {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -60px) scale(1.15);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+}
+
+@keyframes driftTwo {
+  0%, 100% {
+    transform: translate(0, 0) scale(1.05);
+  }
+  50% {
+    transform: translate(-50px, 50px) scale(0.85);
+  }
+}
+
+.bg-blob-1 {
+  animation: driftOne 22s ease-in-out infinite;
+}
+
+.bg-blob-2 {
+  animation: driftTwo 28s ease-in-out infinite;
+}
+
+.blueprint-grid {
+  background-image: 
+    linear-gradient(to right, rgba(216, 179, 106, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(216, 179, 106, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
 .ca-section {
   position: relative;
   overflow: hidden;
