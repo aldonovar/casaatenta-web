@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MessageCircle, ArrowUpRight, ChevronDown } from "lucide-react";
 import type { ServicePageData } from "@/data/services-pages";
 import { servicePages } from "@/data/services-pages";
+import { ServiceMotionGraphics } from "./ServiceMotionGraphics";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -105,6 +106,25 @@ export default function ServicePageLayout({
           heroContent,
           { opacity: 0, y: 40 },
           { opacity: 1, y: 0, duration: 1, delay: 0.2, ease: "power3.out" }
+        );
+      }
+
+      // Hero image parallax
+      const heroBg = heroRef.current?.querySelector(".hero-parallax-img");
+      if (heroBg) {
+        gsap.fromTo(
+          heroBg,
+          { yPercent: -10 },
+          {
+            yPercent: 10,
+            ease: "none",
+            scrollTrigger: {
+              trigger: heroRef.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
         );
       }
 
@@ -206,13 +226,13 @@ export default function ServicePageLayout({
         ref={heroRef}
         className="relative flex min-h-[70vh] items-end overflow-hidden md:min-h-[80vh]"
       >
-        {/* Background image */}
+        {/* Background image with parallax space */}
         <Image
           src={data.hero.image}
           alt={data.hero.imageAlt}
           fill
           priority
-          className="object-cover"
+          className="object-cover scale-110 hero-parallax-img"
           sizes="100vw"
         />
 
@@ -243,9 +263,15 @@ export default function ServicePageLayout({
       {/* ═══════════════════════════════════
           INTRO
          ═══════════════════════════════════ */}
-      <section ref={introRef} className="ca-section">
-        <div className="ca-container">
-          <p className="ca-body mx-auto text-center md:text-left">{data.intro}</p>
+      <section ref={introRef} className="ca-section bg-ca-bg-surface/30 relative border-t border-ca-border/40">
+        <div className="absolute inset-0 z-0 opacity-[0.015] architectural-grid pointer-events-none" />
+        <div className="ca-container relative z-10 grid gap-12 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-8">
+            <p className="ca-body leading-relaxed md:text-lg text-ca-text-secondary text-center lg:text-left">{data.intro}</p>
+          </div>
+          <div className="lg:col-span-4 flex justify-center lg:justify-end">
+            <ServiceMotionGraphics slug={data.slug} />
+          </div>
         </div>
       </section>
 

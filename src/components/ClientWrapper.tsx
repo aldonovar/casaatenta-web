@@ -13,6 +13,7 @@ import { WhatsAppButton } from "./WhatsAppButton";
 import { Preloader } from "./Preloader";
 import { CustomCursor } from "./CustomCursor";
 import { Footer } from "./Footer";
+import { BackgroundParticles } from "./BackgroundParticles";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,6 +93,9 @@ export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
     <div className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-ca-bg-deep font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark">
       {/* Cinematic noise film grain */}
       <div className="grain-overlay" />
+
+      {/* Dynamic network particles backdrop */}
+      <BackgroundParticles />
 
       {/* Interactive premium custom cursor */}
       <CustomCursor />

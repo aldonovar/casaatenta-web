@@ -290,7 +290,7 @@ export const HeroSection: React.FC = () => {
               href="/servicios"
               className="inline-flex min-h-14 items-center justify-center border border-ca-border bg-ca-bg-surface/10 backdrop-filter backdrop-blur-md px-10 py-4.5 text-[11px] font-mono uppercase tracking-[0.25em] text-ca-text transition-all duration-300 hover:bg-ca-text/10 rounded"
             >
-              <BrandText>Ver servicios</BrandText>
+              <BrandText>Nuestros Servicios</BrandText>
             </a>
           </div>
         </div>

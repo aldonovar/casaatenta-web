@@ -38,22 +38,39 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
         { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.2 }
       );
 
-      // Article sections
-      gsap.fromTo(
-        ".blog-section",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: ".blog-article",
-            start: "top 80%",
-          },
-        }
-      );
+      // Reading progress bar
+      gsap.to("#read-progress-bar", {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: true,
+        },
+      });
+
+      // Article sections scroll reveal
+      const sections = containerRef.current?.querySelectorAll(".blog-section");
+      if (sections) {
+        sections.forEach((section) => {
+          gsap.fromTo(
+            section,
+            { opacity: 0, y: 35 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: section,
+                start: "top 85%",
+                toggleActions: "play none none none",
+              },
+            }
+          );
+        });
+      }
 
       // FAQ section
       gsap.fromTo(
@@ -134,6 +151,12 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
       ref={containerRef}
       className="bg-ca-bg-deep min-h-screen relative overflow-hidden"
     >
+      {/* Reading progress bar */}
+      <div
+        id="read-progress-bar"
+        className="fixed top-0 left-0 h-[3px] bg-ca-gold z-[60] origin-left w-full scale-x-0"
+      />
+
       <div className="absolute inset-0 z-0 opacity-5 architectural-grid pointer-events-none" />
 
       {/* ── HERO ── */}
