@@ -30,7 +30,46 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
 
     setIsTransitioning(true);
 
-    // Slide curtain up, swap children, slide curtain out
+    const direction = getPreloaderDirection(pathname);
+
+    // Default: slide up
+    let entryState: gsap.TweenVars = { xPercent: 0, yPercent: 100, scale: 1, opacity: 1 };
+    let midState: gsap.TweenVars = { xPercent: 0, yPercent: 0, scale: 1, opacity: 1 };
+    let exitState: gsap.TweenVars = { xPercent: 0, yPercent: -100, scale: 1, opacity: 1 };
+
+    switch (direction) {
+      case "up":
+        entryState = { xPercent: 0, yPercent: 100, scale: 1, opacity: 1 };
+        exitState = { xPercent: 0, yPercent: -100, scale: 1, opacity: 1 };
+        break;
+      case "down":
+        entryState = { xPercent: 0, yPercent: -100, scale: 1, opacity: 1 };
+        exitState = { xPercent: 0, yPercent: 100, scale: 1, opacity: 1 };
+        break;
+      case "right":
+        entryState = { xPercent: -100, yPercent: 0, scale: 1, opacity: 1 };
+        exitState = { xPercent: 100, yPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "left":
+        entryState = { xPercent: 100, yPercent: 0, scale: 1, opacity: 1 };
+        exitState = { xPercent: -100, yPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "radial-out":
+        entryState = { xPercent: 0, yPercent: 0, scale: 0.8, opacity: 0 };
+        exitState = { xPercent: 0, yPercent: 0, scale: 1.25, opacity: 0 };
+        break;
+      case "radial-in":
+        entryState = { xPercent: 0, yPercent: 0, scale: 1.25, opacity: 0 };
+        exitState = { xPercent: 0, yPercent: 0, scale: 0.8, opacity: 0 };
+        break;
+      case "diagonal":
+      default:
+        entryState = { xPercent: -100, yPercent: 100, scale: 1, opacity: 1 };
+        exitState = { xPercent: 100, yPercent: -100, scale: 1, opacity: 1 };
+        break;
+    }
+
+    // Slide curtain, swap children, slide curtain out
     const ctx = gsap.context(() => {
       // Set initial values for drawing
       gsap.set(logoPathRef1.current, { strokeDasharray: 1040, strokeDashoffset: 1040 });
@@ -45,12 +84,12 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         }
       });
 
-      // 1. Move curtain to bottom and show it
-      gsap.set(curtainRef.current, { yPercent: 100, display: "flex" });
+      // 1. Move curtain to entry position and show it
+      gsap.set(curtainRef.current, { ...entryState, display: "flex" });
 
-      // 2. Slide curtain up to cover viewport
+      // 2. Slide curtain to cover viewport
       tl.to(curtainRef.current, {
-        yPercent: 0,
+        ...midState,
         duration: 0.55,
         ease: "power3.inOut",
       })
@@ -63,9 +102,9 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       .to(logoPathRef1.current, { strokeDashoffset: 0, duration: 0.55, ease: "power2.out" })
       .to(logoPathRef2.current, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, "-=0.4")
       .to([logoPathRef3.current, logoPathRef4.current], { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, "-=0.25")
-      // 5. Slide curtain up and away
+      // 5. Slide curtain to exit position
       .to(curtainRef.current, {
-        yPercent: -100,
+        ...exitState,
         duration: 0.55,
         ease: "power3.inOut",
         delay: 0.2,
@@ -101,7 +140,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
           {/* Animated Isotipo */}
           <svg
             viewBox="0 0 560 560"
-            className="w-16 h-16 fill-none stroke-white"
+            className="w-24 h-24 md:w-32 md:h-32 fill-none stroke-white transition-all"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g strokeLinecap="round" strokeLinejoin="round">

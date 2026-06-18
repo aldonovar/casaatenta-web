@@ -107,7 +107,7 @@ export const Preloader: React.FC = () => {
         })
         // Slide out the background curtain
         .to(containerRef.current, {
-          yPercent: -100,
+          ...exitState,
           duration: 0.8,
           ease: "power4.inOut",
         }, "-=0.2");
@@ -137,7 +137,7 @@ export const Preloader: React.FC = () => {
         {/* Soft white backdrop radial glow */}
         <div className="logo-glow absolute w-64 h-64 rounded-full bg-white/10 filter blur-3xl opacity-0 scale-90 pointer-events-none z-0" />
 
-        <div className="preloader-logo-wrapper relative z-10 w-28 h-28 md:w-36 md:h-36 select-none pointer-events-none">
+        <div className="preloader-logo-wrapper relative z-10 w-36 h-36 md:w-44 md:h-44 select-none pointer-events-none">
           {/* Logo inline paths to allow stroke-drawing animations */}
           <svg
             viewBox="0 0 760 760"
