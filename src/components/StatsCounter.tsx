@@ -8,10 +8,10 @@ import { BrandText } from "./BrandText";
 gsap.registerPlugin(ScrollTrigger);
 
 const statsData = [
-  { value: 1, suffix: " ms", label: "Latencia del Bus local" },
-  { value: 100, suffix: "%", label: "Drivers en Línea" },
-  { value: 3, suffix: " prop.", label: "Casos Conceptuales" },
-  { value: 12, suffix: " W", label: "Potencia Hub en reposo" },
+  { value: 30, suffix: "+", label: "Proyectos y Diseños" },
+  { value: 10, suffix: " Años", label: "Garantía Estructural" },
+  { value: 100, suffix: "%", label: "Diseños Personalizados" },
+  { value: 6, suffix: " Fases", label: "Metodología Integrada" },
 ];
 
 export const StatsCounter: React.FC = () => {

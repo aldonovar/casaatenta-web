@@ -63,7 +63,7 @@ export const SceneController: React.FC = () => {
             {/* Live Indicator */}
             <div className="relative z-10 font-mono text-[9px] text-white/40 flex items-center space-x-2 select-none uppercase tracking-widest bg-ca-bg-deep/80 px-4 py-2 border border-ca-border rounded">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-ping" />
-              <span>Simulación Atmosférica // Escena Activa: {activeMode.label}</span>
+              <span>Control de Atmósfera // Escena Activa: {activeMode.label}</span>
             </div>
           </div>
 
@@ -72,10 +72,10 @@ export const SceneController: React.FC = () => {
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-ca-border/40 pb-4">
                 <h4 className="text-xs font-mono tracking-widest text-ca-text uppercase">
-                  Telemetría Casa Atenta
+                  Controlador de Escenas
                 </h4>
                 <span className="font-mono text-[8px] text-brand-gold uppercase tracking-widest border border-brand-gold/20 px-2 py-0.5 font-bold">
-                  SYS-OS
+                  CASA ATENTA
                 </span>
               </div>
 
@@ -113,8 +113,8 @@ export const SceneController: React.FC = () => {
 
               <div className="bg-ca-bg-deep/50 border border-ca-border/40 p-5 font-mono text-[10px] text-brand-light/75 tracking-wider space-y-3 rounded">
                 <div className="flex justify-between items-center text-brand-gold border-b border-ca-border/30 pb-2 font-sans tracking-[0.15em] uppercase font-bold">
-                  <span>Datos de Escena</span>
-                  <span>SYS-{activeMode.id.toUpperCase()}-01</span>
+                  <span>Ajustes de Escena</span>
+                  <span>MODO-{activeMode.id.toUpperCase()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Temperatura Clima:</span>

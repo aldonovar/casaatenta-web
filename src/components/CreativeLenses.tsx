@@ -81,7 +81,7 @@ export const CreativeLenses: React.FC = () => {
                 
                 {/* Tech coordinates label */}
                 <span className="absolute bottom-2 left-2 font-mono text-[7px] text-brand-gold/70 tracking-widest">
-                  SYS-LENS-0{i+1} // LAT_ZOOM
+                  ENFOQUE DIGITAL // CASA ATENTA
                 </span>
               </div>
 

@@ -180,26 +180,6 @@ export const Footer: React.FC = () => {
                 </a>
               ))}
             </div>
-
-            {/* IoT status indicator */}
-            <div className="border border-ca-border/20 bg-ca-bg-surface/50 rounded-lg p-4 space-y-2 max-w-sm transition-all duration-500 hover:border-brand-gold/30">
-              <div className="flex items-center justify-between text-[10px] font-mono tracking-widest">
-                <span className="text-ca-text-secondary/70">MONITOR DOMÓTICO</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
-                  </span>
-                  <span className="text-brand-gold font-bold">ONLINE</span>
-                </div>
-              </div>
-              <div className="text-[10px] font-mono tracking-wider text-ca-text-secondary/60 grid grid-cols-2 gap-y-1">
-                <span>RED LOCAL: SECURE</span>
-                <span>LATENCIA: 4.2ms</span>
-                <span>LUMINARIAS: EN LÍNEA</span>
-                <span>DIAGNÓSTICO: OK</span>
-              </div>
-            </div>
           </div>
           
           {/* Column 2: Quick Links */}

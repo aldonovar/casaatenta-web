@@ -124,7 +124,7 @@ function InteractiveServiceShowcase({ slug }: { slug: string }) {
       return (
         <div className="glass-card p-6 md:p-10 rounded-sm space-y-8 max-w-4xl mx-auto border border-ca-border">
           <div className="text-center space-y-2">
-            <span className="tech-label">Simulador Bioclimático</span>
+            <span className="tech-label">Orientación Bioclimática</span>
             <h4 className="text-xl font-display font-light uppercase text-ca-text">Control de Sombra y Apertura</h4>
             <p className="text-xs text-ca-text-secondary">Usa el control deslizante para orientar las lamas y ajustar el nivel de sombra.</p>
           </div>
@@ -266,9 +266,9 @@ function InteractiveServiceShowcase({ slug }: { slug: string }) {
       return (
         <div className="glass-card p-6 md:p-10 rounded-sm space-y-8 max-w-4xl mx-auto border border-ca-border">
           <div className="text-center space-y-2">
-            <span className="tech-label">Simulador de Escena Circadiana</span>
+            <span className="tech-label">Espectro Lumínico Circadiano</span>
             <h4 className="text-xl font-display font-light uppercase text-ca-text">Atmósferas de Iluminación</h4>
-            <p className="text-xs text-ca-text-secondary">Haz clic en las diferentes horas del día para simular la luz y ver los parámetros circadianos.</p>
+            <p className="text-xs text-ca-text-secondary">Haz clic en las diferentes horas del día para visualizar el espectro de luz y sintonía circadiana.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -367,9 +367,9 @@ function InteractiveServiceShowcase({ slug }: { slug: string }) {
       return (
         <div className="glass-card p-6 md:p-10 rounded-sm space-y-8 max-w-4xl mx-auto border border-ca-border">
           <div className="text-center space-y-2">
-            <span className="tech-label">Smart Home WhatsApp Simulator</span>
+            <span className="tech-label">Control Conversacional WhatsApp</span>
             <h4 className="text-xl font-display font-light uppercase text-ca-text">Hogar Inteligente Conversacional</h4>
-            <p className="text-xs text-ca-text-secondary">Haz clic en los comandos de abajo para simular el control del hogar desde tu teléfono.</p>
+            <p className="text-xs text-ca-text-secondary">Interactúa con los comandos de abajo para experimentar la respuesta residencial integrada.</p>
           </div>
 
           <div className="grid md:grid-cols-12 gap-8 items-stretch">
@@ -427,9 +427,9 @@ function InteractiveServiceShowcase({ slug }: { slug: string }) {
             {/* Simulated House layout nodes */}
             <div className="md:col-span-7 flex flex-col justify-between p-6 border border-ca-border bg-ca-bg-surface/50 rounded-sm">
               <div className="space-y-2">
-                <span className="tech-label text-[10px]">Estado de Red del Hogar</span>
+                <span className="tech-label text-[10px]">Respuesta de Integración</span>
                 <p className="text-xs text-ca-text-secondary leading-relaxed">
-                  Presiona las escenas para simular cómo los nodos del hogar ejecutan comandos de forma sutil y eficiente.
+                  Presiona las escenas para previsualizar cómo el ecosistema responde de forma sutil y eficiente.
                 </p>
               </div>
 
