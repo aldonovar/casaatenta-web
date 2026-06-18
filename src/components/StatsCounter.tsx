@@ -66,6 +66,7 @@ export const StatsCounter: React.FC = () => {
   return (
     <section
       ref={containerRef}
+      id="stats"
       className="relative z-20 overflow-hidden bg-ca-bg-deep py-16 px-6 md:px-12 lg:px-24"
     >
       <div className="mx-auto max-w-7xl">

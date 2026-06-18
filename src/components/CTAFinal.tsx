@@ -53,6 +53,7 @@ export const CTAFinal: React.FC = () => {
   return (
     <section
       ref={containerRef}
+      id="final"
       className="relative z-20 overflow-hidden bg-ca-bg-deep px-6 py-28 md:px-16 md:py-40 lg:px-28"
     >
       <div className="absolute inset-0 z-0 opacity-5 cad-technical-grid pointer-events-none" />

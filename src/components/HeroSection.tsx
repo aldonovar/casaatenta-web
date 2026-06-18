@@ -179,6 +179,7 @@ export const HeroSection: React.FC = () => {
   return (
     <section
       ref={heroRef}
+      id="hero"
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="relative h-screen min-h-[720px] w-full flex flex-col justify-center overflow-hidden bg-ca-bg-deep px-6 md:px-16 lg:px-28"

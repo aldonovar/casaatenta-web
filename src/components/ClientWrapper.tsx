@@ -14,6 +14,7 @@ import { Preloader } from "./Preloader";
 import { CustomCursor } from "./CustomCursor";
 import { Footer } from "./Footer";
 import { BackgroundParticles } from "./BackgroundParticles";
+import { ScrollChargeNav } from "./ScrollChargeNav";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -113,6 +114,9 @@ export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
 
       {/* Navigation menu */}
       <Header />
+
+      {/* Scroll Charge section indicator (Home page only) */}
+      {pathname === "/" && <ScrollChargeNav />}
 
       {/* Main viewport transition wrapper */}
       <main className="w-full flex-grow relative z-10 bg-transparent">

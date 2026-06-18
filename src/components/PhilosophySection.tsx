@@ -67,7 +67,7 @@ export const PhilosophySection: React.FC = () => {
   }, []);
 
   return (
-    <div ref={triggerRef} className="relative w-full bg-ca-bg-primary border-t border-ca-border">
+    <section ref={triggerRef} id="filosofia" className="relative w-full bg-ca-bg-primary border-t border-ca-border">
       <div
         ref={containerRef}
         className="relative min-h-screen w-full flex flex-col justify-center overflow-hidden py-24 px-6 md:px-16 lg:px-28"
@@ -163,7 +163,7 @@ export const PhilosophySection: React.FC = () => {
 
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 export default PhilosophySection;
