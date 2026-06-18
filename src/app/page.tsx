@@ -42,7 +42,7 @@ export default function HomePage() {
               <span className="font-serif italic text-brand-gold">Antes y después.</span>
             </h2>
             <p className="ca-body mx-auto text-center max-w-2xl">
-              Arrastra el control central para comparar el estado original de la terraza residencial frente al resultado final tras nuestra intervención.
+              Arrastra el control central para comparar el estado original de una terraza frente a la simulación y diseño proyectado por Casa Atenta.
             </p>
           </div>
           <BeforeAfterSlider

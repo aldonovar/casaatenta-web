@@ -265,7 +265,7 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
                 {post.relatedServices.map((slug) => (
                   <Link
                     key={slug}
-                    href={`/soluciones#${slug}`}
+                    href={`/servicios/${slug}`}
                     className="inline-flex items-center gap-2 border border-white/[0.1] bg-white/[0.02] px-4 py-2.5 text-[10px] font-mono uppercase tracking-widest text-brand-light/60 transition-all duration-300 hover:border-brand-gold/40 hover:text-brand-gold hover:bg-brand-gold/[0.04] rounded"
                   >
                     <span>{serviceNames[slug] || slug}</span>

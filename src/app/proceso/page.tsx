@@ -115,7 +115,7 @@ const processStepsData: ProcessStep[] = [
     details: [
       "Monitoreo remoto preventivo y actualizaciones automáticas de firmware.",
       "Ajustes de atmósferas lumínicas y persianas directamente por chat.",
-      "Garantía técnica de integración de hardware por 5 años."
+      "Garantía estructural de hasta 1 año y plan de mantenimiento mensual del sistema."
     ],
     imageSrc: "/backgrounds/specialties.png",
     plano: "Diagrama de Servicios de Nube Local",

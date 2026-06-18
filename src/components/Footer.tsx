@@ -211,7 +211,7 @@ export const Footer: React.FC = () => {
           <div className="md:col-span-3 space-y-6 footer-fade-in">
             <h5 className="text-xs md:text-sm font-mono font-medium uppercase tracking-[0.22em] text-brand-gold border-b border-ca-border/20 pb-3">Especialidades</h5>
             <div className="flex flex-col space-y-3.5 text-[13px] md:text-sm font-mono uppercase tracking-wider text-ca-text-secondary">
-              <Link href="/servicios/techo-sol-y-sombra" className="hover:text-ca-text transition-colors w-fit">Techos Sol y Sombra</Link>
+              <Link href="/servicios/techos-sol-y-sombra" className="hover:text-ca-text transition-colors w-fit">Techos Sol y Sombra</Link>
               <Link href="/servicios/diseno-terrazas" className="hover:text-ca-text transition-colors w-fit">Diseño de Terrazas</Link>
               <Link href="/servicios/iluminacion-inteligente" className="hover:text-ca-text transition-colors w-fit">Iluminación Inteligente</Link>
               <Link href="/servicios/smart-homes" className="hover:text-ca-text transition-colors w-fit">Smart Homes</Link>

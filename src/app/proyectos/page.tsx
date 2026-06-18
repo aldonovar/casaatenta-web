@@ -48,12 +48,12 @@ const projectsData: ProjectCaseStudy[] = [
     id: "pabellon-del-agua",
     title: "Pabellón del Agua",
     category: "pabellones",
-    location: "Cieneguilla, Lima",
+    location: "Propuesta Conceptual / Cieneguilla",
     area: "450 m²",
-    year: "2025",
+    year: "Integración de Clima y Audio",
     intro: "Una estructura minimalista de concreto visto y vidrio templado. El pabellón se integra al entorno mediante el reflejo en un gran espejo de agua exterior, mientras el interior disuelve todo rastro técnico para priorizar la contemplación silenciosa.",
     integrations: ["Iluminación Circadiana", "Clima Invisible", "Acústica Invisible", "Diseño Estructural"],
-    quote: '"El sonido y el aire simplemente existen. No hay parlantes ni termostatos en ningún muro. La casa se siente completamente natural, viva y en calma."',
+    quote: '"Lograr que el sonido y la climatización invisible se fundan en la estructura de concreto visto, liberando los muros de cualquier rejilla o dispositivo técnico."',
     triptych: {
       exterior: {
         title: "PABELLÓN DEL AGUA // FASE 01: EXTERIOR",
@@ -79,12 +79,12 @@ const projectsData: ProjectCaseStudy[] = [
     id: "casa-travertino",
     title: "Casa Travertino",
     category: "residencial",
-    location: "La Molina, Lima",
+    location: "Estudio de Diseño / La Molina",
     area: "720 m²",
-    year: "2024",
+    year: "Iluminación Circadiana y Control",
     intro: "Una residencia familiar esculpida en piedra travertino y concreto. La obra destaca por la continuidad de sus texturas naturales y la total invisibilización de los sistemas mecánicos e interruptores eléctricos convencionales.",
     integrations: ["Iluminación Circadiana", "Clima Invisible", "Seguridad Discreta", "Control Conversacional"],
-    quote: '"La casa sabe qué hacer según la hora. Al anochecer, las luces se atenúan y el clima se calienta de forma autónoma. No tocamos un solo botón."',
+    quote: '"Programar el ciclo lumínico automatizado al ritmo solar natural, integrando interruptores capacitivos invisibles detrás del propio acabado de mármol."',
     triptych: {
       exterior: {
         title: "CASA TRAVERTINO // FASE 01: EXTERIOR",
@@ -110,12 +110,12 @@ const projectsData: ProjectCaseStudy[] = [
     id: "refugio-wellness",
     title: "Refugio Wellness",
     category: "wellness",
-    location: "Valle Sagrado, Cusco",
+    location: "Concepto de Integración / Cusco",
     area: "310 m²",
-    year: "2025",
+    year: "Acústica y Confort Invisible",
     intro: "Un santuario de bienestar diseñado para el descanso profundo y la meditación. La automatización se disuelve por completo en muros de adobe reforzado y piedra volcánica, calibrando la temperatura y purificación de aire sin ruidos.",
     integrations: ["Clima Invisible", "Acústica de Resonancia", "Iluminación Circadiana", "Diseño Estructural"],
-    quote: '"El aire siempre es fresco y limpio en silencio absoluto. La música ambiental parece flotar desde los propios muros de piedra. Un refugio místico."',
+    quote: '"Diseñar una experiencia de absoluto silencio y confort térmico, donde la música y el aire emanan de forma imperceptible desde los materiales locales."',
     triptych: {
       exterior: {
         title: "REFUGIO WELLNESS // FASE 01: EXTERIOR",
@@ -204,9 +204,9 @@ export default function ProyectosPage() {
         <div className="mb-16 space-y-4">
           <SectionHeading
             number="03"
-            label="Casos de Estudio"
-            title="PORTAFOLIO DE PROYECTOS INTEGRADOS"
-            subtitle="Casos de estudio técnicos donde hemos colaborado con arquitectos y constructoras para disolver la tecnología en espacios residenciales de lujo."
+            label="Propuestas"
+            title="CONCEPTOS Y ESTUDIOS DE INTEGRACIÓN"
+            subtitle="Estudios de concepto y simulaciones tridimensionales que demuestran el estándar de calidad, la precisión constructiva y la ingeniería invisible que diseñamos para tu hogar."
           />
         </div>
 
@@ -253,13 +253,13 @@ export default function ProyectosPage() {
                 {/* Specs list */}
                 <div className="lg:col-span-3 font-mono text-[10px] text-ca-text-secondary tracking-wider space-y-3 border-l border-ca-border pl-6 py-1">
                   <p>
-                    UBICACIÓN: <span className="text-ca-text font-normal">{project.location}</span>
+                    PROPUESTA: <span className="text-ca-text font-normal">{project.location}</span>
                   </p>
                   <p>
                     SUPERFICIE: <span className="text-ca-text font-normal">{project.area}</span>
                   </p>
                   <p>
-                    AÑO OBRA: <span className="text-ca-text font-normal">{project.year}</span>
+                    ESTUDIO: <span className="text-ca-text font-normal">{project.year}</span>
                   </p>
                   <div className="flex flex-wrap gap-2 pt-2">
                     {project.integrations.map((tag) => (
@@ -279,7 +279,7 @@ export default function ProyectosPage() {
                     {project.quote}
                   </p>
                   <span className="text-[9px] font-mono tracking-widest text-brand-gold/60 uppercase mt-4 block font-semibold">
-                    — PROPIETARIO RESIDENCIAL
+                    — PROMESA DE EXPERIENCIA
                   </span>
                 </div>
               </div>

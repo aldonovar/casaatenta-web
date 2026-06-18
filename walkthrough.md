@@ -37,9 +37,14 @@ Este documento resume los cambios realizados, las pruebas ejecutadas y la verifi
     *   *Alcance deseado* (Si desea automatización, acabados o ambos).
 *   **Consistencia Visual**: Se mantuvo la estética ultra-dark y de líneas finas doradas distribuyendo el formulario en un grid simétrico que se colapsa a una sola columna en pantallas móviles.
 
+### 6. Corrección de Enlaces Rotos y Rutas de Servicios
+*   **Footer**: Se cambió el enlace singular de `Techos Sol y Sombra` de `/servicios/techo-sol-y-sombra` a su forma correcta plural `/servicios/techos-sol-y-sombra` (que coincide con la ruta real del proyecto).
+*   **BlogPostLayout**: Se corrigieron los enlaces en la sección de "Servicios relacionados" dentro de las entradas del blog para que apunten a `/servicios/${slug}` en lugar de `/soluciones#${slug}`, redirigiendo correctamente a las páginas de servicio correspondientes.
+
 ---
 
 ## Verificación
 
-*   **Compilación Estática**: Se ejecutó `npm run build` para garantizar la compatibilidad de tipos TypeScript y la correcta exportación de todas las páginas secundarias y dinámicas del App Router de Next.js.
+*   **Compilación Estática**: Se ejecutó `npm run build` satisfactoriamente, garantizando que el compilador de TypeScript y el empaquetador de Next.js (Turbopack) no tienen errores y exportan todas las rutas estáticas correctamente.
+*   **Auditoría de Enlaces**: Se verificó la correcta construcción de todos los enlaces internos del Footer y de las páginas de blog/artículos para asegurar transiciones de cliente fluidas sin errores 404/500 de servidor.
 *   **Optimización Responsiva**: Se probó el comportamiento responsivo del nuevo formulario en dispositivos de 390px (mobile) y portátiles de 1440px sin overflow.

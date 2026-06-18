@@ -8,10 +8,10 @@ import { BrandText } from "./BrandText";
 gsap.registerPlugin(ScrollTrigger);
 
 const statsData = [
-  { value: 30, suffix: "+", label: "Proyectos y Diseños" },
-  { value: 10, suffix: " Años", label: "Garantía Estructural" },
   { value: 100, suffix: "%", label: "Diseños Personalizados" },
-  { value: 6, suffix: " Fases", label: "Metodología Integrada" },
+  { value: 1, suffix: " Año", label: "Garantía Estructural" },
+  { value: 1, suffix: " / Mes", label: "Mantenimiento del Sistema" },
+  { value: 1, suffix: " Canal", label: "Control por WhatsApp" },
 ];
 
 export const StatsCounter: React.FC = () => {

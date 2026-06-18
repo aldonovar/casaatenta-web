@@ -41,7 +41,7 @@ export const ConfianzaSection: React.FC = () => {
       icon: Shield,
       title: "Garantía de trabajo",
       description:
-        "Cada intervención cuenta con garantía sobre materiales y mano de obra. Revisamos y corregimos si algo no cumple el estándar.",
+        "Ofrecemos hasta 1 año de garantía estructural en nuestros acabados y plan de mantenimiento mensual del sistema automatizado para tu tranquilidad.",
     },
     {
       icon: MapPin,
