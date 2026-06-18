@@ -88,7 +88,10 @@ export const Footer: React.FC = () => {
               <h5 className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-ca-text-secondary border-b border-ca-border/50 pb-4">Navegación</h5>
               <div className="flex flex-col space-y-5 text-sm md:text-base font-light tracking-widest uppercase">
                 <Link href="/" className="hover:text-ca-text-secondary transition-colors w-fit">Inicio</Link>
-                <Link href="/diseno" className="hover:text-ca-text-secondary transition-colors w-fit">Diseño</Link>
+                <Link href="/servicios" className="hover:text-ca-text-secondary transition-colors w-fit">Servicios</Link>
+                <Link href="/proyectos" className="hover:text-ca-text-secondary transition-colors w-fit">Proyectos</Link>
+                <Link href="/proceso" className="hover:text-ca-text-secondary transition-colors w-fit">Proceso</Link>
+                <Link href="/blog" className="hover:text-ca-text-secondary transition-colors w-fit">Blog</Link>
                 <Link href="/nosotros" className="hover:text-ca-text-secondary transition-colors w-fit">Nosotros</Link>
                 <Link href="/contacto" className="hover:text-ca-text-secondary transition-colors w-fit">Contacto</Link>
               </div>
