@@ -100,14 +100,14 @@ export const Preloader: React.FC = () => {
       {/* Center Wrapper for Logo Icon */}
       <div className="relative flex flex-col items-center max-w-[90vw] px-6">
         
-        {/* Soft gold backdrop radial glow */}
-        <div className="logo-glow absolute w-64 h-64 rounded-full bg-brand-gold/15 filter blur-3xl opacity-0 scale-90 pointer-events-none z-0" />
+        {/* Soft white backdrop radial glow */}
+        <div className="logo-glow absolute w-64 h-64 rounded-full bg-white/10 filter blur-3xl opacity-0 scale-90 pointer-events-none z-0" />
 
         <div className="preloader-logo-wrapper relative z-10 w-28 h-28 md:w-36 md:h-36 select-none pointer-events-none">
           {/* Logo inline paths to allow stroke-drawing animations */}
           <svg
             viewBox="0 0 760 760"
-            className="w-full h-full fill-none stroke-brand-gold transition-all"
+            className="w-full h-full fill-none stroke-white transition-all"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g strokeLinecap="round" strokeLinejoin="round">

@@ -33,7 +33,6 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       gsap.set(logoPathRef2.current, { strokeDasharray: 755, strokeDashoffset: 755 });
       gsap.set(logoPathRef3.current, { strokeDasharray: 200, strokeDashoffset: 200 });
       gsap.set(logoPathRef4.current, { strokeDasharray: 100, strokeDashoffset: 100 });
-      gsap.set(".transition-logo-text", { opacity: 0, y: 10 });
 
       const tl = gsap.timeline({
         onComplete: () => {
@@ -59,7 +58,6 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       .to(logoPathRef1.current, { strokeDashoffset: 0, duration: 0.55, ease: "power2.out" })
       .to(logoPathRef2.current, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, "-=0.4")
       .to([logoPathRef3.current, logoPathRef4.current], { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, "-=0.25")
-      .to(".transition-logo-text", { opacity: 0.85, y: 0, duration: 0.3, ease: "power2.out" }, "-=0.15")
       // 5. Slide curtain up and away
       .to(curtainRef.current, {
         yPercent: -100,
@@ -93,7 +91,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
           {/* Animated Isotipo */}
           <svg
             viewBox="0 0 560 560"
-            className="w-16 h-16 fill-none stroke-brand-gold"
+            className="w-16 h-16 fill-none stroke-white"
             xmlns="http://www.w3.org/2000/svg"
           >
             <g strokeLinecap="round" strokeLinejoin="round">
@@ -123,9 +121,6 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
               />
             </g>
           </svg>
-          <span className="transition-logo-text text-[9px] font-mono tracking-[0.35em] text-brand-gold uppercase font-medium">
-            CASA ATENTA
-          </span>
         </div>
       </div>
 
