@@ -6,12 +6,18 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
+import {
+  TechosIcon,
+  TerrazasIcon,
+  IluminacionIcon,
+  SmartHomeIcon,
+  MantenimientoIcon,
+} from "./icons/AnimatedIcons";
 
 interface ServiceCard {
   slug: string;
   title: string;
   description: string;
-  icon: string;
   image: string;
   tags: string[];
 }
@@ -22,7 +28,6 @@ const serviceCards: ServiceCard[] = [
     title: "Techos Sol y Sombra",
     description:
       "Sombra funcional, estética arquitectónica y protección para tu terraza.",
-    icon: "☀️",
     image: "/backgrounds/casestudy.png",
     tags: ["Sombra", "Cubierta", "Exterior"],
   },
@@ -31,7 +36,6 @@ const serviceCards: ServiceCard[] = [
     title: "Diseño de Terrazas",
     description:
       "Distribución, materiales, iluminación y uso para terrazas que se viven.",
-    icon: "🏡",
     image: "/backgrounds/casestudy.png",
     tags: ["Distribución", "Exterior", "Mobiliario"],
   },
@@ -40,7 +44,6 @@ const serviceCards: ServiceCard[] = [
     title: "Iluminación Inteligente",
     description:
       "Escenas, sensores y control para que cada ambiente tenga la luz correcta.",
-    icon: "💡",
     image: "/backgrounds/circadian.png",
     tags: ["Escenas", "LED", "Sensores"],
   },
@@ -49,7 +52,6 @@ const serviceCards: ServiceCard[] = [
     title: "Smart Homes",
     description:
       "Automatización por etapas para hogares más cómodos, seguros y eficientes.",
-    icon: "🤖",
     image: "/backgrounds/specialties.png",
     tags: ["Domótica", "Rutinas", "Control"],
   },
@@ -58,11 +60,11 @@ const serviceCards: ServiceCard[] = [
     title: "Mantenimiento General",
     description:
       "Resane, pintura, carpintería y mejoras con criterio técnico y visual.",
-    icon: "🔧",
     image: "/backgrounds/beforeafter.png",
     tags: ["Pintura", "Acabados", "Soporte"],
   },
 ];
+
 
 export const ServiciosGridSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -111,6 +113,23 @@ export const ServiciosGridSection: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
+  const getServiceIcon = (slug: string) => {
+    switch (slug) {
+      case "techos-sol-y-sombra":
+        return <TechosIcon size={24} />;
+      case "diseno-terrazas":
+        return <TerrazasIcon size={24} />;
+      case "iluminacion-inteligente":
+        return <IluminacionIcon size={24} />;
+      case "smart-homes":
+        return <SmartHomeIcon size={24} />;
+      case "mantenimiento-general":
+        return <MantenimientoIcon size={24} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <section ref={sectionRef} className="ca-section relative" id="servicios">
       <div className="ca-container relative z-10">
@@ -134,25 +153,30 @@ export const ServiciosGridSection: React.FC = () => {
           ref={gridRef}
           className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto justify-center"
         >
-          {serviceCards.map((card) => (
-            <Link
-              key={card.slug}
-              href={`/servicios/${card.slug}`}
-              className="srv-card group glass-card flex flex-col overflow-hidden rounded-xl"
-              style={{ opacity: 0 }}
-            >
-              {/* Image */}
-              <div className="relative h-40 overflow-hidden">
-                <Image
-                  src={card.image}
-                  alt={card.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep/80 to-transparent" />
-                <span className="absolute top-3 left-3 text-xl">{card.icon}</span>
-              </div>
+            {serviceCards.map((card) => (
+              <Link
+                key={card.slug}
+                href={`/servicios/${card.slug}`}
+                className="srv-card group glass-card flex flex-col overflow-hidden rounded-xl"
+                style={{ opacity: 0 }}
+              >
+                {/* Image */}
+                <div className="relative h-40 overflow-hidden">
+                  <Image
+                    src={card.image}
+                    alt={card.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep/80 to-transparent" />
+                  
+                  {/* Glassmorphic icon container */}
+                  <div className="absolute top-3 left-3 rounded-lg border border-brand-gold/20 bg-ca-bg-deep/80 p-2 backdrop-blur-sm transition-all duration-300 group-hover:border-brand-gold/50 group-hover:bg-brand-gold/5 flex items-center justify-center">
+                    {getServiceIcon(card.slug)}
+                  </div>
+                </div>
+
 
               {/* Content */}
               <div className="flex flex-1 flex-col p-5">

@@ -7,6 +7,7 @@ import { methodSteps, homeCopy } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
 import { BrandText } from "./BrandText";
 import { Eye, Layers, Cpu, Ruler, Sliders, ShieldCheck } from "lucide-react";
+import { PremiumIconWrapper } from "./icons/AnimatedIcons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -136,9 +137,9 @@ export const ProcessTimeline: React.FC = () => {
                   className="timeline-step relative grid grid-cols-1 lg:grid-cols-12 items-center w-full"
                 >
                   {/* Central Node Circle (Desktop only) */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden lg:flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-ca-bg-surface timeline-node">
-                    <IconComponent className="h-4.5 w-4.5 text-brand-gold group-hover:scale-110" />
-                  </div>
+                  <PremiumIconWrapper className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden lg:flex h-10 w-10 timeline-node !rounded-full !p-0">
+                    <IconComponent className="h-4.5 w-4.5 text-brand-gold transition-transform duration-300" />
+                  </PremiumIconWrapper>
 
                   {/* Left Column (Content or Empty depending on step parity) */}
                   <div
@@ -148,9 +149,9 @@ export const ProcessTimeline: React.FC = () => {
                   >
                     <div className="step-content-card p-6 md:p-8 glass-card rounded-lg w-full max-w-lg">
                       <div className="flex items-center gap-4 mb-4 lg:hidden">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-brand-gold/30 text-brand-gold bg-brand-gold/5">
-                          <IconComponent size={16} />
-                        </div>
+                        <PremiumIconWrapper className="!p-2 flex h-9 w-9 items-center justify-center rounded-xl">
+                          <IconComponent size={16} className="text-brand-gold" />
+                        </PremiumIconWrapper>
                         <span className="text-xs font-mono text-brand-gold font-semibold">
                           FASE {step.number}
                         </span>

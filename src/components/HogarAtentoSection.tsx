@@ -5,6 +5,12 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import { WhatsAppMockup } from "./WhatsAppMockup";
+import {
+  BuenosDiasIcon,
+  HoraCenaIcon,
+  BuenasNochesIcon,
+  SalirCasaIcon,
+} from "./icons/AnimatedIcons";
 
 export const HogarAtentoSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -73,25 +79,25 @@ export const HogarAtentoSection: React.FC = () => {
 
   const routines = [
     {
-      icon: "🌅",
+      icon: <BuenosDiasIcon size={24} />,
       title: "Buenos días",
       description:
         "Las cortinas se abren, la luz sube gradualmente y la cafetera se activa.",
     },
     {
-      icon: "🍽️",
+      icon: <HoraCenaIcon size={24} />,
       title: "Hora de cena",
       description:
         "Iluminación cálida al 60%, música ambiental y terraza lista para servir.",
     },
     {
-      icon: "🌙",
+      icon: <BuenasNochesIcon size={24} />,
       title: "Buenas noches",
       description:
         "Luces apagadas, accesos bloqueados, sensores activos y noche tranquila.",
     },
     {
-      icon: "🔒",
+      icon: <SalirCasaIcon size={24} />,
       title: "Salir de casa",
       description:
         "Todo se apaga, la seguridad se activa y recibes confirmación en tu chat.",
@@ -138,10 +144,12 @@ export const HogarAtentoSection: React.FC = () => {
             {routines.map((r, idx) => (
               <div
                 key={idx}
-                className="hogar-step flex items-start gap-4 rounded-lg border border-ca-border/60 bg-white/[0.03] p-5 transition-all duration-300 hover:border-brand-gold/30 hover:bg-white/[0.06]"
+                className="hogar-step group flex items-start gap-4 rounded-lg border border-ca-border/60 bg-white/[0.03] p-5 transition-all duration-300 hover:border-brand-gold/30 hover:bg-white/[0.06]"
                 style={{ opacity: 0 }}
               >
-                <span className="text-2xl leading-none mt-0.5">{r.icon}</span>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-brand-gold/20 bg-ca-bg-deep/80 p-2 backdrop-blur-sm transition-all duration-300 group-hover:border-brand-gold/50">
+                  {r.icon}
+                </div>
                 <div>
                   <h3 className="text-sm font-medium text-ca-text mb-1 font-display tracking-wide uppercase">
                     {r.title}

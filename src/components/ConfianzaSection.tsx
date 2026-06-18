@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Shield, MapPin, Users } from "lucide-react";
+import { PremiumIconWrapper } from "./icons/AnimatedIcons";
 
 export const ConfianzaSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -72,15 +73,22 @@ export const ConfianzaSection: React.FC = () => {
         <div ref={cardsRef} className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
           {trustCards.map((card) => {
             const Icon = card.icon;
+            const getIconClass = (title: string) => {
+              if (title.includes("Garantía")) return "transition-transform duration-500 group-hover:rotate-12";
+              if (title.includes("Atención")) return "transition-transform duration-500 group-hover:-translate-y-1.5";
+              if (title.includes("Equipo")) return "transition-transform duration-500 group-hover:scale-115";
+              return "";
+            };
+
             return (
               <div
                 key={card.title}
-                className="trust-card glass-card rounded-xl p-6 text-center"
+                className="trust-card group glass-card rounded-xl p-6 text-center"
                 style={{ opacity: 0 }}
               >
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full border border-brand-gold/30 bg-brand-gold/10">
-                  <Icon className="h-5 w-5 text-brand-gold" />
-                </div>
+                <PremiumIconWrapper className="mx-auto mb-4 h-12 w-12 !rounded-full">
+                  <Icon className={`h-5 w-5 text-brand-gold ${getIconClass(card.title)}`} />
+                </PremiumIconWrapper>
                 <h3 className="text-sm font-display font-medium text-ca-text tracking-wide uppercase mb-3">
                   {card.title}
                 </h3>

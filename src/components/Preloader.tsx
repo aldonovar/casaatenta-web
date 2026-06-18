@@ -14,6 +14,34 @@ export const Preloader: React.FC = () => {
     // Check if the user has already visited in this session
     const hasVisited = sessionStorage.getItem("casa-atenta-preloader-visited");
 
+    let exitState: gsap.TweenVars = { yPercent: -100, xPercent: 0, scale: 1, opacity: 1 };
+    const preloaderDirection = getPreloaderDirection(pathname);
+
+    switch (preloaderDirection) {
+      case "up":
+        exitState = { yPercent: -100, xPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "down":
+        exitState = { yPercent: 100, xPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "right":
+        exitState = { xPercent: 100, yPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "left":
+        exitState = { xPercent: -100, yPercent: 0, scale: 1, opacity: 1 };
+        break;
+      case "radial-out":
+        exitState = { scale: 1.25, opacity: 0, xPercent: 0, yPercent: 0 };
+        break;
+      case "radial-in":
+        exitState = { scale: 0.75, opacity: 0, xPercent: 0, yPercent: 0 };
+        break;
+      case "diagonal":
+      default:
+        exitState = { xPercent: 100, yPercent: -100, scale: 1, opacity: 1 };
+        break;
+    }
+
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         onComplete: () => {
@@ -28,7 +56,7 @@ export const Preloader: React.FC = () => {
       if (hasVisited) {
         // Fast preloader on revisit (fade and slide up quickly)
         tl.to(containerRef.current, {
-          yPercent: -100,
+          ...exitState,
           duration: 0.6,
           ease: "power4.inOut",
         });

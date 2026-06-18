@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { BrandText } from "./BrandText";
+import { ChevronDownIcon } from "./icons/AnimatedIcons";
 
 interface FAQItem {
   question: string;
@@ -80,11 +80,10 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         >
           <BrandText>{item.question}</BrandText>
         </span>
-        <ChevronDown
+        <ChevronDownIcon
           size={16}
-          className={`shrink-0 transition-transform duration-300 ${
-            isOpen ? "rotate-180 text-brand-gold" : "text-brand-light/40"
-          }`}
+          isOpen={isOpen}
+          className="shrink-0"
         />
       </button>
       <div

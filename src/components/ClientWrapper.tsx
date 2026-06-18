@@ -15,6 +15,7 @@ import { CustomCursor } from "./CustomCursor";
 import { Footer } from "./Footer";
 import { BackgroundParticles } from "./BackgroundParticles";
 import { ScrollChargeNav } from "./ScrollChargeNav";
+import { InjectIconStyles } from "./icons/AnimatedIcons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -92,6 +93,9 @@ export const ClientWrapper: React.FC<ClientWrapperProps> = ({ children }) => {
 
   return (
     <div className="relative flex min-h-screen flex-col justify-between overflow-hidden bg-ca-bg-deep font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark">
+      {/* Dynamic icon styles injection */}
+      <InjectIconStyles />
+
       {/* Cinematic noise film grain */}
       <div className="grain-overlay" />
 

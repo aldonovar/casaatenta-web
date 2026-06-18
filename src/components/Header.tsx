@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { gsap } from "gsap";
-import { Sun, Moon } from "lucide-react";
+import { SunIcon, MoonIcon } from "./icons/AnimatedIcons";
 import { Logo } from "./Logo";
 import { BrandText } from "./BrandText";
 
@@ -148,10 +148,14 @@ export const Header: React.FC = () => {
           <div className="flex items-center space-x-6 md:space-x-12 relative z-[60]">
             <button
               onClick={toggleTheme}
-              className="flex items-center justify-center h-10 w-10 rounded-full border border-ca-border hover:border-ca-text hover:bg-ca-text/5 transition-all duration-300"
+              className="flex items-center justify-center h-10 w-10 rounded-full border border-ca-border hover:border-ca-text hover:bg-ca-text/5 transition-all duration-300 group/theme"
               aria-label="Toggle Theme"
             >
-              {isLight ? <Moon size={16} /> : <Sun size={16} />}
+              {isLight ? (
+                <MoonIcon size={16} className="transition-transform duration-500 group-hover/theme:rotate-12" />
+              ) : (
+                <SunIcon size={16} className="transition-transform duration-500 group-hover/theme:scale-110" />
+              )}
             </button>
             
             <button 

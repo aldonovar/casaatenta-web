@@ -14,6 +14,7 @@ import {
   Sliders, 
   PhoneCall 
 } from "lucide-react";
+import { PremiumIconWrapper } from "@/components/icons/AnimatedIcons";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -266,9 +267,9 @@ export default function ProcesoPage() {
                   className="relative space-y-8"
                 >
                   {/* Timeline dot with icon */}
-                  <div className="timeline-node absolute left-0 top-1.5 -translate-x-1/2 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-ca-border bg-ca-bg-deep transition-all duration-300">
+                  <PremiumIconWrapper className="timeline-node absolute left-0 top-1.5 -translate-x-1/2 z-10 flex h-9 w-9 items-center justify-center !rounded-full !p-0">
                     <IconComponent className="h-4.5 w-4.5 text-brand-gold transition-colors duration-300" />
-                  </div>
+                  </PremiumIconWrapper>
 
                   {/* Step info block */}
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
