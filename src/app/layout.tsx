@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { siteMeta } from "@/data/site";
 import { Cormorant_Garamond, Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { ClientWrapper } from "../components/ClientWrapper";
@@ -24,9 +25,8 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Casa Atenta | Diseño residencial inteligente y automatización para hogares que responden",
-  description:
-    "Casa Atenta integra domótica, iluminación, accesos, terrazas, acabados y escenas inteligentes para transformar la forma en que tu hogar responde.",
+  title: siteMeta.title,
+  description: siteMeta.description,
   keywords: [
     "pérgolas lima",
     "terrazas lima",
@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     "iluminación inteligente perú",
     "automatización residencial lima",
     "smart home perú",
+    "domótica lima",
   ],
   authors: [{ name: "Casa Atenta" }],
 };
