@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { BrandText } from "./BrandText";
 
 interface ProjectCardProps {
   imageSrc: string;
+  imageAlt: string;
+  visualLabel: string;
   title: string;
   location: string;
   size: string;
@@ -15,6 +18,8 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   imageSrc,
+  imageAlt,
+  visualLabel,
   title,
   location,
   size,
@@ -24,52 +29,47 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 }) => {
   return (
     <article
-      className={`project-card-hover group relative overflow-hidden border border-ca-border bg-ca-bg-surface/20 rounded-xl cursor-pointer ${aspectRatio} ${className}`}
+      className={`group relative overflow-hidden rounded-2xl border border-ca-border bg-ca-bg-surface/20 ${aspectRatio} ${className}`}
     >
-      {/* Background Image with Zoom on Hover */}
-      <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-103 opacity-70 group-hover:opacity-85"
-        style={{ backgroundImage: `url(${imageSrc})` }}
+      <Image
+        src={imageSrc}
+        alt={imageAlt}
+        fill
+        sizes="(max-width: 1024px) 100vw, 33vw"
+        className="object-cover opacity-68 transition duration-700 ease-out group-hover:scale-[1.035] group-hover:opacity-82"
       />
-
-      {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/30 to-transparent opacity-85 transition-opacity duration-500 group-hover:opacity-95" />
-
-      {/* Hover Light Glow Accent using theme border color variable */}
+      <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/30 to-transparent" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,var(--ca-border)_0%,transparent_60%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-      {/* Project Specs */}
-      <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end h-full z-10 translate-y-3 transition-transform duration-500 group-hover:translate-y-0">
-        {/* Monospace tags */}
-        <div className="flex flex-wrap gap-2.5 mb-4">
+      <span className="absolute left-5 top-5 z-10 border border-white/10 bg-ca-bg-deep/80 px-3 py-2 text-[8px] font-mono uppercase tracking-[0.18em] text-ca-text backdrop-blur-md">
+        {visualLabel}
+      </span>
+
+      <div className="absolute inset-x-0 bottom-0 z-10 flex h-full flex-col justify-end p-7 md:p-8">
+        <div className="mb-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <span
               key={tag}
-              className="text-[9px] font-mono uppercase tracking-widest text-ca-text bg-ca-text/10 px-3 py-1 rounded"
+              className="rounded border border-white/10 bg-ca-bg-deep/55 px-3 py-1 text-[8px] font-mono uppercase tracking-[0.16em] text-ca-text"
             >
               {tag}
             </span>
           ))}
         </div>
 
-        {/* Project Title (Syne) */}
-        <h3 className="text-2xl md:text-3.5xl font-display font-light uppercase tracking-wide text-ca-text transition-all duration-300">
+        <h3 className="text-2xl font-display font-light uppercase tracking-[0.06em] text-ca-text md:text-3xl">
           <BrandText>{title}</BrandText>
         </h3>
 
-        {/* Divider line that expands on hover */}
-        <div className="w-16 h-[1.5px] bg-ca-text/30 my-4 transition-all duration-500 group-hover:w-full" />
+        <div className="my-4 h-px w-16 bg-ca-text/30 transition-all duration-500 group-hover:w-full" />
 
-        {/* Location & Metrics */}
-        <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-mono text-ca-text-secondary tracking-wider">
+        <div className="flex flex-col gap-2 text-[9px] font-mono uppercase tracking-[0.16em] text-ca-text-secondary sm:flex-row sm:items-center sm:justify-between">
           <span>{location}</span>
           <span>{size}</span>
         </div>
       </div>
-
-      {/* Top border technical detail */}
-      <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-ca-text/20 to-transparent scale-x-0 transition-transform duration-500 group-hover:scale-x-100" />
     </article>
   );
 };
+
 export default ProjectCard;
