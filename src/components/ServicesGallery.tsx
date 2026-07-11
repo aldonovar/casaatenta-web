@@ -1,45 +1,43 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import Image from "next/image";
+import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { servicesData, homeCopy } from "@/data/site";
+import { homeCopy, servicesData } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
 import { BrandText } from "./BrandText";
+import { ServiceMotionGraphics } from "./ServiceMotionGraphics";
 import { WHATSAPP_LINK } from "@/constants/contact";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const ServicesGallery: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollSectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
-    const scrollSection = scrollSectionRef.current;
-    if (!container || !scrollSection) return;
+    const track = trackRef.current;
+    if (!container || !track) return;
 
-    const mm = gsap.matchMedia();
+    const media = gsap.matchMedia();
 
-    mm.add("(min-width: 1024px)", () => {
-      const panels = gsap.utils.toArray(".service-panel");
-      const totalPanels = panels.length;
-
-      // Pin and horizontally scroll the panels
-      gsap.to(scrollSection, {
-        xPercent: -100 * (totalPanels - 1),
+    media.add("(min-width: 1024px)", () => {
+      const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const tween = gsap.to(track, {
+        x: () => -distance(),
         ease: "none",
         scrollTrigger: {
           trigger: container,
           pin: true,
-          scrub: 1,
+          scrub: 0.85,
           start: "top top",
-          end: () => `+=${scrollSection.offsetWidth}`,
+          end: () => `+=${distance()}`,
           invalidateOnRefresh: true,
         },
       });
 
-      // Animate progress scale
       gsap.fromTo(
         ".services-progress-bar",
         { scaleX: 0 },
@@ -49,24 +47,22 @@ export const ServicesGallery: React.FC = () => {
           scrollTrigger: {
             trigger: container,
             start: "top top",
-            end: () => `+=${scrollSection.offsetWidth}`,
-            scrub: 1,
+            end: () => `+=${distance()}`,
+            scrub: 0.85,
           },
-        }
+        },
       );
+
+      return () => tween.kill();
     });
 
-    mm.add("(max-width: 1023px)", () => {
-      gsap.set(scrollSection, { xPercent: 0 });
-    });
-
-    return () => mm.revert();
+    media.add("(max-width: 1023px)", () => gsap.set(track, { x: 0 }));
+    return () => media.revert();
   }, []);
 
   return (
-    <div ref={containerRef} id="servicios" className="relative w-full bg-ca-bg-surface border-t border-ca-border">
-      {/* Title block */}
-      <div className="mx-auto max-w-7xl px-6 pt-32 pb-16 md:px-16 lg:px-28">
+    <div ref={containerRef} id="servicios" className="relative w-full border-t border-ca-border bg-ca-bg-surface">
+      <div className="mx-auto max-w-7xl px-6 pb-16 pt-32 md:px-16 lg:px-28">
         <SectionHeading
           number="04"
           label={homeCopy.services.label}
@@ -75,97 +71,57 @@ export const ServicesGallery: React.FC = () => {
         />
       </div>
 
-      {/* Horizontal scroll section */}
       <div className="relative w-full overflow-hidden">
-        <div
-          ref={scrollSectionRef}
-          className="flex flex-col lg:flex-row w-full lg:w-[500vw] h-auto lg:h-[80vh]"
-        >
+        <div ref={trackRef} className="flex w-full flex-col lg:w-max lg:flex-row">
           {servicesData.map((service, index) => (
-            <div
+            <section
               key={service.id}
-              className="service-panel w-full lg:w-[100vw] h-auto lg:h-full flex flex-col lg:flex-row items-center px-6 md:px-16 lg:px-28 py-16 lg:py-0 gap-12 lg:gap-20 border-b lg:border-b-0 border-ca-border"
+              className="service-panel flex min-h-[760px] w-full flex-col items-center gap-12 border-b border-ca-border px-6 py-16 md:px-16 lg:h-[82vh] lg:min-h-[720px] lg:w-screen lg:flex-row lg:gap-20 lg:border-b-0 lg:px-28 lg:py-0"
             >
-              {/* Massive Atmospheric Image Frame */}
-              <div className="w-full lg:w-7/12 h-[45vh] lg:h-[85%] relative overflow-hidden border border-ca-border rounded-xl shadow-2xl group bg-ca-bg-deep select-none">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:scale-103 opacity-40 group-hover:opacity-15"
-                  style={{ backgroundImage: `url(${service.image})` }}
+              <div className="group relative h-[48vh] min-h-[360px] w-full overflow-hidden rounded-2xl border border-ca-border bg-ca-bg-deep shadow-2xl lg:h-[84%] lg:w-7/12">
+                <Image
+                  src={service.image}
+                  alt={service.imageAlt}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  className="object-cover opacity-38 transition duration-700 ease-out group-hover:scale-[1.025] group-hover:opacity-24"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/20 to-transparent" />
-                
-                {/* Large minimal line work overlays */}
-                {index === 0 && (
-                  <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full stroke-ca-text/30 fill-none p-12 opacity-60">
-                    <circle cx="200" cy="150" r="90" strokeWidth="0.5" strokeDasharray="4 4" />
-                    <circle cx="200" cy="150" r="60" strokeWidth="0.5" />
-                    <circle cx="200" cy="150" r="30" strokeWidth="0.75" />
-                  </svg>
-                )}
-                {index === 1 && (
-                  <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full stroke-ca-text/30 fill-none p-12 opacity-60">
-                    <rect x="50" y="50" width="300" height="200" strokeWidth="0.5" strokeDasharray="6 6" />
-                    <line x1="100" y1="50" x2="100" y2="250" strokeWidth="0.5" />
-                    <line x1="200" y1="50" x2="200" y2="250" strokeWidth="0.5" />
-                    <line x1="300" y1="50" x2="300" y2="250" strokeWidth="0.5" />
-                  </svg>
-                )}
-                {index === 2 && (
-                  <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full stroke-ca-text/30 fill-none p-12 opacity-60">
-                    <path d="M 100 220 L 200 80 L 300 220" strokeWidth="0.75" />
-                    <line x1="100" y1="220" x2="300" y2="220" strokeWidth="0.5" strokeDasharray="3 3" />
-                    <circle cx="200" cy="80" r="4" fill="var(--color-brand-gold)" />
-                  </svg>
-                )}
-                {index === 3 && (
-                  <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full stroke-ca-text/30 fill-none p-12 opacity-60">
-                    <line x1="50" y1="150" x2="350" y2="150" strokeWidth="0.5" />
-                    <path d="M 120 150 L 200 70 L 280 150" strokeWidth="0.5" />
-                    <rect x="180" y="150" width="40" height="60" strokeWidth="0.5" strokeDasharray="2 2" />
-                  </svg>
-                )}
-                {index === 4 && (
-                  <svg viewBox="0 0 400 300" className="absolute inset-0 w-full h-full stroke-ca-text/30 fill-none p-12 opacity-60">
-                    <circle cx="200" cy="150" r="10" fill="var(--color-brand-gold)" />
-                    <path d="M 150 150 A 50 50 0 0 1 250 150" strokeWidth="0.5" strokeDasharray="3 3" />
-                    <path d="M 120 150 A 80 80 0 0 1 280 150" strokeWidth="0.5" />
-                    <path d="M 90 150 A 110 110 0 0 1 310 150" strokeWidth="0.5" strokeDasharray="3 3" />
-                  </svg>
-                )}
-
-                <div className="absolute bottom-6 left-6 font-mono text-[10px] tracking-widest bg-ca-bg-deep/85 px-4 py-2 rounded border border-ca-border uppercase">
-                  <span>SERVICIOS // 0{index + 1}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/30 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center p-8 md:p-12">
+                  <ServiceMotionGraphics slug={service.motionSlug} />
                 </div>
+
+                <span className="absolute left-5 top-5 z-10 border border-white/10 bg-ca-bg-deep/80 px-3 py-2 text-[8px] font-mono uppercase tracking-[0.18em] text-ca-text backdrop-blur-md">
+                  {service.visualLabel}
+                </span>
+                <span className="absolute bottom-5 left-5 z-10 border border-ca-border bg-ca-bg-deep/80 px-4 py-2 text-[9px] font-mono uppercase tracking-[0.18em] text-ca-text backdrop-blur-md">
+                  SERVICIO 0{index + 1}
+                </span>
               </div>
 
-              {/* Large scale Content Side */}
-              <div className="w-full lg:w-5/12 flex flex-col justify-center items-start space-y-8">
-                <div className="flex items-center justify-between w-full border-b border-ca-border/40 pb-4">
-                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-ca-text/60">
-                    Casa Atenta // {service.title}
+              <div className="flex w-full flex-col items-start justify-center space-y-7 lg:w-5/12">
+                <div className="flex w-full items-center justify-between border-b border-ca-border/40 pb-4">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.24em] text-ca-text/60">
+                    CASA ATENTA / {service.title}
                   </span>
-                  <span className="text-xs font-mono text-ca-text/30">
-                    0{index + 1} / 05
+                  <span className="text-[10px] font-mono text-ca-text/35">
+                    0{index + 1} / 0{servicesData.length}
                   </span>
                 </div>
 
-                <h3 className="text-3xl md:text-5xl font-display font-light uppercase tracking-wide text-ca-text">
+                <h3 className="text-3xl font-display font-light uppercase tracking-[0.05em] text-ca-text md:text-5xl">
                   <BrandText>{service.title}</BrandText>
                 </h3>
 
-                <p className="text-sm md:text-base font-light leading-relaxed text-ca-text-secondary/90">
+                <p className="max-w-xl text-sm font-light leading-relaxed text-ca-text-secondary md:text-base">
                   {service.text}
                 </p>
 
-                {/* Features List */}
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full pt-2">
-                  {service.includes.map((bullet) => (
-                    <li
-                      key={bullet}
-                      className="flex items-center gap-3 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-ca-text/80"
-                    >
-                      <span className="h-2 w-2 rounded-full bg-ca-text" />
-                      <span>{bullet}</span>
+                <ul className="grid w-full grid-cols-1 gap-3 pt-1 sm:grid-cols-2">
+                  {service.includes.map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-[9px] font-mono uppercase tracking-[0.14em] text-ca-text/80 sm:text-[10px]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -174,33 +130,19 @@ export const ServicesGallery: React.FC = () => {
                   href={service.href || WHATSAPP_LINK}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 text-[11px] font-mono uppercase tracking-[0.25em] text-ca-text border-b border-ca-text/30 pb-1 pt-4 transition-all duration-300 hover:border-ca-text"
+                  className="inline-flex items-center gap-3 border-b border-ca-text/30 pb-2 pt-3 text-[10px] font-mono uppercase tracking-[0.22em] text-ca-text transition hover:border-ca-text"
                 >
-                  <BrandText>{service.cta || "Saber Más"}</BrandText>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2"
-                    stroke="currentColor"
-                    className="w-3.5 h-3.5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                    />
-                  </svg>
+                  <BrandText>{service.cta}</BrandText>
+                  <span aria-hidden="true">↗</span>
                 </a>
               </div>
-            </div>
+            </section>
           ))}
         </div>
       </div>
 
-      {/* Progress Bar (Desktop only) */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-ca-border/20 z-20 hidden lg:block">
-        <div className="services-progress-bar absolute left-0 top-0 h-full w-full bg-ca-text origin-left scale-x-[0.20]" />
+      <div className="absolute bottom-0 left-0 right-0 z-20 hidden h-[2px] bg-ca-border/20 lg:block">
+        <div className="services-progress-bar h-full w-full origin-left bg-brand-gold" />
       </div>
     </div>
   );
