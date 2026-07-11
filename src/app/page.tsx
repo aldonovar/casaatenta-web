@@ -1,10 +1,6 @@
 import React from "react";
 import { HeroSection } from "@/components/HeroSection";
-import { CinematicWalk } from "@/components/CinematicWalk";
-import { CreativeLenses } from "@/components/CreativeLenses";
-import { ServicesGallery } from "@/components/ServicesGallery";
-import { SceneController } from "@/components/SceneController";
-import { HalfRenderReality } from "@/components/HalfRenderReality";
+import { ServiciosGridSection } from "@/components/ServiciosGridSection";
 import { ProjectsShowcase } from "@/components/ProjectsShowcase";
 import { ProcesoSection } from "@/components/ProcesoSection";
 import { AboutSection } from "@/components/AboutSection";
@@ -15,11 +11,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <CinematicWalk />
-      <CreativeLenses />
-      <ServicesGallery />
-      <SceneController />
-      <HalfRenderReality />
+      <ServiciosGridSection />
       <ProjectsShowcase />
       <ProcesoSection />
       <AboutSection />
