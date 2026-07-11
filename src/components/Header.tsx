@@ -1,8 +1,14 @@
 "use client";
+
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect,useState } from "react";
+import { gsap } from "gsap";
+import { SunIcon, MoonIcon } from "./icons/AnimatedIcons";
 import { Logo } from "./Logo";
-const items=[["Inicio","/"],["Servicios","/servicios"],["Proyectos","/proyectos"],["Proceso","/proceso"],["Nosotros","/nosotros"],["Contacto","/contacto"]] as const;
-export function Header(){const path=usePathname();const[open,setOpen]=useState(false);useEffect(()=>{setOpen(false)},[path]);useEffect(()=>{const onKey=(e:KeyboardEvent)=>{if(e.key==="Escape")setOpen(false)};document.addEventListener("keydown",onKey);return()=>document.removeEventListener("keydown",onKey)},[]);const active=(href:string)=>href==="/"?path===href:path.startsWith(href);return <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#07111d]/90 backdrop-blur-xl"><a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-brand-gold focus:px-4 focus:py-2 focus:text-[#07111d]">Ir al contenido</a><div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6 lg:px-10"><Link href="/" aria-label="Casa Atenta" onClick={()=>setOpen(false)} className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold"><Logo className="h-10 w-auto"/></Link><nav className="hidden items-center gap-7 lg:flex" aria-label="Principal">{items.slice(1).map(([label,href])=><Link key={href} href={href} aria-current={active(href)?"page":undefined} className={`text-[11px] uppercase tracking-[.18em] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold ${active(href)?"text-brand-gold":"text-ca-text/72 hover:text-ca-text"}`}>{label}</Link>)}</nav><button type="button" aria-expanded={open} aria-controls="mobile-menu" aria-label={open?"Cerrar menú":"Abrir menú"} onClick={()=>setOpen(v=>!v)} className="grid h-11 w-11 place-items-center border border-white/15 text-xl text-ca-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold lg:hidden"><span aria-hidden="true">{open?"×":"☰"}</span></button></div>{open&&<nav id="mobile-menu" className="border-t border-white/10 bg-[#07111d] px-6 py-5 lg:hidden" aria-label="Móvil"><div className="mx-auto grid max-w-[1440px]">{items.map(([label,href])=><Link key={href} href={href} aria-current={active(href)?"page":undefined} onClick={()=>setOpen(false)} className={`border-b border-white/10 py-4 text-sm uppercase tracking-[.16em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold ${active(href)?"text-brand-gold":"text-ca-text"}`}>{label}</Link>)}</div></nav>}</header>}
-export default Header;
+import { BrandText } from "./BrandText";
+
+const navItems = [
+  { label: "Inicio", path: "/" },
+  { label: "Servicios", path: "/servicios" },
+  { label: "Proyectos", path:
