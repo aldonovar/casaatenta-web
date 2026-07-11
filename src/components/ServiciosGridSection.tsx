@@ -1,25 +1,16 @@
-"use client";
-
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
-import {
-  TechosIcon,
-  TerrazasIcon,
-  IluminacionIcon,
-  SmartHomeIcon,
-  MantenimientoIcon,
-} from "./icons/AnimatedIcons";
+import Link from "next/link";
+import React from "react";
 
 interface ServiceCard {
   slug: string;
   title: string;
   description: string;
   image: string;
-  tags: string[];
+  imageAlt: string;
+  visualLabel: string;
+  details: string[];
+  featured?: boolean;
 }
 
 const serviceCards: ServiceCard[] = [
@@ -27,182 +18,112 @@ const serviceCards: ServiceCard[] = [
     slug: "techos-sol-y-sombra",
     title: "Techos Sol y Sombra",
     description:
-      "Sombra funcional, estética arquitectónica y protección para tu terraza.",
-    image: "/backgrounds/casestudy.png",
-    tags: ["Sombra", "Cubierta", "Exterior"],
+      "Estructura a medida, cubierta fija o corrediza y accionamiento manual o motorizado según el espacio.",
+    image: "/media/cinematic-walk/terraza-02.png",
+    imageAlt: "Propuesta visual de terraza con estructura y cubierta Sol y Sombra.",
+    visualLabel: "PROPUESTA VISUAL",
+    details: ["Cubierta fija", "Corredizo por polea", "Gancho o motor", "Iluminación integrada"],
+    featured: true,
   },
   {
     slug: "diseno-terrazas",
-    title: "Diseño de Terrazas",
+    title: "Diseño de terrazas",
     description:
-      "Distribución, materiales, iluminación y uso para terrazas que se viven.",
-    image: "/backgrounds/casestudy.png",
-    tags: ["Distribución", "Exterior", "Mobiliario"],
+      "Levantamiento, distribución, apoyos, recorrido solar y definición de materiales antes de fabricar.",
+    image: "/media/creative-lenses/plano-cenital-01.png",
+    imageAlt: "Vista cenital conceptual de una propuesta para terraza.",
+    visualLabel: "PROPUESTA VISUAL",
+    details: ["Medición", "Distribución", "Estructura", "Acabados"],
   },
   {
     slug: "iluminacion-inteligente",
-    title: "Iluminación Inteligente",
+    title: "Iluminación inteligente",
     description:
-      "Escenas, sensores y control para que cada ambiente tenga la luz correcta.",
-    image: "/backgrounds/circadian.png",
-    tags: ["Escenas", "LED", "Sensores"],
+      "Puntos de luz, encendidos por zonas, regulación y sensores coordinados con la estructura y el uso.",
+    image: "/media/cinematic-walk/luz-03.png",
+    imageAlt: "Propuesta visual de iluminación cálida integrada en un espacio residencial.",
+    visualLabel: "PROPUESTA VISUAL",
+    details: ["Puntos de luz", "Regulación", "Sensores", "Escenas"],
   },
   {
     slug: "smart-homes",
     title: "Smart Homes",
     description:
-      "Automatización por etapas para hogares más cómodos, seguros y eficientes.",
-    image: "/backgrounds/specialties.png",
-    tags: ["Domótica", "Rutinas", "Control"],
+      "Automatización por etapas para iluminación, accesos, sensores y rutinas sobre una red estable.",
+    image: "/media/creative-lenses/half-render-reality-01.png",
+    imageAlt: "Composición conceptual de automatización residencial.",
+    visualLabel: "COMPOSICIÓN CONCEPTUAL",
+    details: ["Escenas", "Sensores", "Accesos", "Control compatible"],
   },
   {
     slug: "mantenimiento-general",
-    title: "Mantenimiento General",
+    title: "Mantenimiento y acabados",
     description:
-      "Resane, pintura, carpintería y mejoras con criterio técnico y visual.",
-    image: "/backgrounds/beforeafter.png",
-    tags: ["Pintura", "Acabados", "Soporte"],
+      "Correcciones en pintura, metal, madera y superficies con atención a alineación, unión y remate.",
+    image: "/media/creative-lenses/material-encuentro-01.png",
+    imageAlt: "Referencia visual de materiales y encuentros de acabado.",
+    visualLabel: "REFERENCIA DE MATERIAL",
+    details: ["Pintura", "Metal", "Madera", "Correcciones"],
   },
 ];
 
-
 export const ServiciosGridSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      if (gridRef.current) {
-        const cards = gridRef.current.querySelectorAll(".srv-card");
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.5,
-            stagger: 0.1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: gridRef.current,
-              start: "top 80%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    });
-    return () => ctx.revert();
-  }, []);
-
-  const getServiceIcon = (slug: string) => {
-    switch (slug) {
-      case "techos-sol-y-sombra":
-        return <TechosIcon size={24} />;
-      case "diseno-terrazas":
-        return <TerrazasIcon size={24} />;
-      case "iluminacion-inteligente":
-        return <IluminacionIcon size={24} />;
-      case "smart-homes":
-        return <SmartHomeIcon size={24} />;
-      case "mantenimiento-general":
-        return <MantenimientoIcon size={24} />;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <section ref={sectionRef} className="ca-section relative" id="servicios">
-      <div className="ca-container relative z-10">
-        <div ref={headingRef} className="mb-14 text-center" style={{ opacity: 0 }}>
-          <span className="ca-kicker mb-4 block">Nuestros Servicios</span>
-          <h2 className="ca-heading mx-auto max-w-4xl mb-6">
-            Lo que Casa Atenta puede hacer
-            <br />
-            <span className="font-serif italic" style={{ color: "var(--ca-gold)" }}>
-              por tu hogar.
+    <section id="servicios" className="relative border-t border-ca-border bg-ca-bg-surface px-6 py-24 md:px-16 md:py-32 lg:px-28">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-14 grid gap-8 border-b border-ca-border/60 pb-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
+            <span className="mb-5 block text-[10px] font-mono uppercase tracking-[0.28em] text-brand-gold">
+              SERVICIOS / LIMA
             </span>
-          </h2>
-          <p className="ca-body mx-auto text-center">
-            Desde techos y terrazas hasta automatización inteligente. Cada
-            servicio empieza con una visita técnica y termina con un espacio
-            que funciona mejor.
+            <h2 className="max-w-4xl text-4xl font-display font-light uppercase leading-[1.02] tracking-[0.04em] text-ca-text md:text-6xl">
+              Estructura, cubierta, luz y control.
+            </h2>
+          </div>
+          <p className="max-w-xl text-sm font-light leading-relaxed text-ca-text-secondary lg:col-span-4">
+            Cada intervención comienza con medidas, apoyos y uso real. La solución se define según la casa, el recorrido solar y el nivel de apertura necesario.
           </p>
         </div>
 
-        <div
-          ref={gridRef}
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto justify-center"
-        >
-            {serviceCards.map((card) => (
-              <Link
-                key={card.slug}
-                href={`/servicios/${card.slug}`}
-                className="srv-card group glass-card flex flex-col overflow-hidden rounded-xl"
-                style={{ opacity: 0 }}
-              >
-                {/* Image */}
-                <div className="relative h-40 overflow-hidden">
-                  <Image
-                    src={card.image}
-                    alt={card.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep/80 to-transparent" />
-                  
-                  {/* Glassmorphic icon container */}
-                  <div className="absolute top-3 left-3 rounded-lg border border-brand-gold/20 bg-ca-bg-deep/80 p-2 backdrop-blur-sm transition-all duration-300 group-hover:border-brand-gold/50 group-hover:bg-brand-gold/5 flex items-center justify-center">
-                    {getServiceIcon(card.slug)}
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-6">
+          {serviceCards.map((card) => (
+            <Link
+              key={card.slug}
+              href={`/servicios/${card.slug}`}
+              className={`group relative min-h-[480px] overflow-hidden rounded-2xl border border-ca-border bg-ca-bg-deep ${card.featured ? "lg:col-span-4" : "lg:col-span-2"}`}
+            >
+              <Image
+                src={card.image}
+                alt={card.imageAlt}
+                fill
+                sizes={card.featured ? "(max-width: 1024px) 100vw, 66vw" : "(max-width: 1024px) 100vw, 33vw"}
+                className="object-cover opacity-52 transition duration-700 ease-out group-hover:scale-[1.025] group-hover:opacity-62"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/45 to-ca-bg-deep/5" />
 
+              <span className="absolute left-5 top-5 z-10 border border-white/10 bg-ca-bg-deep/82 px-3 py-2 text-[8px] font-mono uppercase tracking-[0.18em] text-ca-text backdrop-blur-md">
+                {card.visualLabel}
+              </span>
 
-              {/* Content */}
-              <div className="flex flex-1 flex-col p-5">
-                <h3 className="text-base font-display font-medium text-ca-text mb-2 tracking-wide uppercase group-hover:text-brand-gold transition-colors duration-300">
+              <div className="absolute inset-x-0 bottom-0 z-10 p-6 md:p-8">
+                <h3 className="max-w-2xl text-2xl font-display font-light uppercase tracking-[0.05em] text-ca-text md:text-3xl">
                   {card.title}
                 </h3>
-                <p className="text-sm text-ca-text-secondary leading-relaxed mb-4 flex-1">
+                <p className="mt-4 max-w-xl text-sm font-light leading-relaxed text-ca-text-secondary">
                   {card.description}
                 </p>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-4">
-                  {card.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-ca-border px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider text-ca-text-secondary"
-                    >
-                      {tag}
-                    </span>
+                <ul className="mt-6 flex flex-wrap gap-2">
+                  {card.details.map((detail) => (
+                    <li key={detail} className="border border-white/10 bg-ca-bg-deep/55 px-3 py-2 text-[8px] font-mono uppercase tracking-[0.14em] text-ca-text/80">
+                      {detail}
+                    </li>
                   ))}
-                </div>
+                </ul>
 
-                {/* CTA */}
-                <div className="flex items-center gap-1.5 text-brand-gold text-xs font-mono uppercase tracking-widest transition-all duration-300 group-hover:gap-3">
-                  <span>Ver más</span>
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <div className="mt-7 flex items-center justify-between border-t border-ca-border/50 pt-5 text-[9px] font-mono uppercase tracking-[0.2em] text-brand-gold">
+                  <span>Revisar alcance</span>
+                  <span aria-hidden="true">↗</span>
                 </div>
               </div>
             </Link>
