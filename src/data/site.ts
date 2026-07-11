@@ -69,8 +69,8 @@ export const homeCopy = {
   },
   about: {
     label: "Dirección y ejecución",
-    title: "JHON FEBRES Y ALEXIS ESPÍRITU.",
-    subtitle: "Jhon dirige operación y ejecución. Alexis conduce estrategia de marca, dirección visual y desarrollo digital.",
+    title: "COORDINACIÓN TÉCNICA Y VISUAL.",
+    subtitle: "La propuesta, el alcance y la ejecución se coordinan desde el inicio para mantener continuidad entre estructura, cubierta, iluminación y acabado.",
   },
   finalCta: {
     title: "ENVÍANOS UNA FOTO Y LAS MEDIDAS DISPONIBLES.",
