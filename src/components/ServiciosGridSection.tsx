@@ -1,13 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { TechosIcon,TerrazasIcon,IluminacionIcon,SmartHomeIcon,MantenimientoIcon } from "./icons/AnimatedIcons";
+import type { ComponentType } from "react";
+import {
+  IluminacionIcon,
+  MantenimientoIcon,
+  SmartHomeIcon,
+  TechosIcon,
+  TerrazasIcon,
+} from "./icons/AnimatedIcons";
 
-const cards=[
-  {slug:"techos-sol-y-sombra",title:"Techos Sol y Sombra",text:"Estructura a medida, cubierta fija o corrediza y accionamiento manual o motorizado.",image:"/media/cinematic-walk/terraza-02.png",label:"PROPUESTA VISUAL",items:["Cubierta fija","Polea o gancho","Motor","Luz integrada"],Icon:TechosIcon,wide:true},
-  {slug:"diseno-terrazas",title:"Diseño de terrazas",text:"Medidas, apoyos, recorrido solar, distribución y definición de materiales.",image:"/media/creative-lenses/plano-cenital-01.png",label:"PROPUESTA VISUAL",items:["Medición","Distribución","Estructura","Acabados"],Icon:TerrazasIcon},
-  {slug:"iluminacion-inteligente",title:"Iluminación inteligente",text:"Puntos de luz, regulación, sensores y encendidos coordinados con el uso.",image:"/media/cinematic-walk/luz-03.png",label:"PROPUESTA VISUAL",items:["Puntos","Regulación","Sensores","Escenas"],Icon:IluminacionIcon},
-  {slug:"smart-homes",title:"Domótica aplicada",text:"Automatización por etapas para iluminación, accesos, sensores y rutinas.",image:"/media/creative-lenses/half-render-reality-01.png",label:"COMPOSICIÓN CONCEPTUAL",items:["Red local","Sensores","Accesos","Control"],Icon:SmartHomeIcon},
-  {slug:"mantenimiento-general",title:"Mantenimiento y acabados",text:"Correcciones en pintura, metal, madera y superficies visibles.",image:"/media/creative-lenses/material-encuentro-01.png",label:"REFERENCIA DE MATERIAL",items:["Pintura","Metal","Madera","Remates"],Icon:MantenimientoIcon}
-] as const;
+type ServiceIcon = ComponentType<{ className?: string; size?: number }>;
 
-export function ServiciosGridSection(){return <section id="servicios" className="border-t border-white/10 bg-[#0a1724] px-6 py-24 text-ca-text lg:px-10"><div className="mx-auto max-w-[1440px]"><div className="mb-14 grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-12 lg:items-end"><div className="lg:col-span-8"><span className="text-[10px] uppercase tracking-[.28em] text-brand-gold">Servicios / Lima</span><h2 className="mt-5 text-4xl font-display font-light uppercase leading-[1.02] md:text-6xl">Estructura, cubierta, luz y control.</h2></div><p className="max-w-xl text-sm leading-7 text-ca-text-secondary lg:col-span-4">Cada intervención comienza con medidas, apoyos, orientación y uso real del espacio.</p></div><div className="grid gap-6 md:grid-cols-2 lg:grid-cols-6">{cards.map(({slug,title,text,image,label,items,Icon,wide})=><Link key={slug} href={`/servicios/${slug}`} className={`group relative min-h-[500px] overflow-hidden border border-white/10 bg-[#07111d] ${wide?"lg:col-span-4":"lg:col-span-2"}`}><Image src={image} alt={`${label.toLowerCase()} de ${title.toLowerCase()}`} fill sizes={wide?"(max-width:1024px) 100vw,66vw":"(max-width:1024px) 100vw,33vw"} className="object-cover opacity-42 transition duration-700 group-hover:scale-[1.025] group-hover:opacity-52"/><div className="absolute inset-0 bg-gradient-to-t from-[#07111d] via-[#07111d]/55 to-transparent"/><div className="absolute left-5 top-5 z-10 flex items-center gap-3"><span className="border border-white/10 bg-[#07111d]/82 px-3 py-2 text-[8px] uppercase tracking-[.18em] backdrop-blur-md">{label}</span><span className="grid h-11 w-11 place-items-center border border-brand-gold/25 bg-[#07111d]/82 text-brand-gold backdrop-blur-md"><Icon size={25}/></span></div><div className="absolute inset-x-0 bottom-0 z-10 p-6 md:p-8"><h3 className="text-2xl font-display font-light uppercase md:text-3xl">{title}</h3><p className="mt-4 max-w-xl text-sm leading-7 text-ca-text-secondary">{text}</p><ul className="mt-6 flex flex-wrap gap-2">{items.map(item=><li key={item} className="border border-white/10 bg-[#07111d]/55 px-3 py-2 text-[8px] uppercase tracking-[.14em]">{item}</li>)}</ul><div className="mt-7 flex items-center justify-between border-t border-white/10 pt-5 text-[9px] uppercase tracking-[.2em] text-brand-gold"><span>Revisar alcance</span><span>↗</span></div></div></Link>)}</div></div></section>;}
+type ServiceCard = {
+  slug: string;
+  title: string;
+  text: string;
+  image: string
