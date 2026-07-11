@@ -1,146 +1,34 @@
-"use client";
+const steps=[
+  ["01","Levantamiento","Medidas, niveles, apoyos, accesos y registro fotográfico del estado actual."],
+  ["02","Propuesta","Distribución, estructura, cubierta, iluminación y sistema de accionamiento."],
+  ["03","Presupuesto","Alcance, materiales, condiciones de pago y plazo estimado por escrito."],
+  ["04","Fabricación","Corte, preparación de perfiles, piezas, acabados y componentes antes del montaje."],
+  ["05","Instalación","Montaje de estructura, cubierta, iluminación y mecanismos según secuencia de obra."],
+  ["06","Entrega","Prueba de funcionamiento, revisión de acabados, limpieza y conformidad del cliente."]
+] as const;
 
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-const steps = [
-  {
-    number: "01",
-    title: "Diagnóstico",
-    text: "Visitamos tu espacio, medimos, revisamos estructura, orientación y uso actual.",
-  },
-  {
-    number: "02",
-    title: "Propuesta visual",
-    text: "Traducimos tus necesidades en una propuesta clara con materiales, distribución y acabados.",
-  },
-  {
-    number: "03",
-    title: "Cotización transparente",
-    text: "Desglose completo de costos: materiales, mano de obra, instalación. Sin sorpresas.",
-  },
-  {
-    number: "04",
-    title: "Ejecución cuidada",
-    text: "Instalamos, pintamos, cableamos o configuramos con protección y orden.",
-  },
-  {
-    number: "05",
-    title: "Configuración inteligente",
-    text: "Escenas, rutinas, sensores y control desde tu celular o WhatsApp.",
-  },
-  {
-    number: "06",
-    title: "Entrega y acompañamiento",
-    text: "Verificamos funcionamiento, te capacitamos y dejamos recomendaciones de uso.",
-  },
-];
-
-export const ProcesoSection: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const stepsRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.7,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-
-      if (stepsRef.current) {
-        const items = stepsRef.current.querySelectorAll(".step-item");
-        gsap.fromTo(
-          items,
-          { opacity: 0, x: -24 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.5,
-            stagger: 0.12,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: stepsRef.current,
-              start: "top 75%",
-              toggleActions: "play none none none",
-            },
-          }
-        );
-      }
-    });
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <section ref={sectionRef} className="ca-section relative" id="proceso">
-      <div className="absolute inset-0 architectural-grid opacity-30 pointer-events-none" />
-
-      <div className="ca-container relative z-10">
-        <div ref={headingRef} className="mb-14 text-center" style={{ opacity: 0 }}>
-          <span className="ca-kicker mb-4 block">Método de trabajo</span>
-          <h2 className="ca-heading mx-auto max-w-3xl mb-6">
-            Del diagnóstico
-            <br />
-            <span className="font-serif italic" style={{ color: "var(--ca-gold)" }}>
-              a la escena.
-            </span>
-          </h2>
-          <p className="ca-body mx-auto text-center">
-            Cada proyecto pasa por un proceso claro que empieza con una visita
-            técnica y termina con un espacio que funciona mejor.
-          </p>
+export function ProcesoSection(){
+  return <section id="proceso" className="border-t border-white/10 bg-[#091522] px-6 py-24 text-ca-text md:py-32 lg:px-10">
+    <div className="mx-auto max-w-[1440px]">
+      <div className="grid gap-8 border-b border-white/10 pb-10 lg:grid-cols-12 lg:items-end">
+        <div className="lg:col-span-7">
+          <span className="mb-5 block text-[10px] uppercase tracking-[.28em] text-brand-gold">Proceso de trabajo</span>
+          <h2 className="max-w-4xl text-4xl font-display font-light uppercase leading-[1.02] md:text-6xl">Medición, diseño y montaje.</h2>
         </div>
-
-        <div ref={stepsRef} className="mx-auto max-w-2xl">
-          {steps.map((step, idx) => (
-            <div
-              key={step.number}
-              className="step-item group relative flex gap-6 pb-10"
-              style={{ opacity: 0 }}
-            >
-              {/* Timeline line */}
-              {idx < steps.length - 1 && (
-                <div
-                  className="absolute left-[19px] top-10 w-px"
-                  style={{
-                    height: "calc(100% - 2rem)",
-                    background:
-                      "linear-gradient(180deg, var(--ca-gold), rgba(216, 179, 106, 0.15))",
-                  }}
-                />
-              )}
-
-              {/* Number circle */}
-              <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand-gold/40 bg-ca-bg-deep text-xs font-mono text-brand-gold transition-all duration-300 group-hover:bg-brand-gold/10 group-hover:border-brand-gold">
-                {step.number}
-              </div>
-
-              {/* Content */}
-              <div className="pt-1">
-                <h3 className="text-sm font-display font-medium text-ca-text tracking-wide uppercase mb-1.5">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-ca-text-secondary leading-relaxed">
-                  {step.text}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        <p className="max-w-xl text-sm leading-7 text-ca-text-secondary lg:col-span-4 lg:col-start-9">La visita técnica define apoyos, niveles, recorrido de cubierta, puntos eléctricos y secuencia de instalación.</p>
       </div>
-    </section>
-  );
-};
+
+      <ol className="mt-12 grid gap-px overflow-hidden border border-white/10 bg-white/10 md:grid-cols-2 lg:grid-cols-3">
+        {steps.map(([number,title,text])=><li key={number} className="min-h-[260px] bg-[#07111d] p-7 md:p-8">
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <span className="font-mono text-xs text-brand-gold">{number}</span>
+            <span className="h-2 w-2 rounded-full border border-brand-gold/60"/>
+          </div>
+          <h3 className="mt-8 text-xl font-display font-light uppercase tracking-[.06em]">{title}</h3>
+          <p className="mt-4 text-sm leading-7 text-ca-text-secondary">{text}</p>
+        </li>)}
+      </ol>
+    </div>
+  </section>;
+}
+export default ProcesoSection;
