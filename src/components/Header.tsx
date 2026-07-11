@@ -11,10 +11,4 @@ const navItems = [
   { label: "Proyectos", path: "/proyectos" },
   { label: "Proceso", path: "/proceso" },
   { label: "Nosotros", path: "/nosotros" },
-  { label: "Contacto", path: "/contacto" },
-];
-
-export const Header: React.FC = () => {
-  const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const
+ 
