@@ -2,9 +2,7 @@
 import {useEffect,useRef} from "react";
 import {usePathname} from "next/navigation";
 import {gsap} from "gsap";
-
-const rootOf=(p:string)=>"/"+(p.split("/").filter(Boolean)[0]||"");
-const drawings:Record<string,string[]>={
-  "/servicios":["M120 620H1080","M220 520V210H980V520","M300 270H900","M300 340H900","M300 410H900"],
-  "/proyectos":["M150 610L390 250H820L1050 610","M390 250V610","M820 250V610","M520 250V610","M690 250V610"],
-  "/pro
+const root=(p:string)=>"/"+(p.split("/").filter(Boolean)[0]||"");
+const art:Record<string,string[]>={"/servicios":["M100 620H1100","M220 520V210H980V520","M300 280H900","M300 360H900","M300 440H900"],"/proyectos":["M140 620L380 250H820L1060 620","M380 250V620","M820 250V620","M520 250V620","M680 250V620"],"/proceso":["M180 150V650","M180 210H420","M180 320H610","M180 430H800","M180 540H1020"],"/nosotros":["M180 600V250H520V600","M680 600V180H1020V600","M350 250V180H850V180"],"/contacto":["M180 220H1020V600H180Z","M180 220L600 470L1020 220","M300 650H900"],"/diseno":["M140 620H1060","M240 520L600 180L960 520","M360 520V370H840V520"],"/soluciones":["M160 600H1040","M260 520V260H940V520","M420 260V520","M600 260V520","M780 260V520"]};
+export function RouteScape(){const path=usePathname();const ref=useRef<SVGSVGElement>(null);const lines=art[root(path)]||[];useEffect(()=>{const el=ref.current;if(!el||!lines.length||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const ctx=gsap.context(()=>gsap.fromTo("path",{strokeDasharray:1200,strokeDashoffset:1200,opacity:0},{strokeDashoffset:0,opacity:.26,duration:1.25,stagger:.08,ease:"power2.out"}),el);return()=>ctx.revert()},[path,lines.length]);if(!lines.length)return null;return <svg ref={ref} viewBox="0 0 1200 800" aria-hidden="true" className="pointer-events-none fixed inset-0 z-[1] h-full w-full fill-none stroke-brand-gold/20"><g>{lines.map((d,i)=><path key={`${path}-${i}`} d={d} strokeWidth={i===0?1.2:.8}/>)}</g></svg>}
+export default RouteScape;
