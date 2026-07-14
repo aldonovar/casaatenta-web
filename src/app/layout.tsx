@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteMeta } from "@/data/site";
+import { SITE_URL } from "@/lib/urls";
 import { Cormorant_Garamond, Inter, Syne } from "next/font/google";
 import "./globals.css";
 import { ClientWrapper } from "../components/ClientWrapper";
@@ -25,6 +26,7 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: siteMeta.title,
   description: siteMeta.description,
   keywords: [

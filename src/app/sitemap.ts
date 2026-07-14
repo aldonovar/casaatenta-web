@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { allServiceSlugs } from "@/data/services-pages";
-import { allBlogSlugs } from "@/data/blog-posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.casa-atenta.com";
@@ -16,7 +15,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/preguntas-frecuentes",
     "/cotiza",
     "/servicios",
-    "/blog",
   ];
 
   const sitemapEntries: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
@@ -33,16 +31,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
-    });
-  });
-
-  // Add blog posts
-  allBlogSlugs.forEach((slug) => {
-    sitemapEntries.push({
-      url: `${baseUrl}/blog/${slug}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
     });
   });
 
