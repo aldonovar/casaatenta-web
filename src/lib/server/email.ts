@@ -8,7 +8,7 @@ import { escapeHtml } from "./security";
 let resendClient: Resend | undefined;
 
 const FONT_FAMILY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif';
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif";
 const BRAND_NAVY = "#07111d";
 const BRAND_GOLD = "#d8b36a";
 const BODY_TEXT = "#273445";
@@ -16,7 +16,9 @@ const MUTED_TEXT = "#596878";
 const PAGE_BACKGROUND = "#f4f0e8";
 const AUTOMATED_SENDER_ADDRESS = "notificaciones@casa-atenta.com";
 const OPERATIONAL_CONTACT_ADDRESS = "info@casa-atenta.com";
-const EMAIL_LOGO_PATH = "/email/casa-atenta-wordmark-white-v1@2x.png";
+const EMAIL_LOGO_SVG_PATH = "/email/casa-atenta-wordmark-white-v2.svg";
+const EMAIL_LOGO_FALLBACK_PATH =
+  "/email/casa-atenta-wordmark-white-v2@2x.png";
 
 function formatClaimAmount(value: number | null) {
   return value === null
@@ -68,10 +70,24 @@ export async function sendEmail(options: EmailOptions, idempotencyKey: string) {
 
 function inlineText(value: unknown, maxLength = 120) {
   return String(value ?? "")
+    .normalize("NFC")
     .replace(/[\u0000-\u001f\u007f]+/g, " ")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, maxLength);
+}
+
+/**
+ * Mantiene el documento HTML completamente ASCII para que los caracteres
+ * españoles y cualquier nombre Unicode sobrevivan incluso si un intermediario
+ * interpreta de forma incorrecta el charset del mensaje.
+ */
+function encodeHtmlForEmail(value: string) {
+  return value
+    .normalize("NFC")
+    .replace(/[^\u0000-\u007f]/gu, (character) =>
+      `&#${character.codePointAt(0)};`,
+    );
 }
 
 function paragraph(content: string, muted = false) {
@@ -154,13 +170,16 @@ function emailShell({
   const siteUrl = getSiteUrl();
   const homeUrl = escapeHtml(siteUrl.href);
   const privacyUrl = escapeHtml(new URL("/privacidad", siteUrl).href);
-  const logoUrl = escapeHtml(new URL(EMAIL_LOGO_PATH, siteUrl).href);
+  const logoSvgUrl = escapeHtml(new URL(EMAIL_LOGO_SVG_PATH, siteUrl).href);
+  const logoFallbackUrl = escapeHtml(
+    new URL(EMAIL_LOGO_FALLBACK_PATH, siteUrl).href,
+  );
   const senderNotice = automatedSenderNotice(audience);
   const legalIdentity = escapeHtml(
     `${LEGAL_PROVIDER.tradeName} · ${LEGAL_PROVIDER.displayName} · RUC ${LEGAL_PROVIDER.ruc}`,
   );
 
-  return `<!DOCTYPE html>
+  const html = `<!DOCTYPE html>
 <html lang="es" dir="ltr" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
   <head>
     <meta charset="UTF-8">
@@ -175,11 +194,14 @@ function emailShell({
       img { border: 0; line-height: 100%; outline: none; text-decoration: none; }
       @media screen and (max-width: 480px) {
         .email-page-padding { padding: 16px 8px !important; }
-        .email-header { padding: 22px 18px 21px !important; }
+        .email-header { padding: 18px !important; }
         .email-body { padding: 25px 18px 23px !important; }
         .email-footer { padding: 18px !important; }
-        .email-title { font-size: 23px !important; line-height: 30px !important; }
-        .email-logo { width: 270px !important; height: auto !important; max-width: 100% !important; }
+        .email-brand-cell, .email-title-cell { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+        .email-brand-cell { padding-right: 0 !important; padding-bottom: 14px !important; }
+        .email-title-cell { border-left: 0 !important; border-top: 1px solid #304050 !important; padding-top: 13px !important; padding-left: 0 !important; }
+        .email-title { font-size: 22px !important; line-height: 28px !important; }
+        .email-logo { width: 220px !important; height: auto !important; max-width: 100% !important; }
         .data-label, .data-value { display: block !important; width: 100% !important; box-sizing: border-box !important; }
         .data-label { border-bottom: 0 !important; padding-bottom: 3px !important; }
         .data-value { padding-top: 3px !important; }
@@ -193,6 +215,8 @@ function emailShell({
         .email-copy { color: #e8edf2 !important; }
         .email-muted { color: #b6c0cb !important; }
         .email-heading { color: #f3d28f !important; }
+        .email-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+        .email-tagline { color: #c9d1d9 !important; -webkit-text-fill-color: #c9d1d9 !important; }
         .email-footer, .data-label { background-color: #111e2b !important; }
         .email-footer, .data-label, .data-value { border-color: #334252 !important; }
         .data-value { color: #e8edf2 !important; }
@@ -208,6 +232,8 @@ function emailShell({
       [data-ogsc] .email-copy { color: #e8edf2 !important; }
       [data-ogsc] .email-muted { color: #b6c0cb !important; }
       [data-ogsc] .email-heading { color: #f3d28f !important; }
+      [data-ogsc] .email-title { color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; }
+      [data-ogsc] .email-tagline { color: #c9d1d9 !important; -webkit-text-fill-color: #c9d1d9 !important; }
       [data-ogsc] .email-footer, [data-ogsc] .data-label { background-color: #111e2b !important; }
       [data-ogsc] .email-footer, [data-ogsc] .data-label, [data-ogsc] .data-value { border-color: #334252 !important; }
       [data-ogsc] .data-value { color: #e8edf2 !important; }
@@ -238,12 +264,28 @@ function emailShell({
           <![endif]-->
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" class="email-card" style="width:100%;max-width:640px;border-collapse:collapse;background-color:#ffffff;border-width:1px;border-style:solid;border-color:#dedbd3;mso-table-lspace:0pt;mso-table-rspace:0pt;">
             <tr>
-              <td bgcolor="${BRAND_NAVY}" class="email-header" style="background-color:${BRAND_NAVY};padding-top:26px;padding-right:24px;padding-bottom:25px;padding-left:24px;border-bottom-width:3px;border-bottom-style:solid;border-bottom-color:${BRAND_GOLD};">
-                <a href="${homeUrl}" style="display:inline-block;color:#ffffff;text-decoration:none;">
-                  <img src="${logoUrl}" width="300" height="48" alt="Casa Atenta" class="email-logo" style="display:block;width:300px;height:48px;max-width:100%;border:0;color:#ffffff;font-family:${FONT_FAMILY};font-size:18px;line-height:48px;font-weight:700;letter-spacing:2px;-ms-interpolation-mode:bicubic;">
-                </a>
-                <p style="font-family:${FONT_FAMILY};font-size:11px;line-height:17px;font-weight:600;letter-spacing:0.7px;color:#c9d1d9;margin-top:10px;margin-right:0;margin-bottom:20px;margin-left:0;">Diseño · ejecución · control</p>
-                <h1 class="email-title" style="font-family:${FONT_FAMILY};font-size:26px;line-height:34px;font-weight:500;color:#ffffff;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;mso-line-height-rule:exactly;">${safeTitle}</h1>
+              <td bgcolor="${BRAND_NAVY}" class="email-header" style="background-color:${BRAND_NAVY};padding-top:20px;padding-right:24px;padding-bottom:19px;padding-left:24px;border-bottom-width:3px;border-bottom-style:solid;border-bottom-color:${BRAND_GOLD};">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;mso-table-lspace:0pt;mso-table-rspace:0pt;">
+                  <tr>
+                    <td width="45%" valign="middle" class="email-brand-cell" style="width:45%;padding-right:22px;">
+                      <a href="${homeUrl}" style="display:inline-block;color:#ffffff;text-decoration:none;">
+                        <!--[if mso]>
+                        <img src="${logoFallbackUrl}" width="243" height="42" alt="Casa Atenta" class="email-logo" style="display:block;width:243px;height:42px;max-width:100%;border:0;color:#ffffff;font-family:${FONT_FAMILY};font-size:18px;line-height:42px;font-weight:700;letter-spacing:2px;-ms-interpolation-mode:bicubic;">
+                        <![endif]-->
+                        <!--[if !mso]><!-->
+                        <picture style="display:block;">
+                          <source srcset="${logoSvgUrl}" type="image/svg+xml">
+                          <img src="${logoFallbackUrl}" width="243" height="42" alt="Casa Atenta" class="email-logo" style="display:block;width:243px;height:42px;max-width:100%;border:0;color:#ffffff;font-family:${FONT_FAMILY};font-size:18px;line-height:42px;font-weight:700;letter-spacing:2px;-ms-interpolation-mode:bicubic;">
+                        </picture>
+                        <!--<![endif]-->
+                      </a>
+                    </td>
+                    <td valign="middle" class="email-title-cell" style="border-left-width:1px;border-left-style:solid;border-left-color:#304050;padding-left:22px;color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;">
+                      <p class="email-tagline" style="font-family:${FONT_FAMILY};font-size:10px;line-height:15px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#c9d1d9!important;-webkit-text-fill-color:#c9d1d9!important;margin-top:0;margin-right:0;margin-bottom:4px;margin-left:0;"><font color="#C9D1D9">Diseño · ejecución · control</font></p>
+                      <h1 class="email-title" style="font-family:${FONT_FAMILY};font-size:22px;line-height:29px;font-weight:600;color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;mso-line-height-rule:exactly;"><font color="#FFFFFF">${safeTitle}</font></h1>
+                    </td>
+                  </tr>
+                </table>
               </td>
             </tr>
             <tr>
@@ -256,7 +298,7 @@ function emailShell({
                 ${senderNotice.html}
                 <p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:8px;margin-left:0;">${escapeHtml(footerNote || "Correo transaccional enviado por Casa Atenta.")}</p>
                 <p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:6px;margin-left:0;">${legalIdentity}</p>
-                <p class="email-muted email-footer-links" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;"><a href="${homeUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">casa-atenta.com</a><span class="email-footer-separator"> &nbsp;·&nbsp; </span><a href="mailto:${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}</a><span class="email-footer-separator"> &nbsp;·&nbsp; </span><a href="${privacyUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">Privacidad</a></p>
+                <p class="email-muted email-footer-links" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;"><a href="${homeUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">casa-atenta.com</a><span class="email-footer-separator"> · </span><a href="mailto:${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}</a><span class="email-footer-separator"> · </span><a href="${privacyUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">Privacidad</a></p>
               </td>
             </tr>
           </table>
@@ -268,6 +310,8 @@ function emailShell({
     </table>
   </body>
 </html>`;
+
+  return encodeHtmlForEmail(html);
 }
 
 type TransactionalEmailOptions = EmailShellOptions & {
@@ -362,9 +406,11 @@ export function contactNotificationEmail(data: ContactEmailData) {
 }
 
 export function contactReceiptEmail(name: string, reference: string) {
-  const displayName = inlineText(name) || "allí";
-  const body = `${paragraph(`Hola ${escapeHtml(displayName)},`)}
-    ${paragraph("Recibimos correctamente la información que enviaste desde casa-atenta.com. Nuestro equipo la revisará antes de comunicarse contigo por los datos proporcionados.")}
+  const displayName = inlineText(name);
+  const greeting = displayName ? `Hola ${escapeHtml(displayName)},` : "Hola,";
+  const textGreeting = displayName ? `Hola ${displayName},` : "Hola,";
+  const body = `${paragraph(greeting)}
+    ${paragraph("Recibimos correctamente la información que enviaste desde casa-atenta.com. Nuestro equipo la revisará antes de comunicarse contigo mediante los datos de contacto que proporcionaste.")}
     ${callout("Referencia de la solicitud", reference)}
     ${sectionHeading("¿Necesitas añadir información?")}
     ${paragraph("Puedes responder directamente a este correo para adjuntar fotos, medidas o cualquier detalle adicional.")}
@@ -375,7 +421,7 @@ export function contactReceiptEmail(name: string, reference: string) {
     title: "Recibimos tu solicitud",
     preheader: `Tu solicitud quedó registrada con la referencia ${reference}.`,
     body,
-    text: `Hola ${displayName},\n\nRecibimos correctamente la información que enviaste desde casa-atenta.com. Nuestro equipo la revisará antes de comunicarse contigo.\n\nReferencia: ${reference}\n\nSi necesitas añadir fotos, medidas u otros detalles, responde directamente a este correo. Conserva la referencia para facilitar el seguimiento.`,
+    text: `${textGreeting}\n\nRecibimos correctamente la información que enviaste desde casa-atenta.com. Nuestro equipo la revisará antes de comunicarse contigo.\n\nReferencia: ${reference}\n\nSi necesitas añadir fotos, medidas u otros detalles, responde directamente a este correo. Conserva la referencia para facilitar el seguimiento.`,
   });
 }
 
@@ -460,10 +506,15 @@ export function claimNotificationEmail(data: ClaimEmailData) {
 }
 
 export function claimReceiptEmail(data: ClaimEmailData) {
-  const displayName = inlineText(data.fullName) || "allí";
+  const displayName = inlineText(data.fullName);
+  const greeting = displayName ? `Hola ${escapeHtml(displayName)},` : "Hola,";
+  const textGreeting = displayName ? `Hola ${displayName},` : "Hola,";
+  const claimType = inlineText(data.claimType, 30).toLocaleLowerCase("es-PE");
+  const subjectClaimType =
+    claimType === "queja" ? "de la queja" : "del reclamo";
   const createdAt = inlineText(data.createdAt, 180).replace(/\.$/, "");
-  const body = `${paragraph(`Hola ${escapeHtml(displayName)},`)}
-    ${paragraph(`Registramos correctamente tu ${escapeHtml(data.claimType.toLowerCase())} el ${escapeHtml(createdAt)}. Este mensaje contiene la copia digital de la información recibida.`)}
+  const body = `${paragraph(greeting)}
+    ${paragraph(`Registramos correctamente tu ${escapeHtml(claimType)} el ${escapeHtml(createdAt)}. Este mensaje contiene la copia digital de la información recibida.`)}
     ${callout("Código de seguimiento", data.code)}
     ${rows([
       ["Proveedor", LEGAL_PROVIDER_LABEL],
@@ -490,15 +541,15 @@ export function claimReceiptEmail(data: ClaimEmailData) {
     ${paragraph("Conserva este correo y el código para cualquier seguimiento posterior.", true)}`;
 
   return transactionalEmail({
-    subject: `Copia de ${inlineText(data.claimType.toLowerCase(), 30)} ${inlineText(data.code, 40)} | Casa Atenta`,
+    subject: `Copia ${subjectClaimType} ${inlineText(data.code, 40)} | Casa Atenta`,
     title: `Registro ${data.code}`,
     preheader: `Tu registro fue recibido con el código ${data.code}.`,
     body,
     footerNote: "Copia digital del registro enviado al Libro de Reclamaciones de Casa Atenta.",
     text: [
-      `Hola ${displayName},`,
+      textGreeting,
       "",
-      `Tu ${data.claimType.toLowerCase()} fue registrada correctamente. Esta es la copia digital de la información recibida.`,
+      `Registramos correctamente tu ${claimType}. Esta es la copia digital de la información recibida.`,
       "",
       `Código: ${data.code}`,
       `Proveedor: ${LEGAL_PROVIDER_LABEL}`,

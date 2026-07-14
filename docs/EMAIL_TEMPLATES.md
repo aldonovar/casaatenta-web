@@ -5,8 +5,8 @@ mediante Resend. El HTML está pensado para Gmail, Apple Mail y Outlook:
 
 - estructura por tablas y estilos en línea;
 - ancho máximo de 640 px y versión móvil fluida;
-- cabecera de marca compartida con el wordmark PNG de Casa Atenta, texto
-  alternativo y dimensiones explícitas para Outlook;
+- cabecera de marca compacta con el wordmark SVG de Casa Atenta y un PNG retina
+  de respaldo, texto alternativo y dimensiones explícitas para Outlook;
 - paleta navy y dorado, tipografía de sistema y modo oscuro intencional con
   contraste reforzado;
 - texto alternativo completo para clientes que bloquean HTML;
@@ -15,12 +15,15 @@ mediante Resend. El HTML está pensado para Gmail, Apple Mail y Outlook:
 - sin fuentes externas, JavaScript, formularios, píxeles ni seguimiento de clics;
 - pie transaccional, aviso de confidencialidad en notificaciones internas y
   aviso de remitente automático en HTML y texto plano.
+- caracteres Unicode normalizados y codificados como entidades HTML numéricas
+  para evitar mojibake aunque un intermediario interprete mal el charset.
 
-El recurso de marca para correo es
-`public/email/casa-atenta-wordmark-white-v1@2x.png`. Se sirve desde una URL
-absoluta del propio dominio y se muestra a 300 × 48 px; el archivo incluye
-margen transparente y resolución doble para conservar nitidez. No debe
-reemplazarse por SVG, Base64, WebP ni una URL temporal.
+El recurso vectorial canónico para correo es
+`public/email/casa-atenta-wordmark-white-v2.svg`. Tiene un `viewBox` ajustado al
+dibujo y se muestra a 243 × 42 px. La plantilla ofrece
+`public/email/casa-atenta-wordmark-white-v2@2x.png` como respaldo retina para
+Outlook y clientes que no procesan SVG. Ambos se sirven desde URLs absolutas del
+propio dominio; no deben sustituirse por Base64, WebP ni una URL temporal.
 
 El logotipo dentro del contenido no controla el avatar que muestra Gmail junto
 al remitente. Esa identidad de bandeja se gestionará por separado mediante
@@ -70,7 +73,7 @@ está disponible, Apple Mail, porque cada cliente aplica reglas propias.
 2. El remitente y `Reply-To` deben ser de Casa Atenta.
 3. La bandeja debe mostrar asunto y preencabezado sin texto técnico.
 4. El contenido debe ser legible con imágenes bloqueadas y a 320 px de ancho.
-5. El logotipo debe responder `200` con `Content-Type: image/png` desde el
-   dominio de producción antes de enviar una prueba real.
+5. El SVG y su respaldo PNG deben responder `200` con `Content-Type` correcto
+   (`image/svg+xml` e `image/png`) desde producción antes de una prueba real.
 6. Los botones y enlaces de texto deben abrir únicamente `https://www.casa-atenta.com`.
 7. Los mensajes de newsletter deben incluir `List-Unsubscribe` y baja en un clic.
