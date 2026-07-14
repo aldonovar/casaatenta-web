@@ -188,16 +188,19 @@ Copiar los nombres de `.env.example` a Vercel o al proveedor de hosting. Los sec
 
 ### Reintentos automáticos
 
-`vercel.json` programa `/api/cron/email-retry` cada hora. Configurar
-`CRON_SECRET` con al menos 32 caracteres en Vercel; la plataforma lo enviará
-como Bearer token. La tarea reintenta hasta cinco veces las notificaciones y
-recibos de contacto, las copias del Libro de Reclamaciones, la confirmación de
-doble opt-in y la bienvenida del newsletter. Las claves idempotentes son estables
-y también recuperan registros cuyo envío terminó, pero cuyo estado no alcanzó a
-persistirse en Supabase.
+`vercel.json` programa `/api/cron/email-retry` una vez al día a las 10:07 UTC
+(05:07 de Lima), frecuencia compatible con el límite técnico de Vercel Hobby.
+Configurar `CRON_SECRET` con al menos 32 caracteres en Vercel; la plataforma lo
+enviará como Bearer token. La tarea reintenta hasta cinco veces las
+notificaciones y recibos de contacto, las copias del Libro de Reclamaciones, la
+confirmación de doble opt-in y la bienvenida del newsletter. Las claves
+idempotentes son estables y también recuperan registros cuyo envío terminó,
+pero cuyo estado no alcanzó a persistirse en Supabase.
 
-La frecuencia horaria necesita un plan comercial de Vercel compatible. Casa
-Atenta es un sitio comercial y no debe operar bajo el plan Hobby.
+Los envíos normales siguen siendo inmediatos; el cron solo recupera fallos
+excepcionales. Al pasar el proyecto a un plan comercial compatible, conviene
+restaurar la expresión horaria `7 * * * *`. Además del límite de cron, se debe
+confirmar que el plan de hosting autoriza el uso comercial de Casa Atenta.
 
 Variables obligatorias:
 
