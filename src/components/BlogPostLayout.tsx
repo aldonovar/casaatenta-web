@@ -1,305 +1,214 @@
-"use client";
-
-import React, { useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
-  Calendar,
-  Clock,
-  Tag,
   ArrowLeft,
   ArrowRight,
+  CalendarDays,
+  Clock3,
   MessageCircle,
+  Tag,
 } from "lucide-react";
+import type { BlogPost } from "@/data/blog-posts";
+import { blogPosts } from "@/data/blog-posts";
+import {
+  BLOG_AUTHOR,
+  formatBlogDate,
+  getBlogPostUrl,
+  getReadingTimeMinutes,
+  getSpeechChunks,
+  headingId,
+} from "@/lib/blog";
+import { BLOG_URL, siteUrl } from "@/lib/urls";
 import { createWhatsAppLink } from "@/constants/contact";
 import { BrandText } from "./BrandText";
 import { FAQAccordion } from "./FAQAccordion";
-import type { BlogPost } from "@/data/blog-posts";
-import { blogPosts } from "@/data/blog-posts";
-
-gsap.registerPlugin(ScrollTrigger);
+import { ShareToolbar } from "./blog/ShareToolbar";
+import { VoiceReader } from "./blog/VoiceReader";
 
 interface BlogPostLayoutProps {
   post: BlogPost;
 }
 
-export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+const serviceNames: Record<string, string> = {
+  "techos-sol-y-sombra": "Techos sol y sombra",
+  "diseno-terrazas": "Diseño de terrazas",
+  "smart-homes": "Smart homes",
+  "iluminacion-inteligente": "Iluminación inteligente",
+  "mantenimiento-general": "Mantenimiento general",
+};
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-
-    const ctx = gsap.context(() => {
-      // Hero elements
-      gsap.fromTo(
-        ".blog-hero-content",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.2 }
-      );
-
-      // Reading progress bar
-      gsap.to("#read-progress-bar", {
-        scaleX: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: true,
-        },
-      });
-
-      // Article sections scroll reveal
-      const sections = containerRef.current?.querySelectorAll(".blog-section");
-      if (sections) {
-        sections.forEach((section) => {
-          gsap.fromTo(
-            section,
-            { opacity: 0, y: 35 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: section,
-                start: "top 85%",
-                toggleActions: "play none none none",
-              },
-            }
-          );
-        });
-      }
-
-      // FAQ section
-      gsap.fromTo(
-        ".blog-faq",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".blog-faq",
-            start: "top 85%",
-          },
-        }
-      );
-
-      // Related section
-      gsap.fromTo(
-        ".blog-related",
-        { opacity: 0, y: 25 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".blog-related",
-            start: "top 85%",
-          },
-        }
-      );
-
-      // CTA section
-      gsap.fromTo(
-        ".blog-cta",
-        { opacity: 0, scale: 0.97 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".blog-cta",
-            start: "top 85%",
-          },
-        }
-      );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr + "T00:00:00");
-    return date.toLocaleDateString("es-PE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  // Service slug -> display name mapping
-  const serviceNames: Record<string, string> = {
-    "techos-sol-y-sombra": "Techos sol y sombra",
-    "diseno-terrazas": "Diseño de terrazas",
-    "smart-homes": "Smart homes",
-    "iluminacion-inteligente": "Iluminación inteligente",
-    "mantenimiento-general": "Mantenimiento general",
-  };
-
-  const whatsAppMessage = `Hola Casa Atenta, acabo de leer su artículo "${post.hero.h1}" y me gustaría más información.`;
+export function BlogPostLayout({ post }: BlogPostLayoutProps) {
+  const articleUrl = getBlogPostUrl(post.slug);
+  const readingMinutes = getReadingTimeMinutes(post);
+  const whatsAppMessage = `Hola Casa Atenta, acabo de leer su artículo "${post.hero.h1}" y me gustaría recibir orientación.`;
 
   return (
-    <div
-      ref={containerRef}
-      className="bg-ca-bg-deep min-h-screen relative overflow-hidden"
-    >
-      {/* Reading progress bar */}
-      <div
-        id="read-progress-bar"
-        className="fixed top-0 left-0 h-[3px] bg-ca-gold z-[60] origin-left w-full scale-x-0"
-      />
+    <main className="relative min-h-screen overflow-hidden bg-ca-bg-deep">
+      <div className="architectural-grid pointer-events-none absolute inset-0 opacity-[.045]" />
 
-      <div className="absolute inset-0 z-0 opacity-5 architectural-grid pointer-events-none" />
-
-      {/* ── HERO ── */}
-      <section className="relative z-10 pt-32 pb-20 md:pt-40 md:pb-28">
-        {/* Background image overlay */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-[0.07]"
-          style={{ backgroundImage: `url(${post.hero.image})` }}
-        />
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-ca-bg-deep/60 via-transparent to-ca-bg-deep" />
-
-        <div className="blog-hero-content relative z-10 max-w-4xl mx-auto px-6 md:px-12">
-          {/* Back link */}
+      <header className="relative z-10 border-b border-ca-border/60 px-6 pb-14 pt-32 md:px-10 md:pb-20 md:pt-40">
+        <div className="mx-auto max-w-6xl">
           <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-[10px] font-mono tracking-[0.25em] text-brand-gold uppercase mb-8 hover:text-brand-gold-light transition-colors duration-300 group"
+            href={BLOG_URL}
+            className="group inline-flex items-center gap-2 font-mono text-[9px] uppercase tracking-[.22em] text-brand-gold transition hover:text-brand-gold-light"
           >
-            <ArrowLeft
-              size={12}
-              className="transition-transform duration-300 group-hover:-translate-x-1"
-            />
-            <span>Volver al blog</span>
+            <ArrowLeft size={12} className="transition-transform group-hover:-translate-x-1" />
+            Casa Atenta Editorial
           </Link>
 
-          {/* Category */}
-          <span className="tech-label block mb-4">{post.hero.category}</span>
+          <div className="mt-10 grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
+            <div>
+              <span className="tech-label block">{post.hero.category}</span>
+              <h1 className="mt-5 max-w-5xl font-display text-[clamp(2.6rem,7vw,6.8rem)] font-light uppercase leading-[.94] tracking-[-.02em] text-brand-light">
+                <BrandText>{post.hero.h1}</BrandText>
+              </h1>
+              <p className="mt-7 max-w-3xl font-serif text-xl italic leading-relaxed text-ca-text-secondary md:text-2xl">
+                {post.hero.subtitle}
+              </p>
+            </div>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-display font-light uppercase leading-tight tracking-wide text-brand-light mb-6">
-            <BrandText>{post.hero.h1}</BrandText>
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-base md:text-lg font-serif italic text-brand-light/60 leading-relaxed max-w-2xl mb-8">
-            {post.hero.subtitle}
-          </p>
-
-          {/* Meta */}
-          <div className="flex flex-wrap items-center gap-6 text-[10px] font-mono tracking-widest text-brand-light/35 uppercase">
-            <span className="flex items-center gap-1.5">
-              <Calendar size={12} className="text-brand-gold/60" />
-              {formatDate(post.hero.date)}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock size={12} className="text-brand-gold/60" />
-              {post.hero.readTime} de lectura
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Tag size={12} className="text-brand-gold/60" />
-              {post.hero.category}
-            </span>
+            <dl className="grid grid-cols-2 gap-5 border-l border-ca-border pl-6 lg:grid-cols-1">
+              <div>
+                <dt className="font-mono text-[8px] uppercase tracking-[.18em] text-ca-text-muted">Publicado</dt>
+                <dd className="mt-2 flex items-center gap-2 text-xs text-ca-text-secondary">
+                  <CalendarDays size={13} className="text-brand-gold" />
+                  <time dateTime={post.hero.date}>{formatBlogDate(post.hero.date)}</time>
+                </dd>
+              </div>
+              <div>
+                <dt className="font-mono text-[8px] uppercase tracking-[.18em] text-ca-text-muted">Lectura</dt>
+                <dd className="mt-2 flex items-center gap-2 text-xs text-ca-text-secondary">
+                  <Clock3 size={13} className="text-brand-gold" />
+                  {readingMinutes} min · {BLOG_AUTHOR.name}
+                </dd>
+              </div>
+            </dl>
           </div>
 
-          {/* Decorative line */}
-          <div className="ca-rule mt-10" />
+          <figure className="relative mt-12 aspect-[16/8] min-h-72 overflow-hidden rounded-2xl border border-ca-border bg-ca-bg-primary md:mt-16">
+            <Image
+              src={post.hero.image}
+              alt={post.hero.imageAlt}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1152px"
+              className="object-cover opacity-75"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#07111d]/85 via-transparent to-transparent" />
+            <figcaption className="absolute bottom-5 left-5 right-5 font-mono text-[8px] uppercase tracking-[.18em] text-white/65 md:bottom-7 md:left-7">
+              {post.hero.imageAlt}
+            </figcaption>
+          </figure>
         </div>
-      </section>
+      </header>
 
-      {/* ── ARTICLE BODY ── */}
-      <article className="blog-article relative z-10 max-w-3xl mx-auto px-6 md:px-12 pb-20">
-        {post.sections.map((section, i) => (
-          <div key={i} className="blog-section mb-14">
-            <h2 className="text-xl md:text-2xl font-display font-light uppercase tracking-wide text-brand-light mb-4">
-              <BrandText>{section.heading}</BrandText>
-            </h2>
-            <p className="ca-body">{section.content}</p>
-            {section.list && (
-              <ul className="mt-5 space-y-3">
-                {section.list.map((item, j) => (
-                  <li key={j} className="flex items-start gap-3">
-                    <span className="text-brand-gold mt-1 shrink-0">▪</span>
-                    <span className="text-sm font-light text-brand-light/55 leading-relaxed">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-12 md:px-10 md:py-16">
+        <VoiceReader chunks={getSpeechChunks(post)} />
+        <div className="mt-7">
+          <span className="mb-3 block font-mono text-[8px] uppercase tracking-[.18em] text-ca-text-muted">
+            Comparte esta guía
+          </span>
+          <ShareToolbar title={post.hero.h1} url={articleUrl} />
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto grid max-w-6xl gap-14 px-6 pb-24 md:px-10 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-20">
+        <article className="blog-prose min-w-0" itemScope itemType="https://schema.org/Article">
+          {post.sections.map((section, index) => {
+            const id = headingId(section.heading);
+            return (
+              <section key={id} id={id} className="scroll-mt-28 border-t border-ca-border/60 py-11 first:border-t-0 first:pt-0">
+                <div className="mb-5 flex items-baseline gap-4">
+                  <span className="font-mono text-[9px] tracking-[.18em] text-brand-gold" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h2 className="font-display text-2xl font-light uppercase leading-tight tracking-wide text-brand-light md:text-3xl">
+                    <BrandText>{section.heading}</BrandText>
+                  </h2>
+                </div>
+                <p className="text-[1.05rem] font-light leading-[1.9] text-ca-text-secondary md:text-lg">
+                  {section.content}
+                </p>
+                {section.list && (
+                  <ul className="mt-7 grid gap-4">
+                    {section.list.map((item) => (
+                      <li key={item} className="flex items-start gap-4 rounded-lg border border-ca-border/60 bg-ca-bg-card/45 p-4 text-sm font-light leading-7 text-ca-text-secondary">
+                        <span className="mt-[.7rem] h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold" aria-hidden="true" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            );
+          })}
+        </article>
+
+        <aside className="order-first lg:order-none" aria-label="Tabla de contenidos">
+          <div className="lg:sticky lg:top-28">
+            <span className="font-mono text-[9px] uppercase tracking-[.2em] text-brand-gold">En esta guía</span>
+            <nav className="mt-5 border-l border-ca-border" aria-label="Contenido del artículo">
+              {post.sections.map((section, index) => (
+                <a
+                  key={section.heading}
+                  href={`#${headingId(section.heading)}`}
+                  className="block border-l border-transparent px-4 py-2 text-xs leading-5 text-ca-text-secondary transition hover:border-brand-gold hover:text-brand-gold"
+                >
+                  <span className="mr-2 font-mono text-[8px] text-ca-text-muted">{String(index + 1).padStart(2, "0")}</span>
+                  {section.heading}
+                </a>
+              ))}
+            </nav>
+            <div className="mt-8 border-t border-ca-border pt-6">
+              <span className="flex items-center gap-2 font-mono text-[8px] uppercase tracking-[.16em] text-ca-text-muted">
+                <Tag size={11} /> {post.hero.category}
+              </span>
+            </div>
           </div>
-        ))}
-      </article>
+        </aside>
+      </div>
 
-      {/* ── FAQ ── */}
       {post.faqs.length > 0 && (
-        <section className="blog-faq relative z-10 border-t border-white/[0.05] py-20">
-          <div className="max-w-3xl mx-auto px-6 md:px-12">
-            <span className="tech-label block mb-3">
-              Preguntas frecuentes
-            </span>
-            <h2 className="text-2xl md:text-3xl font-display font-light uppercase tracking-wide text-brand-light mb-8">
-              <BrandText>Resuelve tus dudas</BrandText>
+        <section className="relative z-10 border-y border-ca-border/60 bg-ca-bg-card/35 px-6 py-20 md:px-10">
+          <div className="mx-auto max-w-3xl">
+            <span className="tech-label">Preguntas frecuentes</span>
+            <h2 className="mt-4 font-display text-3xl font-light uppercase tracking-wide text-brand-light md:text-4xl">
+              <BrandText>Respuestas directas</BrandText>
             </h2>
-            <FAQAccordion items={post.faqs} />
+            <div className="mt-9">
+              <FAQAccordion items={post.faqs} />
+            </div>
           </div>
         </section>
       )}
 
-      {/* ── RELATED CONTENT ── */}
-      <section className="blog-related relative z-10 border-t border-white/[0.05] py-20">
-        <div className="max-w-3xl mx-auto px-6 md:px-12">
-          {/* Related Services */}
-          {post.relatedServices.length > 0 && (
-            <div className="mb-14">
-              <span className="tech-label block mb-4">
-                Servicios relacionados
-              </span>
-              <div className="flex flex-wrap gap-3">
-                {post.relatedServices.map((slug) => (
-                  <Link
-                    key={slug}
-                    href={`/servicios/${slug}`}
-                    className="inline-flex items-center gap-2 border border-white/[0.1] bg-white/[0.02] px-4 py-2.5 text-[10px] font-mono uppercase tracking-widest text-brand-light/60 transition-all duration-300 hover:border-brand-gold/40 hover:text-brand-gold hover:bg-brand-gold/[0.04] rounded"
-                  >
-                    <span>{serviceNames[slug] || slug}</span>
-                    <ArrowRight size={10} />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Related Posts */}
+      <section className="relative z-10 px-6 py-20 md:px-10">
+        <div className="mx-auto max-w-6xl">
           {post.relatedPosts.length > 0 && (
             <div>
-              <span className="tech-label block mb-4">
-                Artículos relacionados
-              </span>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-end justify-between gap-6">
+                <div>
+                  <span className="tech-label">Sigue explorando</span>
+                  <h2 className="mt-4 font-display text-3xl font-light uppercase text-brand-light">
+                    Lecturas relacionadas
+                  </h2>
+                </div>
+                <Link href={BLOG_URL} className="hidden items-center gap-2 font-mono text-[9px] uppercase tracking-[.18em] text-brand-gold sm:flex">
+                  Ver todas <ArrowRight size={12} />
+                </Link>
+              </div>
+              <div className="mt-8 grid gap-4 md:grid-cols-2">
                 {post.relatedPosts.map((slug) => {
                   const related = blogPosts[slug];
                   if (!related) return null;
                   return (
-                    <Link
-                      key={slug}
-                      href={`/blog/${slug}`}
-                      className="glass-card p-5 rounded-lg group block"
-                    >
-                      <span className="text-[9px] font-mono tracking-widest text-brand-gold uppercase block mb-2">
-                        {related.hero.category}
-                      </span>
-                      <h3 className="text-sm font-display font-light text-brand-light uppercase tracking-wide group-hover:text-brand-gold transition-colors duration-300 leading-snug">
-                        <BrandText>{related.hero.h1}</BrandText>
+                    <Link key={slug} href={getBlogPostUrl(slug)} className="group rounded-xl border border-ca-border bg-ca-bg-card/50 p-6 transition hover:-translate-y-1 hover:border-brand-gold/45">
+                      <span className="font-mono text-[8px] uppercase tracking-[.18em] text-brand-gold">{related.hero.category}</span>
+                      <h3 className="mt-4 font-display text-xl font-light uppercase leading-snug text-brand-light transition group-hover:text-brand-gold">
+                        {related.hero.h1}
                       </h3>
-                      <span className="text-[9px] font-mono text-brand-light/30 mt-2 block">
-                        {related.hero.readTime} de lectura
+                      <span className="mt-5 flex items-center gap-2 text-xs text-ca-text-muted">
+                        {getReadingTimeMinutes(related)} min de lectura <ArrowRight size={12} />
                       </span>
                     </Link>
                   );
@@ -307,32 +216,41 @@ export const BlogPostLayout: React.FC<BlogPostLayoutProps> = ({ post }) => {
               </div>
             </div>
           )}
+
+          {post.relatedServices.length > 0 && (
+            <div className="mt-14 border-t border-ca-border pt-9">
+              <span className="mb-4 block font-mono text-[8px] uppercase tracking-[.18em] text-ca-text-muted">Servicios relacionados</span>
+              <div className="flex flex-wrap gap-2">
+                {post.relatedServices.map((slug) => (
+                  <Link key={slug} href={siteUrl(`/servicios/${slug}`)} className="rounded-full border border-ca-border px-4 py-2 font-mono text-[8px] uppercase tracking-[.13em] text-ca-text-secondary transition hover:border-brand-gold hover:text-brand-gold">
+                    {serviceNames[slug] || slug}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="blog-cta relative z-10 border-t border-white/[0.05] py-24">
-        <div className="max-w-3xl mx-auto px-6 md:px-12 text-center">
-          <span className="tech-label block mb-4">¿Te interesa?</span>
-          <h2 className="text-2xl md:text-4xl font-display font-light uppercase tracking-wide text-brand-light mb-4">
-            <BrandText>Hablemos de tu proyecto</BrandText>
+      <section className="relative z-10 border-t border-ca-border bg-[#06101b] px-6 py-24 text-center md:px-10">
+        <div className="mx-auto max-w-3xl">
+          <span className="tech-label">Llévalo a tu espacio</span>
+          <h2 className="mt-5 font-display text-4xl font-light uppercase leading-tight text-[#f4f0e8] md:text-5xl">
+            <BrandText>Conversemos sobre tu proyecto</BrandText>
           </h2>
-          <p className="text-sm font-serif italic text-brand-light/50 mb-8 max-w-xl mx-auto leading-relaxed">
-            Cuéntanos qué tienes en mente y te asesoramos sin compromiso.
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#f4f0e8]/55">
+            Envíanos una foto y las medidas disponibles. Te indicaremos qué información hace falta para evaluar el alcance.
           </p>
-          <a
-            href={createWhatsAppLink(whatsAppMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ca-button inline-flex items-center gap-2"
-          >
-            <MessageCircle size={14} />
-            <span>Consultar por WhatsApp</span>
+          <a href={createWhatsAppLink(whatsAppMessage)} target="_blank" rel="noopener noreferrer" className="ca-button mt-8">
+            <MessageCircle size={14} /> Consultar por WhatsApp
           </a>
+          <div className="mt-10 flex justify-center">
+            <ShareToolbar title={post.hero.h1} url={articleUrl} compact />
+          </div>
         </div>
       </section>
-    </div>
+    </main>
   );
-};
+}
 
 export default BlogPostLayout;
