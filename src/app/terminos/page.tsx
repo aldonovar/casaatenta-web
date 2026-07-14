@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { LEGAL_PROVIDER_LABEL } from "@/constants/legal";
 
 export const metadata: Metadata = {
   title: "Términos y Condiciones | Casa Atenta",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   ],
 };
 
-const UPDATED_AT = "18 de junio de 2026";
+const UPDATED_AT = "13 de julio de 2026";
 
 export default function TermsPage() {
   return (
@@ -51,6 +52,9 @@ export default function TermsPage() {
             <p>
               Al acceder, navegar o utilizar este sitio web, o al enviar formularios de contacto y cotización técnica, manifiestas tu aceptación incondicional de los presentes Términos y Condiciones. Si no estás de acuerdo con alguna de las cláusulas aquí estipuladas, te solicitamos abstenerte de hacer uso de la plataforma.
             </p>
+            <p>
+              El proveedor responsable del sitio es {LEGAL_PROVIDER_LABEL}.
+            </p>
           </section>
 
           <section className="space-y-4">
@@ -86,7 +90,7 @@ export default function TermsPage() {
             <ul className="list-disc pl-6 space-y-2 font-light">
               <li>Incurrir en cualquier acto ilícito o que busque vulnerar la seguridad, el código fuente o el rendimiento del sitio web.</li>
               <li>Ingresar datos falsos, maliciosos o suplantar la identidad de terceros en los formularios de cotización o de reclamación.</li>
-              <li>Extraer información, imágenes o contenidos mediante técnicas de "scraping" o bots automatizados.</li>
+              <li>Extraer información, imágenes o contenidos mediante técnicas de &quot;scraping&quot; o bots automatizados.</li>
             </ul>
           </section>
 
@@ -134,7 +138,7 @@ export default function TermsPage() {
               Si tienes preguntas sobre este documento o deseas programar una consulta técnica:
             </p>
             <p className="font-mono text-xs text-brand-gold">
-              Email: contacto@casa-atenta.com <br />
+              Email: info@casa-atenta.com <br />
               WhatsApp: +51 908 550 942
             </p>
           </section>

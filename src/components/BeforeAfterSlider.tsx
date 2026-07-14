@@ -3,7 +3,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface BeforeAfterSliderProps {
   beforeImage: string;

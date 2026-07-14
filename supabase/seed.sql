@@ -1,0 +1,1 @@
+-- No hay datos de prueba obligatorios para esta base.

@@ -3,7 +3,7 @@ import { allServiceSlugs } from "@/data/services-pages";
 import { allBlogSlugs } from "@/data/blog-posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://casa-atenta.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.casa-atenta.com";
 
   // Static routes
   const staticRoutes = [

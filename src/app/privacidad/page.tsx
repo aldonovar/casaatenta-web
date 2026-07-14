@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { LEGAL_PROVIDER_LABEL } from "@/constants/legal";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad | Casa Atenta",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   ],
 };
 
-const UPDATED_AT = "18 de junio de 2026";
+const UPDATED_AT = "13 de julio de 2026";
 
 export default function PrivacyPage() {
   return (
@@ -49,12 +50,12 @@ export default function PrivacyPage() {
               1. Responsable del Tratamiento de Datos
             </h2>
             <p>
-              CASA ATENTA es responsable del tratamiento de los datos personales recopilados a través de los formularios del sitio web y los canales de mensajería integrados.
+              {LEGAL_PROVIDER_LABEL} es responsable del tratamiento de los datos personales recopilados a través de los formularios del sitio web y los canales de mensajería integrados.
             </p>
             <p>
               Para cualquier consulta legal o relacionada con tus datos personales, puedes escribir a nuestro canal oficial de privacidad:{" "}
-              <a className="text-brand-gold hover:text-brand-gold-light border-b border-brand-gold/30 pb-0.5 transition-colors" href="mailto:contacto@casa-atenta.com">
-                contacto@casa-atenta.com
+              <a className="text-brand-gold hover:text-brand-gold-light border-b border-brand-gold/30 pb-0.5 transition-colors" href="mailto:info@casa-atenta.com">
+                info@casa-atenta.com
               </a>.
             </p>
           </section>
@@ -70,7 +71,7 @@ export default function PrivacyPage() {
               <li>Nombre y apellidos del titular del proyecto.</li>
               <li>Detalles de contacto (teléfono celular y correo electrónico).</li>
               <li>Información del inmueble o proyecto (tipo de servicio requerido, rango presupuestal, distrito de Lima y notas de requerimiento técnico).</li>
-              <li>Datos anónimos de analítica (dirección IP encriptada, datos de navegación y comportamiento del usuario).</li>
+              <li>Datos técnicos seudonimizados para prevenir abuso, además de datos agregados de navegación cuando corresponda.</li>
             </ul>
           </section>
 
@@ -117,6 +118,8 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-6 space-y-2 font-light">
               <li>Servicios de mensajería instantánea directa (WhatsApp Business).</li>
               <li>Proveedores de infraestructura en la nube y hosting seguro del sitio web (Vercel, Supabase).</li>
+              <li>Servicios de seguridad antiabuso y enrutamiento de correo (Cloudflare).</li>
+              <li>Proveedor de correo transaccional y confirmaciones solicitadas (Resend).</li>
             </ul>
           </section>
 
@@ -138,8 +141,8 @@ export default function PrivacyPage() {
             </p>
             <p>
               Para ejercerlos, puedes enviar una solicitud formal por escrito a nuestro email:{" "}
-              <a className="text-brand-gold hover:text-brand-gold-light border-b border-brand-gold/30 pb-0.5 transition-colors" href="mailto:contacto@casa-atenta.com">
-                contacto@casa-atenta.com
+              <a className="text-brand-gold hover:text-brand-gold-light border-b border-brand-gold/30 pb-0.5 transition-colors" href="mailto:info@casa-atenta.com">
+                info@casa-atenta.com
               </a>, adjuntando una copia legible de tu documento de identidad (DNI/CE).
             </p>
           </section>

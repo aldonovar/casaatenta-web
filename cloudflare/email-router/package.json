@@ -1,0 +1,16 @@
+{
+  "name": "casa-atenta-email-router",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "types": "wrangler types",
+    "types:check": "wrangler types --check",
+    "typecheck": "tsc --noEmit",
+    "deploy:dry": "wrangler deploy --dry-run",
+    "deploy": "wrangler deploy --keep-vars"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "wrangler": "4.110.0"
+  }
+}

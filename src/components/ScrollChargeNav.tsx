@@ -22,18 +22,10 @@ const sections: SectionItem[] = [
 ];
 
 export const ScrollChargeNav: React.FC = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
     const handleScroll = () => {
-      // Calculate overall page scroll progress
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalScroll > 0) {
-        const progress = (window.scrollY / totalScroll) * 100;
-        setScrollProgress(progress);
-      }
-
       // Check if user is near the bottom of the page
       const isAtBottom = window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 100;
 

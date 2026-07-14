@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://casa-atenta.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.casa-atenta.com";
   return {
     rules: {
       userAgent: "*",

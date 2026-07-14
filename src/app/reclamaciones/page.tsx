@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { TurnstileWidget } from "@/components/TurnstileWidget";
+import { LEGAL_PROVIDER, LEGAL_PROVIDER_LABEL } from "@/constants/legal";
 
 interface FormErrors {
   [key: string]: string;
@@ -16,7 +18,12 @@ export default function ReclamacionesPage() {
     email: "",
     phone: "",
     address: "",
+    isMinor: false,
     minorGuardian: "",
+    minorGuardianAddress: "",
+    minorGuardianPhone: "",
+    minorGuardianEmail: "",
+    goodType: "Servicio",
     claimType: "Reclamo", // Reclamo o Queja
     productDescription: "",
     claimedAmount: "",
@@ -28,6 +35,13 @@ export default function ReclamacionesPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [claimCode, setClaimCode] = useState("");
   const [claimDate, setClaimDate] = useState("");
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [claimTermsConsent, setClaimTermsConsent] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [website, setWebsite] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -54,33 +68,79 @@ export default function ReclamacionesPage() {
     }
     if (!formData.phone.trim()) newErrors.phone = "El teléfono es obligatorio.";
     if (!formData.address.trim()) newErrors.address = "La dirección de domicilio es obligatoria.";
+    if (formData.isMinor) {
+      if (!formData.minorGuardian.trim()) {
+        newErrors.minorGuardian = "El nombre completo del representante es obligatorio.";
+      }
+      if (!formData.minorGuardianAddress.trim()) {
+        newErrors.minorGuardianAddress = "El domicilio del representante es obligatorio.";
+      }
+      if (!formData.minorGuardianPhone.trim()) {
+        newErrors.minorGuardianPhone = "El teléfono del representante es obligatorio.";
+      } else if (!/^[+()\-\s\d]{7,30}$/.test(formData.minorGuardianPhone)) {
+        newErrors.minorGuardianPhone = "Ingresa un teléfono válido para el representante.";
+      }
+      if (!formData.minorGuardianEmail.trim()) {
+        newErrors.minorGuardianEmail = "El correo del representante es obligatorio.";
+      } else if (!/\S+@\S+\.\S+/.test(formData.minorGuardianEmail)) {
+        newErrors.minorGuardianEmail = "Ingresa un correo válido para el representante.";
+      }
+    }
     if (!formData.productDescription.trim()) newErrors.productDescription = "Describe el bien o servicio adquirido.";
     if (!formData.claimDetail.trim()) newErrors.claimDetail = "Describe el detalle del reclamo o queja.";
     if (!formData.consumerRequest.trim()) newErrors.consumerRequest = "Indica tu pedido concreto de solución.";
+    if (!privacyConsent) newErrors.privacyConsent = "Debes aceptar el tratamiento necesario para registrar el reclamo.";
+    if (!claimTermsConsent) newErrors.claimTermsConsent = "Debes confirmar los términos del reclamo o queja.";
+    if (!turnstileToken) newErrors.turnstile = "Completa la verificación de seguridad.";
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      // Generate a random unique tracking code: CA-REC-YYYY-XXXX
-      const year = new Date().getFullYear();
-      const randNum = Math.floor(1000 + Math.random() * 9000);
-      const code = `CA-REC-${year}-${randNum}`;
-      
-      setClaimCode(code);
-      setClaimDate(new Date().toLocaleDateString("es-PE", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-      }));
-      
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/claims", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          privacyConsent,
+          claimTermsConsent,
+          turnstileToken,
+          website,
+        }),
+      });
+      const result = (await response.json()) as {
+        error?: string;
+        code?: string;
+        createdAt?: string;
+      };
+      if (!response.ok || !result.code || !result.createdAt) {
+        throw new Error(result.error || "No pudimos registrar el reclamo.");
+      }
+
+      setClaimCode(result.code);
+      setClaimDate(
+        new Intl.DateTimeFormat("es-PE", {
+          dateStyle: "long",
+          timeStyle: "short",
+          timeZone: "America/Lima",
+        }).format(new Date(result.createdAt)),
+      );
       setIsSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "No pudimos registrar el reclamo.",
+      );
+      setTurnstileResetKey((key) => key + 1);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -111,7 +171,29 @@ export default function ReclamacionesPage() {
               Conforme a lo establecido en el Código de Protección y Defensa del Consumidor de la República del Perú (Ley N° 29571), ponemos a tu disposición nuestro Libro de Reclamaciones Virtual para registrar tus reclamos o quejas comerciales.
             </p>
 
+            <dl className="mb-12 grid gap-3 border border-ca-border/40 bg-ca-bg-surface/40 p-5 text-sm text-ca-text-secondary md:grid-cols-[10rem_1fr]">
+              <dt className="font-mono text-[10px] uppercase tracking-[.16em] text-brand-gold">Proveedor</dt>
+              <dd>{LEGAL_PROVIDER_LABEL}</dd>
+              {LEGAL_PROVIDER.address ? (
+                <>
+                  <dt className="font-mono text-[10px] uppercase tracking-[.16em] text-brand-gold">Domicilio fiscal</dt>
+                  <dd>{LEGAL_PROVIDER.address}</dd>
+                </>
+              ) : null}
+            </dl>
+
             <form onSubmit={handleSubmit} className="space-y-10">
+              <div className="absolute -left-[10000px]" aria-hidden="true">
+                <label>
+                  Tu sitio web
+                  <input
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={website}
+                    onChange={(event) => setWebsite(event.target.value)}
+                  />
+                </label>
+              </div>
               
               {/* Sección 1: Datos del Consumidor */}
               <div className="space-y-6">
@@ -211,18 +293,110 @@ export default function ReclamacionesPage() {
                   {errors.address && <p className="text-xs text-red-400 font-mono mt-1">{errors.address}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="minorGuardian" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Nombre de Padre/Madre o Tutor (Solo si el consumidor es menor de edad)</label>
+                <label className="flex items-start gap-3 text-xs leading-5 text-ca-text-secondary">
                   <input
-                    type="text"
-                    id="minorGuardian"
-                    name="minorGuardian"
-                    value={formData.minorGuardian}
-                    onChange={handleChange}
-                    className="w-full bg-ca-bg-surface/50 border border-ca-border/60 rounded px-4 py-3 text-sm focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-colors"
-                    placeholder="Nombre del apoderado legal"
+                    type="checkbox"
+                    checked={formData.isMinor}
+                    onChange={(event) => {
+                      const isMinor = event.target.checked;
+                      setFormData((previous) => ({
+                        ...previous,
+                        isMinor,
+                        ...(isMinor
+                          ? {}
+                          : {
+                              minorGuardian: "",
+                              minorGuardianAddress: "",
+                              minorGuardianPhone: "",
+                              minorGuardianEmail: "",
+                            }),
+                      }));
+                      if (!isMinor) {
+                        setErrors((previous) => ({
+                          ...previous,
+                          minorGuardian: "",
+                          minorGuardianAddress: "",
+                          minorGuardianPhone: "",
+                          minorGuardianEmail: "",
+                        }));
+                      }
+                    }}
+                    className="mt-1 accent-brand-gold"
                   />
-                </div>
+                  El consumidor reclamante es menor de edad.
+                </label>
+
+                {formData.isMinor && (
+                  <fieldset className="space-y-6 rounded border border-ca-border/30 bg-ca-bg-surface/20 p-5">
+                    <legend className="px-2 text-xs font-mono uppercase tracking-wider text-brand-gold">
+                      Datos del padre, madre o representante
+                    </legend>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="minorGuardian" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Nombre completo *</label>
+                        <input
+                          type="text"
+                          id="minorGuardian"
+                          name="minorGuardian"
+                          required={formData.isMinor}
+                          value={formData.minorGuardian}
+                          onChange={handleChange}
+                          className="w-full bg-ca-bg-surface/50 border border-ca-border/60 rounded px-4 py-3 text-sm focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-colors"
+                          placeholder="Nombre del representante"
+                        />
+                        {errors.minorGuardian && <p className="text-xs text-red-400 font-mono mt-1">{errors.minorGuardian}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="minorGuardianEmail" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Correo electrónico *</label>
+                        <input
+                          type="email"
+                          id="minorGuardianEmail"
+                          name="minorGuardianEmail"
+                          required={formData.isMinor}
+                          value={formData.minorGuardianEmail}
+                          onChange={handleChange}
+                          className="w-full bg-ca-bg-surface/50 border border-ca-border/60 rounded px-4 py-3 text-sm focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-colors"
+                          placeholder="representante@correo.com"
+                        />
+                        {errors.minorGuardianEmail && <p className="text-xs text-red-400 font-mono mt-1">{errors.minorGuardianEmail}</p>}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="minorGuardianAddress" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Domicilio completo *</label>
+                        <input
+                          type="text"
+                          id="minorGuardianAddress"
+                          name="minorGuardianAddress"
+                          required={formData.isMinor}
+                          value={formData.minorGuardianAddress}
+                          onChange={handleChange}
+                          className="w-full bg-ca-bg-surface/50 border border-ca-border/60 rounded px-4 py-3 text-sm focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-colors"
+                          placeholder="Calle, avenida, número y distrito"
+                        />
+                        {errors.minorGuardianAddress && <p className="text-xs text-red-400 font-mono mt-1">{errors.minorGuardianAddress}</p>}
+                      </div>
+
+                      <div className="space-y-2">
+                        <label htmlFor="minorGuardianPhone" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Teléfono *</label>
+                        <input
+                          type="tel"
+                          id="minorGuardianPhone"
+                          name="minorGuardianPhone"
+                          required={formData.isMinor}
+                          value={formData.minorGuardianPhone}
+                          onChange={handleChange}
+                          className="w-full bg-ca-bg-surface/50 border border-ca-border/60 rounded px-4 py-3 text-sm focus:outline-none focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/30 transition-colors"
+                          placeholder="Ej. 987654321"
+                        />
+                        {errors.minorGuardianPhone && <p className="text-xs text-red-400 font-mono mt-1">{errors.minorGuardianPhone}</p>}
+                      </div>
+                    </div>
+                  </fieldset>
+                )}
               </div>
 
               {/* Sección 2: Detalle del Bien o Servicio */}
@@ -231,7 +405,22 @@ export default function ReclamacionesPage() {
                   2. Identificación del Bien o Servicio Contratado
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="space-y-2">
+                    <label htmlFor="goodType" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Tipo de bien contratado *</label>
+                    <select
+                      id="goodType"
+                      name="goodType"
+                      required
+                      value={formData.goodType}
+                      onChange={handleChange}
+                      className="w-full bg-ca-bg-surface border border-ca-border/60 rounded px-3 py-3 text-sm focus:outline-none focus:border-brand-gold transition-colors"
+                    >
+                      <option value="Producto">Producto</option>
+                      <option value="Servicio">Servicio</option>
+                    </select>
+                  </div>
+
                   <div className="space-y-2 md:col-span-2">
                     <label htmlFor="productDescription" className="text-xs font-mono uppercase tracking-wider text-ca-text-secondary">Descripción del Bien/Servicio adquirido *</label>
                     <input
@@ -335,12 +524,60 @@ export default function ReclamacionesPage() {
                   * Al enviar este formulario, declaras que los datos ingresados son verídicos y que prestas tu consentimiento para el tratamiento de tu reclamo de conformidad con la normativa de protección de datos del consumidor en el Perú. Casa Atenta enviará una copia del reclamo a la dirección de correo proporcionada. La atención del mismo será resuelta en un plazo máximo de quince (15) días hábiles improrrogables.
                 </p>
 
+                <label className="flex items-start gap-3 text-xs leading-5 text-ca-text-secondary">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={privacyConsent}
+                    onChange={(event) => {
+                      setPrivacyConsent(event.target.checked);
+                      if (event.target.checked) {
+                        setErrors((previous) => ({ ...previous, privacyConsent: "" }));
+                      }
+                    }}
+                    className="mt-1 accent-brand-gold"
+                  />
+                  <span>
+                    Acepto el tratamiento necesario de mis datos para registrar, atender y responder este reclamo o queja, de acuerdo con la{" "}
+                    <Link href="/privacidad" className="text-brand-gold underline underline-offset-4 hover:text-brand-gold-light">
+                      Política de Privacidad
+                    </Link>.
+                  </span>
+                </label>
+                {errors.privacyConsent && <p className="text-xs text-red-400 font-mono">{errors.privacyConsent}</p>}
+
+                <label className="flex items-start gap-3 text-xs leading-5 text-ca-text-secondary">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={claimTermsConsent}
+                    onChange={(event) => {
+                      setClaimTermsConsent(event.target.checked);
+                      if (event.target.checked) {
+                        setErrors((previous) => ({ ...previous, claimTermsConsent: "" }));
+                      }
+                    }}
+                    className="mt-1 accent-brand-gold"
+                  />
+                  Declaro que la información y los hechos consignados son veraces, y confirmo el envío y registro de este reclamo o queja en los términos indicados.
+                </label>
+                {errors.claimTermsConsent && <p className="text-xs text-red-400 font-mono">{errors.claimTermsConsent}</p>}
+
+                <TurnstileWidget
+                  action="consumer_claim"
+                  onToken={setTurnstileToken}
+                  resetKey={turnstileResetKey}
+                />
+                {errors.turnstile && <p className="text-xs text-red-400 font-mono">{errors.turnstile}</p>}
+                {submitError && <p className="text-xs text-red-300 font-mono" role="status">{submitError}</p>}
+
                 <div className="flex justify-start">
                   <button
                     type="submit"
-                    className="ca-button hover:cursor-pointer"
+                    disabled={isSubmitting}
+                    className="ca-button hover:cursor-pointer disabled:cursor-wait disabled:opacity-60"
                   >
-                    Registrar Reclamación
+                    {isSubmitting ? "Registrando…" : "Registrar Reclamación"}
                   </button>
                 </div>
               </div>
@@ -364,7 +601,7 @@ export default function ReclamacionesPage() {
                 <span className="text-brand-gold italic font-serif normal-case">Registrada</span>
               </h2>
               <p className="text-sm font-light text-ca-text-secondary max-w-lg mx-auto">
-                Tu solicitud ha sido catalogada y enviada a nuestro equipo de auditoría legal. Recibirás una copia en tu bandeja de entrada en los próximos minutos.
+                Tu solicitud fue registrada y enviada al equipo de atención. Recibirás una copia en tu bandeja de entrada en los próximos minutos.
               </p>
             </div>
 
@@ -388,9 +625,18 @@ export default function ReclamacionesPage() {
                   <p className="text-xs text-ca-text-secondary">{formData.documentType}: {formData.documentNumber}</p>
                   <p className="text-xs text-ca-text-secondary">{formData.email} | {formData.phone}</p>
                   <p className="text-xs text-ca-text-secondary mt-1">{formData.address}</p>
+                  {formData.isMinor && (
+                    <div className="mt-3 border-t border-ca-border/10 pt-3">
+                      <p className="text-[10px] font-mono uppercase tracking-widest text-ca-text-secondary/50">Representante del menor</p>
+                      <p className="text-xs text-ca-text">{formData.minorGuardian}</p>
+                      <p className="text-xs text-ca-text-secondary">{formData.minorGuardianEmail} | {formData.minorGuardianPhone}</p>
+                      <p className="text-xs text-ca-text-secondary">{formData.minorGuardianAddress}</p>
+                    </div>
+                  )}
                 </div>
                 <div>
-                  <span className="block text-[10px] font-mono text-ca-text-secondary/50 uppercase tracking-widest mb-1.5">Detalle del Servicio</span>
+                  <span className="block text-[10px] font-mono text-ca-text-secondary/50 uppercase tracking-widest mb-1.5">Detalle del bien contratado</span>
+                  <p className="text-xs text-brand-gold">{formData.goodType}</p>
                   <p className="font-medium text-ca-text">{formData.productDescription}</p>
                   {formData.claimedAmount && <p className="text-xs text-brand-gold">Monto Estimado: S/. {formData.claimedAmount}</p>}
                   <p className="text-xs text-ca-text-secondary mt-2">Acción catalogada como: <strong>{formData.claimType}</strong></p>

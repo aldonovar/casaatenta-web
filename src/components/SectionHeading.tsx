@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type SplitTypeInstance from "split-type";
 import { SectionLabel } from "./SectionLabel";
 import { BrandText } from "./BrandText";
 
@@ -34,7 +35,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
     if (!heading) return;
 
     // Dynamically load split-type only on the client side
-    let splitInstance: any = null;
+    let splitInstance: SplitTypeInstance | null = null;
 
     const ctx = gsap.context(() => {
       import("split-type").then(({ default: SplitType }) => {

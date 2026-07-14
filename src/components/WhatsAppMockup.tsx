@@ -55,7 +55,7 @@ export const WhatsAppMockup: React.FC = () => {
   useEffect(() => {
     if (!hasStarted) return;
 
-    messages.forEach((msg, idx) => {
+    messages.forEach((msg) => {
       const timeout = setTimeout(() => {
         setVisibleMessages((prev) => prev + 1);
       }, msg.delay);

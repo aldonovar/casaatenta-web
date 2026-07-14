@@ -6,12 +6,14 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { BrandText } from "./BrandText";
 import { WHATSAPP_NUMBER } from "@/constants/contact";
+import { TurnstileWidget } from "./TurnstileWidget";
 
 interface ConfigState {
   spaceType: string;
   automationLevel: string;
   focusArea: string;
   name: string;
+  email: string;
   phone: string;
 }
 
@@ -22,8 +24,15 @@ export const Configurator: React.FC = () => {
     automationLevel: "",
     focusArea: "",
     name: "",
+    email: "",
     phone: "",
   });
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [whatsappUrl, setWhatsappUrl] = useState("");
 
   const stepContainerRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +66,15 @@ export const Configurator: React.FC = () => {
     setStep((prev) => Math.max(1, prev - 1));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!config.name || !config.phone) return;
+    if (!config.name || !config.email || !config.phone) return;
+    if (!turnstileToken) {
+      setSubmitError("Completa la verificación de seguridad.");
+      return;
+    }
+    setIsSubmitting(true);
+    setSubmitError("");
 
     const text = `Hola Casa Atenta, he configurado mi proyecto a través de su sitio web:
 - **Espacio**: ${config.spaceType}
@@ -70,9 +85,48 @@ export const Configurator: React.FC = () => {
 
 Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
 
-    const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodedText}`, "_blank");
-    setStep(5); // Go to thank you step
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: "configurator",
+          name: config.name,
+          email: config.email,
+          phone: config.phone,
+          service: "Configurador residencial",
+          location: "",
+          measures: "",
+          message: "Solicitud generada desde el configurador de residencias.",
+          projectData: {
+            espacio: config.spaceType,
+            automatizacion: config.automationLevel,
+            prioridad: config.focusArea,
+          },
+          privacyConsent,
+          website: "",
+          turnstileToken,
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(result.error || "No pudimos registrar la configuración.");
+      }
+
+      setWhatsappUrl(
+        `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`,
+      );
+      setStep(5);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "No pudimos registrar la configuración.",
+      );
+      setTurnstileResetKey((key) => key + 1);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -463,7 +517,41 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                           className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3 text-xs font-mono text-ca-text outline-none transition-all duration-300"
                         />
                       </div>
-                      
+                      <div className="relative group">
+                        <label className="block text-[9px] font-mono tracking-widest text-ca-text/60 uppercase mb-1.5">
+                          <BrandText>Correo electrónico</BrandText>
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          autoComplete="email"
+                          value={config.email}
+                          onChange={(e) => updateConfig("email", e.target.value)}
+                          placeholder="nombre@correo.com"
+                          className="w-full bg-ca-bg-deep/60 border border-ca-border focus:border-brand-gold/80 rounded px-4 py-3 text-xs font-mono text-ca-text outline-none transition-all duration-300"
+                        />
+                      </div>
+                      <label className="flex items-start gap-2 text-[9px] leading-4 text-ca-text/60">
+                        <input
+                          type="checkbox"
+                          required
+                          checked={privacyConsent}
+                          onChange={(event) => setPrivacyConsent(event.target.checked)}
+                          className="mt-0.5 accent-brand-gold"
+                        />
+                        Acepto el tratamiento de mis datos para recibir respuesta a esta solicitud.
+                      </label>
+                      <TurnstileWidget
+                        action="contact_form"
+                        onToken={setTurnstileToken}
+                        resetKey={turnstileResetKey}
+                      />
+                      {submitError && (
+                        <p className="text-[10px] leading-4 text-red-300" role="status">
+                          {submitError}
+                        </p>
+                      )}
+
                       <div className="pt-2 flex gap-4">
                         <button
                           type="button"
@@ -474,9 +562,10 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                         </button>
                         <button
                           type="submit"
-                          className="flex-1 glow-btn inline-flex min-h-11 items-center justify-center gap-2 border border-brand-gold bg-brand-gold px-4 py-3 text-[10px] font-mono tracking-widest uppercase text-brand-dark font-semibold hover:bg-brand-gold-dark transition-all duration-300 rounded cursor-pointer"
+                          disabled={isSubmitting}
+                          className="flex-1 glow-btn inline-flex min-h-11 items-center justify-center gap-2 border border-brand-gold bg-brand-gold px-4 py-3 text-[10px] font-mono tracking-widest uppercase text-brand-dark font-semibold hover:bg-brand-gold-dark transition-all duration-300 rounded cursor-pointer disabled:cursor-wait disabled:opacity-60"
                         >
-                          <BrandText>Enviar Propuesta</BrandText>
+                          <BrandText>{isSubmitting ? "Registrando…" : "Enviar Propuesta"}</BrandText>
                         </button>
                       </div>
                     </form>
@@ -492,9 +581,19 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                     <BrandText>¡Configuración Registrada!</BrandText>
                   </h3>
                   <p className="text-xs font-light text-brand-light/50 leading-relaxed font-sans max-w-md mx-auto">
-                    Tu selección técnica ha sido compilada. Se ha abierto un canal directo de comunicación vía WhatsApp para coordinar tu propuesta arquitectónica.
+                    Tu selección técnica fue registrada de forma segura. También enviamos una copia a tu correo.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4 pt-6">
+                    {whatsappUrl && (
+                      <a
+                        href={whatsappUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="glow-btn px-6 py-3 text-[10px] tracking-widest uppercase border border-brand-gold bg-brand-gold text-brand-dark transition-all duration-400 font-semibold rounded"
+                      >
+                        <BrandText>Continuar por WhatsApp</BrandText>
+                      </a>
+                    )}
                     <button
                       onClick={() => {
                         setStep(1);
@@ -503,8 +602,14 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                           automationLevel: "",
                           focusArea: "",
                           name: "",
+                          email: "",
                           phone: "",
                         });
+                        setPrivacyConsent(false);
+                        setTurnstileToken("");
+                        setTurnstileResetKey((key) => key + 1);
+                        setSubmitError("");
+                        setWhatsappUrl("");
                       }}
                       className="glow-btn px-6 py-3 text-[10px] tracking-widest uppercase border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-dark transition-all duration-400 font-semibold rounded cursor-pointer"
                     >

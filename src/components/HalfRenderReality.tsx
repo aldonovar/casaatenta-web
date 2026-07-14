@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import React, { useState, useRef } from "react";
 import { homeCopy } from "@/data/site";
 import { SectionHeading } from "./SectionHeading";
-import { BrandText } from "./BrandText";
 
 export const HalfRenderReality: React.FC = () => {
   const [sliderPos, setSliderPos] = useState(50); // percentage (0 - 100)
@@ -73,10 +73,12 @@ export const HalfRenderReality: React.FC = () => {
           
           {/* LADO B: REALIDAD TERMINADA (Fondo completo, se revela recortando el Lado A) */}
           <div className="absolute inset-0 w-full h-full">
-            <img
+            <Image
               src="/media/cases/terraza-inteligente/after.png"
               alt="Realidad terminada Casa Atenta"
-              className="absolute inset-0 w-full h-full object-cover"
+              fill
+              sizes="(max-width: 768px) calc(100vw - 3rem), (max-width: 1280px) calc(100vw - 8rem), 1280px"
+              className="object-cover"
             />
             {/* Dark overlay */}
             <div className="absolute inset-0 bg-brand-dark/30" />
@@ -95,10 +97,12 @@ export const HalfRenderReality: React.FC = () => {
             }}
           >
             {/* Blueprint image (we apply filters to look like a blueprint sketch) */}
-            <img
+            <Image
               src="/media/cases/terraza-inteligente/before.png"
               alt="Esquema propuesta Casa Atenta"
-              className="absolute inset-0 w-full h-full object-cover filter grayscale invert contrast-125 brightness-75 opacity-70"
+              fill
+              sizes="(max-width: 768px) calc(100vw - 3rem), (max-width: 1280px) calc(100vw - 8rem), 1280px"
+              className="object-cover filter grayscale invert contrast-125 brightness-75 opacity-70"
             />
             
             {/* Blue tint mix to feel like architectural blueprint */}

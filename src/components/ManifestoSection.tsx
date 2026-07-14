@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export const ManifestoSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);

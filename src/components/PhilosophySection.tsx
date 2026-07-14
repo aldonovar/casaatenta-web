@@ -22,8 +22,8 @@ export const PhilosophySection: React.FC = () => {
 
     mm.add("(min-width: 1024px)", () => {
       // Desktop: Pinned layout for large typography slide-up reveals
-      const items = gsap.utils.toArray(".philosophy-item") as any[];
-      const svgs = gsap.utils.toArray(".philosophy-svg-bg") as any[];
+      const items = gsap.utils.toArray<HTMLElement>(".philosophy-item");
+      const svgs = gsap.utils.toArray<SVGElement>(".philosophy-svg-bg");
 
       // Set initial states
       gsap.set(items, { opacity: 0.15, y: 50 });

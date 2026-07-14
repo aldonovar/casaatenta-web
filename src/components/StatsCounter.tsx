@@ -39,8 +39,8 @@ export const StatsCounter: React.FC = () => {
       );
 
       // Animate the counters
-      const counters = gsap.utils.toArray(".stat-number");
-      counters.forEach((counter: any) => {
+      const counters = gsap.utils.toArray<HTMLSpanElement>(".stat-number");
+      counters.forEach((counter) => {
         const targetVal = parseInt(counter.getAttribute("data-target") || "0", 10);
         const obj = { val: 0 };
 

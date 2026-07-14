@@ -1,5 +1,7 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+La configuración de correo, Cloudflare Email Routing, Resend, Supabase y Turnstile está documentada en [`docs/EMAIL_SECURITY_SETUP.md`](docs/EMAIL_SECURITY_SETUP.md). Copia `.env.example` como referencia y nunca confirmes secretos reales en Git.
+
 ## Getting Started
 
 First, run the development server:

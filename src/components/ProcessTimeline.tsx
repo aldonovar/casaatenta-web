@@ -45,11 +45,12 @@ export const ProcessTimeline: React.FC = () => {
       });
 
       // Animate individual nodes as the scroll passes them
-      const stepItems = gsap.utils.toArray(".timeline-step");
-      stepItems.forEach((step: any, index: number) => {
-        const node = step.querySelector(".timeline-node");
-        const number = step.querySelector(".step-number-outline");
-        const content = step.querySelector(".step-content-card");
+      const stepItems = gsap.utils.toArray<HTMLElement>(".timeline-step");
+      stepItems.forEach((step, index) => {
+        const node = step.querySelector<HTMLElement>(".timeline-node");
+        const number = step.querySelector<HTMLElement>(".step-number-outline");
+        const content = step.querySelector<HTMLElement>(".step-content-card");
+        if (!node || !number || !content) return;
 
         const tl = gsap.timeline({
           scrollTrigger: {

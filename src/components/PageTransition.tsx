@@ -45,10 +45,10 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) {
-      setIsTransitioning(false);
+      const frame = window.requestAnimationFrame(() => setIsTransitioning(false));
       gsap.set(curtain, { display: "none" });
       gsap.set(container, { autoAlpha: 1, x: 0, y: 0, clearProps: "transform" });
-      return;
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const direction = getPreloaderDirection(pathname);
@@ -85,7 +85,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
         break;
     }
 
-    setIsTransitioning(true);
+    const transitionFrame = window.requestAnimationFrame(() => setIsTransitioning(true));
     gsap.set(container, { autoAlpha: 0, y: 12 });
     gsap.set(curtain, { ...entryState, display: "flex" });
     gsap.set(logoPathRef1.current, { strokeDasharray: 1040, strokeDashoffset: 1040 });
@@ -117,6 +117,7 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children }) => {
       .to(container, { autoAlpha: 1, y: 0, duration: 0.36, ease: "power2.out" }, "-=0.28");
 
     return () => {
+      window.cancelAnimationFrame(transitionFrame);
       timeline.kill();
       gsap.set(curtain, { display: "none" });
       gsap.set(container, { autoAlpha: 1, x: 0, y: 0, clearProps: "transform,opacity,visibility" });

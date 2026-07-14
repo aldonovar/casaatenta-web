@@ -85,7 +85,7 @@ export default function ConexionesPage() {
     {
       title: "Escribir un Correo",
       subtitle: "Consultas comerciales y corporativas",
-      href: "mailto:contacto@casa-atenta.com",
+      href: "mailto:info@casa-atenta.com",
       icon: <Mail className="w-5 h-5 text-ca-blue-gray" />,
       external: true,
     },
