@@ -167,7 +167,9 @@ textarea {
 
 html {
   scroll-behavior: auto;
+  scroll-padding-top: 6rem;
   background-color: var(--bg-deep);
+  -webkit-text-size-adjust: 100%;
   transition: --bg-deep 0.5s cubic-bezier(0.4, 0, 0.2, 1),
               --bg-primary 0.5s cubic-bezier(0.4, 0, 0.2, 1),
               --bg-surface 0.5s cubic-bezier(0.4, 0, 0.2, 1),
@@ -183,6 +185,7 @@ html {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh;
   margin: 0;
   overflow-x: hidden;
   background-color: var(--bg-deep);
@@ -496,11 +499,30 @@ html.lenis body {
 
 @media (max-width: 640px) {
   .ca-section {
-    padding-block: 4.5rem;
+    padding: 4.5rem clamp(1rem, 5vw, 1.5rem);
   }
 
   .ca-display {
-    font-size: clamp(3rem, 17vw, 5.8rem);
+    font-size: clamp(2.75rem, 16vw, 5.8rem);
+  }
+
+  .ca-heading {
+    font-size: clamp(2.2rem, 12vw, 4rem);
+  }
+
+  .ca-button {
+    width: 100%;
+  }
+}
+
+@media (pointer: coarse) {
+  .custom-cursor,
+  .custom-cursor-dot {
+    display: none !important;
+  }
+
+  .glass-card:hover {
+    transform: none;
   }
 }
 

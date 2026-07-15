@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/apps/storefront/node_modules/
 /cloudflare/email-router/node_modules/
 /.pnp
 .pnp.*
@@ -16,6 +17,7 @@
 
 # next.js
 /.next/
+/apps/storefront/.next/
 /out/
 
 # production
