@@ -67,7 +67,7 @@ export function BlogPostLayout({ post }: BlogPostLayoutProps) {
               </p>
             </div>
 
-            <dl className="grid grid-cols-2 gap-5 border-l border-ca-border pl-6 lg:grid-cols-1">
+            <dl className="grid grid-cols-2 gap-5 border-t border-ca-border pt-5 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0 lg:grid-cols-1">
               <div>
                 <dt className="font-mono text-[8px] uppercase tracking-[.18em] text-ca-text-muted">Publicado</dt>
                 <dd className="mt-2 flex items-center gap-2 text-xs text-ca-text-secondary">
@@ -144,22 +144,22 @@ export function BlogPostLayout({ post }: BlogPostLayoutProps) {
           })}
         </article>
 
-        <aside className="order-first lg:order-none" aria-label="Tabla de contenidos">
+        <aside className="order-first min-w-0 lg:order-none" aria-label="Tabla de contenidos">
           <div className="lg:sticky lg:top-28">
             <span className="font-mono text-[9px] uppercase tracking-[.2em] text-brand-gold">En esta guía</span>
-            <nav className="mt-5 border-l border-ca-border" aria-label="Contenido del artículo">
+            <nav className="-mx-6 mt-5 flex snap-x gap-2 overflow-x-auto px-6 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:block lg:overflow-visible lg:border-l lg:border-ca-border lg:px-0 lg:pb-0" aria-label="Contenido del artículo">
               {post.sections.map((section, index) => (
                 <a
                   key={section.heading}
                   href={`#${headingId(section.heading)}`}
-                  className="block border-l border-transparent px-4 py-2 text-xs leading-5 text-ca-text-secondary transition hover:border-brand-gold hover:text-brand-gold"
+                  className="block max-w-[78vw] shrink-0 snap-start rounded-full border border-ca-border px-4 py-2.5 text-xs leading-5 text-ca-text-secondary transition hover:border-brand-gold hover:text-brand-gold lg:max-w-none lg:rounded-none lg:border-y-0 lg:border-r-0 lg:border-l-transparent lg:py-2"
                 >
                   <span className="mr-2 font-mono text-[8px] text-ca-text-muted">{String(index + 1).padStart(2, "0")}</span>
                   {section.heading}
                 </a>
               ))}
             </nav>
-            <div className="mt-8 border-t border-ca-border pt-6">
+            <div className="mt-5 border-t border-ca-border pt-5 lg:mt-8 lg:pt-6">
               <span className="flex items-center gap-2 font-mono text-[8px] uppercase tracking-[.16em] text-ca-text-muted">
                 <Tag size={11} /> {post.hero.category}
               </span>

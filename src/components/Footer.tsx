@@ -4,9 +4,12 @@ import { BLOG_URL, SITE_URL } from "@/lib/urls";
 import { BrandText } from "./BrandText";
 import { Logo } from "./Logo";
 
+const STORE_URL = process.env.NEXT_PUBLIC_STORE_URL || "https://tienda.casa-atenta.com";
+
 const nav = [
   ["Automatización", `${SITE_URL}/servicios/smart-homes`],
   ["Servicios", `${SITE_URL}/servicios`],
+  ["Tienda", STORE_URL],
   ["Proyectos", `${SITE_URL}/proyectos`],
   ["Proceso", `${SITE_URL}/proceso`],
   ["Nosotros", `${SITE_URL}/nosotros`],

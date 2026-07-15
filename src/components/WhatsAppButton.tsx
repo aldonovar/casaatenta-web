@@ -48,7 +48,7 @@ export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
         target="_blank"
         rel="noopener noreferrer"
         aria-label={label}
-        className={`fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full border border-brand-gold/30 bg-ca-bg-surface/80 text-brand-gold shadow-[0_12px_30px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-brand-gold hover:text-brand-gold focus:outline-none opacity-0 group ca-group-hover-spin ca-group-hover-vibrate ${className}`}
+        className={`fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 flex h-13 w-13 items-center justify-center rounded-full border border-brand-gold/30 bg-ca-bg-surface/80 text-brand-gold shadow-[0_12px_30px_rgba(0,0,0,0.4)] backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-brand-gold hover:text-brand-gold focus:outline-none opacity-0 group ca-group-hover-spin ca-group-hover-vibrate sm:bottom-6 sm:right-6 sm:h-14 sm:w-14 ${className}`}
       >
         {/* Glowing aura */}
         <span className="absolute inset-0 rounded-full bg-brand-gold/10 animate-ping opacity-75" />

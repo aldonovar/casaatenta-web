@@ -12,6 +12,7 @@ export const ZenitMotionSystem: React.FC = () => {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const compactViewport = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
     document.documentElement.dataset.motion = reducedMotion ? "reduced" : "full";
 
     if (reducedMotion) return;
@@ -44,42 +45,44 @@ export const ZenitMotionSystem: React.FC = () => {
         );
       });
 
-      const parallaxNodes = gsap.utils.toArray<HTMLElement>("[data-zenit-parallax]");
-      parallaxNodes.forEach((node) => {
-        const depth = Number(node.dataset.zenitParallax ?? 8);
-        gsap.fromTo(
-          node,
-          { yPercent: -depth },
-          {
-            yPercent: depth,
-            ease: "none",
-            scrollTrigger: {
-              trigger: node.closest("section") ?? node,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.8,
+      if (!compactViewport) {
+        const parallaxNodes = gsap.utils.toArray<HTMLElement>("[data-zenit-parallax]");
+        parallaxNodes.forEach((node) => {
+          const depth = Number(node.dataset.zenitParallax ?? 8);
+          gsap.fromTo(
+            node,
+            { yPercent: -depth },
+            {
+              yPercent: depth,
+              ease: "none",
+              scrollTrigger: {
+                trigger: node.closest("section") ?? node,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.8,
+              },
             },
-          },
-        );
-      });
+          );
+        });
 
-      const scaleNodes = gsap.utils.toArray<HTMLElement>("[data-zenit-scale]");
-      scaleNodes.forEach((node) => {
-        gsap.fromTo(
-          node,
-          { scale: 1.08 },
-          {
-            scale: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: node,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 0.9,
+        const scaleNodes = gsap.utils.toArray<HTMLElement>("[data-zenit-scale]");
+        scaleNodes.forEach((node) => {
+          gsap.fromTo(
+            node,
+            { scale: 1.08 },
+            {
+              scale: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: node,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 0.9,
+              },
             },
-          },
-        );
-      });
+          );
+        });
+      }
 
       const lineNodes = gsap.utils.toArray<HTMLElement>("[data-zenit-line]");
       lineNodes.forEach((node) => {
