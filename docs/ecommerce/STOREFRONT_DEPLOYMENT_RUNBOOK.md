@@ -15,28 +15,55 @@ bloqueadores del checklist de lanzamiento.
 No se debe añadir `tienda` al proyecto Vercel actual: ese proyecto compila la
 raíz y serviría la web principal, no el storefront.
 
-## Estado live encontrado
+## Estado verificado
 
-- Vercel solo tiene el proyecto `casaatenta-web`; producción está en el commit
-  `b1988bb`.
-- `tienda.casa-atenta.com` no está asociado a ningún proyecto.
-- Cloudflare no tiene registro `tienda`; públicamente el host devuelve NXDOMAIN.
-- Apex, `www` y `blog` usan CNAME DNS-only hacia Vercel.
-- El blog recibe TLS de Vercel/Let's Encrypt. La web principal ya publica HSTS
-  con `includeSubDomains`, de modo que `tienda` necesita HTTPS válido desde su
+- Vercel ya tiene el proyecto separado `casaatenta-storefront`
+  (`prj_ddxHyW45OiPPIeNyPNzs4OMrfh1g`), conectado a
+  `aldonovar/casaatenta-web` con `main` como rama de producción.
+- La configuración efectiva es `Root Directory = apps/storefront`, Next.js,
+  Node.js 22 y `Install Command = cd ../.. && npm ci --include=dev`. El comando
+  de instalación desde la raíz es necesario porque el PostCSS compartido usa
+  dependencias de desarrollo del workspace.
+- La rama `codex/storefront-readiness`, commit
+  `40246e1245e211090cd357f09a2c1c98499c6276`, tiene un Preview `READY` y
+  protegido por Vercel:
+  `https://casaatenta-storefront-q0usyhopw-allyx.vercel.app`
+  (`dpl_FzssvmZ7mmDQTcctQmqnVRJnv7ZB`).
+- El Preview tiene solamente las variables no sensibles de modo, URL de tienda
+  y URL de marketing. No tiene credenciales de Supabase ni Openpay.
+- La validación remota devolvió 200 para portada, términos de compra, ficha de
+  producto e imagen WebP. También confirmó `X-Robots-Tag: noindex`,
+  `robots.txt` con `Disallow: /`, canonical hacia `tienda.casa-atenta.com` y
+  checkout bloqueado con 503.
+- El primer intento de build quedó en `ERROR` sin alias asignado ni dominio y no
+  está sirviendo tráfico. No debe promoverse.
+- El proyecto solo tiene asociado su dominio predeterminado
+  `casaatenta-storefront.vercel.app`; `tienda.casa-atenta.com` continúa sin
+  asociarse.
+- Cloudflare no tiene registro `tienda`; públicamente el host continúa en
+  NXDOMAIN. No se modificaron apex, `www` ni `blog`.
+- La consulta de configuración, todavía de solo lectura, recomienda como CNAME
+  primario `64595190c9c57126.vercel-dns-017.com.`. Debe volver a consultarse
+  después de asociar el dominio al proyecto y antes de crear el registro DNS.
+- Apex, `www` y `blog` usan CNAME DNS-only hacia Vercel. El blog recibe TLS de
+  Vercel/Let's Encrypt. La web principal ya publica HSTS con
+  `includeSubDomains`, de modo que `tienda` necesita HTTPS válido desde su
   primera respuesta.
 - La zona tiene Universal SSL, pero no se observó un registro DS público para
   completar DNSSEC.
 
 ## Secuencia segura de publicación
 
-1. Crear `casaatenta-storefront` en el mismo equipo Vercel.
+1. Crear `casaatenta-storefront` en el mismo equipo Vercel. **Completado.**
 2. Conectar el repositorio `aldonovar/casaatenta-web`, rama `main`.
-3. Configurar `Root Directory = apps/storefront` y framework Next.js.
+   **Completado.**
+3. Configurar `Root Directory = apps/storefront`, framework Next.js, Node.js 22
+   e instalación desde la raíz del workspace. **Completado.**
 4. Cargar únicamente variables de preview. No cargar credenciales de producción
    de Openpay hasta terminar la compra de staging.
+   **Completado para las variables no sensibles.**
 5. Validar la URL `vercel.app`: catálogo, imágenes, legales, carrito, headers y
-   bloqueo de cobros.
+   bloqueo de cobros. **Completado para el Preview actual.**
 6. Agregar `tienda.casa-atenta.com` al proyecto nuevo y copiar el destino CNAME
    exacto que indique Vercel.
 7. Crear en Cloudflare un solo CNAME:
