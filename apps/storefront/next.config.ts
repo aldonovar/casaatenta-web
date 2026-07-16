@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+const isStorePreview =
+  (process.env.NEXT_PUBLIC_STORE_MODE || "preview") !== "live";
 
 function originOf(value: string | undefined) {
   if (!value) return null;
@@ -50,6 +52,9 @@ const nextConfig: NextConfig = {
   async headers() {
     const securityHeaders = [
       { key: "Content-Security-Policy", value: contentSecurityPolicy },
+      ...(isStorePreview
+        ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+        : []),
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "DENY" },
