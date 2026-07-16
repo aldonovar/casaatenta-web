@@ -61,7 +61,8 @@ Mantener `STORE_MODE=preview` hasta que todos los puntos críticos estén cerrad
 
 ## 5. DNS, despliegue y observabilidad
 
-- [ ] Proyecto Vercel separado con root `apps/storefront`.
+- [x] Proyecto Vercel separado con root `apps/storefront`, Node.js 22 y Preview
+  protegido validado.
 - [ ] DNS `tienda` conectado, TLS activo y redirección canónica verificada.
 - [ ] Variables de entorno cargadas según `.env.example`.
 - [ ] Alertas para errores de checkout/webhook, colas de correo y conciliación.
