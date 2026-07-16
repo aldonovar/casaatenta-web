@@ -17,6 +17,8 @@ raíz y serviría la web principal, no el storefront.
 
 ## Estado verificado
 
+- Auditoría realizada el 15 de julio de 2026 (America/Lima) en el equipo Vercel
+  `ALLYX` (`team_6wzPFgkn21Gut1GTzJduhKzu`).
 - Vercel ya tiene el proyecto separado `casaatenta-storefront`
   (`prj_ddxHyW45OiPPIeNyPNzs4OMrfh1g`), conectado a
   `aldonovar/casaatenta-web` con `main` como rama de producción.
@@ -28,15 +30,23 @@ raíz y serviría la web principal, no el storefront.
   `40246e1245e211090cd357f09a2c1c98499c6276`, tiene un Preview `READY` y
   protegido por Vercel:
   `https://casaatenta-storefront-q0usyhopw-allyx.vercel.app`
-  (`dpl_FzssvmZ7mmDQTcctQmqnVRJnv7ZB`).
+  (`dpl_FzssvmZ7mmDQTcctQmqnVRJnv7ZB`). El alias de rama
+  `https://casaatenta-storefront-git-codex-storefront-readiness-allyx.vercel.app`
+  apunta al Preview más reciente que Vercel genera con cada nuevo commit.
 - El Preview tiene solamente las variables no sensibles de modo, URL de tienda
   y URL de marketing. No tiene credenciales de Supabase ni Openpay.
-- La validación remota devolvió 200 para portada, términos de compra, ficha de
-  producto e imagen WebP. También confirmó `X-Robots-Tag: noindex`,
-  `robots.txt` con `Disallow: /`, canonical hacia `tienda.casa-atenta.com` y
-  checkout bloqueado con 503.
-- El primer intento de build quedó en `ERROR` sin alias asignado ni dominio y no
-  está sirviendo tráfico. No debe promoverse.
+- La validación remota autenticada, mediante el bypass de protección de Vercel,
+  devolvió 200 para portada, términos de compra, ficha de producto e imagen
+  WebP. También confirmó `X-Robots-Tag: noindex`, `robots.txt` con
+  `Disallow: /`, canonical hacia `tienda.casa-atenta.com` y checkout bloqueado
+  con 503. Una visita anónima al Preview permanece detrás del acceso del equipo
+  Vercel.
+- El primer intento de build (`dpl_6EN6xG5WxYP6oBN3X4xM65gN3SDm`) quedó en
+  `ERROR` por la dependencia PostCSS antes de fijar el comando de instalación;
+  no recibió alias ni dominio y no está sirviendo tráfico. No debe promoverse.
+- El proyecto está actualmente en el plan Hobby. Antes de vender debe revisarse
+  el plan operativo y confirmar la ejecución en producción del cron diario
+  `/api/cron/order-notifications`; los cron no se ejecutan en Preview.
 - El proyecto solo tiene asociado su dominio predeterminado
   `casaatenta-storefront.vercel.app`; `tienda.casa-atenta.com` continúa sin
   asociarse.
