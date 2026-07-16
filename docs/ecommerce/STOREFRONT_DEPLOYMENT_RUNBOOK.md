@@ -26,8 +26,7 @@ raíz y serviría la web principal, no el storefront.
   Node.js 22 y `Install Command = cd ../.. && npm ci --include=dev`. El comando
   de instalación desde la raíz es necesario porque el PostCSS compartido usa
   dependencias de desarrollo del workspace.
-- La rama `codex/storefront-readiness`, commit
-  `40246e1245e211090cd357f09a2c1c98499c6276`, tiene un Preview `READY` y
+- La rama `codex/storefront-readiness` tiene un Preview `READY` y
   protegido por Vercel:
   `https://casaatenta-storefront-q0usyhopw-allyx.vercel.app`
   (`dpl_FzssvmZ7mmDQTcctQmqnVRJnv7ZB`). El alias de rama
@@ -44,17 +43,23 @@ raíz y serviría la web principal, no el storefront.
 - El primer intento de build (`dpl_6EN6xG5WxYP6oBN3X4xM65gN3SDm`) quedó en
   `ERROR` por la dependencia PostCSS antes de fijar el comando de instalación;
   no recibió alias ni dominio y no está sirviendo tráfico. No debe promoverse.
-- El proyecto está actualmente en el plan Hobby. Antes de vender debe revisarse
-  el plan operativo y confirmar la ejecución en producción del cron diario
-  `/api/cron/order-notifications`; los cron no se ejecutan en Preview.
-- El proyecto solo tiene asociado su dominio predeterminado
-  `casaatenta-storefront.vercel.app`; `tienda.casa-atenta.com` continúa sin
-  asociarse.
+- El commit `e906b5600b7771b502bd4f18d3f11ee4281271cc` quedó además como
+  deployment Production `READY` (`dpl_GzVWZ4FeLmwUgKefJAFYM5tXAbsW`), pero la
+  aplicación conserva sus valores por defecto de preview y el checkout responde
+  503. No se cargaron credenciales comerciales.
+- `tienda.casa-atenta.com` está asociado y verificado en el proyecto. Su alias
+  está fijado a `dpl_GzVWZ4FeLmwUgKefJAFYM5tXAbsW` y
+  `autoAssignCustomDomains=false` evita que un futuro deploy cambie el destino
+  sin revisión explícita.
+- El equipo `ALLYX` está actualmente en Hobby. Los términos vigentes de Vercel
+  limitan Hobby a uso personal/no comercial; se requiere cambiar el equipo a
+  Pro antes de crear el CNAME que hará pública esta tienda empresarial. También
+  debe confirmarse la ejecución en producción del cron diario
+  `/api/cron/order-notifications`.
 - Cloudflare no tiene registro `tienda`; públicamente el host continúa en
   NXDOMAIN. No se modificaron apex, `www` ni `blog`.
-- La consulta de configuración, todavía de solo lectura, recomienda como CNAME
-  primario `64595190c9c57126.vercel-dns-017.com.`. Debe volver a consultarse
-  después de asociar el dominio al proyecto y antes de crear el registro DNS.
+- La consulta posterior a la asociación recomienda como CNAME primario
+  `64595190c9c57126.vercel-dns-017.com.`.
 - Apex, `www` y `blog` usan CNAME DNS-only hacia Vercel. El blog recibe TLS de
   Vercel/Let's Encrypt. La web principal ya publica HSTS con
   `includeSubDomains`, de modo que `tienda` necesita HTTPS válido desde su
@@ -74,17 +79,18 @@ raíz y serviría la web principal, no el storefront.
    **Completado para las variables no sensibles.**
 5. Validar la URL `vercel.app`: catálogo, imágenes, legales, carrito, headers y
    bloqueo de cobros. **Completado para el Preview actual.**
-6. Agregar `tienda.casa-atenta.com` al proyecto nuevo y copiar el destino CNAME
-   exacto que indique Vercel.
-7. Crear en Cloudflare un solo CNAME:
+6. Agregar `tienda.casa-atenta.com` al proyecto nuevo, fijar el alias y copiar el
+   destino CNAME exacto que indique Vercel. **Completado.**
+7. Cambiar el equipo Vercel `ALLYX` de Hobby a Pro para uso comercial.
+8. Crear en Cloudflare un solo CNAME:
    - nombre: `tienda`;
    - destino: valor indicado por Vercel;
    - proxy: DNS-only;
    - TTL: Auto.
-8. Esperar hasta que Vercel muestre el dominio verificado, alias sin error y
+9. Esperar hasta que Vercel muestre el dominio verificado, alias sin error y
    certificado activo.
-9. Verificar DNS, TLS, HSTS, canonical, `robots.txt` y rutas críticas.
-10. Configurar Supabase hospedado y ejecutar pruebas Auth/RLS. Solo después se
+10. Verificar DNS, TLS, HSTS, canonical, `robots.txt` y rutas críticas.
+11. Configurar Supabase hospedado y ejecutar pruebas Auth/RLS. Solo después se
     evalúa una activación comercial controlada.
 
 No reutilizar a ciegas el CNAME actual del blog: Vercel debe proporcionar el
