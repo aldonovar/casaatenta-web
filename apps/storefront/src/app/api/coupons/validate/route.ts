@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { getRequestFingerprint, isAllowedStoreOrigin } from "@/lib/server/security";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
+import { calculateOnlineShippingMinor } from "@/lib/store-shipping";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -97,7 +98,7 @@ export async function POST(request: Request) {
   } catch {
     // Guest quotes are revalidated with the final checkout email.
   }
-  const shippingMinor = subtotalMinor >= 70_000 ? 0 : 1_990;
+  const shippingMinor = calculateOnlineShippingMinor(subtotalMinor);
   const quote = await admin.rpc("quote_store_coupon", {
     p_code: parsed.data.code,
     p_subtotal_minor: subtotalMinor,

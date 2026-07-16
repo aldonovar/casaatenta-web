@@ -25,8 +25,9 @@ export function StoreFooter() {
           </p>
           <div className="store-footer__contact">
             <a href={`mailto:${storeConfig.supportEmail}`}><Mail size={16} /> {storeConfig.supportEmail}</a>
-            <span><MapPin size={16} /> Lima, Perú</span>
+            <span><MapPin size={16} /> {storeConfig.legal.address || "Lima, Perú · ventas aún desactivadas"}</span>
           </div>
+          <p className="store-footer__identity">{storeConfig.legal.holderName} · {storeConfig.legal.tradeName} · RUC {storeConfig.legal.ruc}</p>
         </div>
         <div>
           <h3>Comprar</h3>
@@ -45,17 +46,17 @@ export function StoreFooter() {
         </div>
         <div>
           <h3>Ayuda y posventa</h3>
-          <Link href="/ayuda#envios">Envíos y recojo</Link>
-          <Link href="/ayuda#cambios">Cambios y devoluciones</Link>
-          <Link href="/ayuda#garantia">Garantía y servicio técnico</Link>
-          <a href={`${storeConfig.marketingUrl}/reclamaciones`}>Libro de Reclamaciones</a>
+          <Link href="/legal/envios-cambios-y-garantias">Envíos, cambios y garantía</Link>
+          <Link href="/ayuda">Centro de ayuda</Link>
+          <Link href="/libro-de-reclamaciones">Libro de Reclamaciones</Link>
         </div>
       </div>
       <div className="store-container store-footer__bottom">
         <span>© {new Date().getFullYear()} Casa Atenta. Todos los derechos reservados.</span>
         <div>
-          <a href={`${storeConfig.marketingUrl}/privacidad`}>Privacidad</a>
-          <a href={`${storeConfig.marketingUrl}/terminos`}>Términos</a>
+          <Link href="/legal/privacidad">Privacidad</Link>
+          <Link href="/legal/terminos-de-compra">Términos de compra</Link>
+          <Link href="/legal/cookies">Cookies</Link>
           <span><ShieldCheck size={14} /> Pago protegido por Openpay</span>
         </div>
       </div>

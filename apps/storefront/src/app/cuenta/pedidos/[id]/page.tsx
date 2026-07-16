@@ -51,7 +51,7 @@ export default async function OrderDetailPage({ params }: OrderDetailProps) {
       </div>
 
       <div className="order-detail__grid">
-        <main>
+        <div>
           <section className="order-panel">
             <h2><PackageCheck size={19} /> Productos</h2>
             <div className="order-items">{items.map((item) => <div key={item.id}><span><strong>{item.name}</strong><small>{item.sku} · Cantidad {item.quantity}</small></span><b>{formatMoney(item.total_minor)}</b></div>)}</div>
@@ -62,7 +62,7 @@ export default async function OrderDetailPage({ params }: OrderDetailProps) {
             <div className="order-timeline">{events.map((event) => <div key={event.id}><span><Check size={13} /></span><p><strong>{event.public_message}</strong><time>{new Date(event.created_at).toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" })}</time></p></div>)}</div>
             {shipment?.tracking_number && <a className="button button--outline" href={shipment.tracking_url || "#"} target={shipment.tracking_url ? "_blank" : undefined} rel="noreferrer">Rastrear {shipment.carrier || "envío"}: {shipment.tracking_number}</a>}
           </section>
-        </main>
+        </div>
         <aside>
           <section className="order-panel order-panel--compact"><h2><CreditCard size={18} /> Pago</h2><p><span>Estado</span><strong>{order.payment_state}</strong></p><p><span>Comprobante</span><strong>{order.invoice_type === "invoice" ? "Factura" : "Boleta"}</strong></p></section>
           {address && <section className="order-panel order-panel--compact"><h2><MapPin size={18} /> Entrega</h2><address><strong>{address.recipient_name}</strong><span>{address.address_line_1}{address.address_line_2 ? `, ${address.address_line_2}` : ""}</span><span>{address.district}, {address.department}</span>{address.reference && <small>Ref.: {address.reference}</small>}</address></section>}

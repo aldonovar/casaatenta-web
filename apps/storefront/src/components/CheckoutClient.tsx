@@ -16,6 +16,8 @@ import {
   UserRound,
 } from "lucide-react";
 import { formatMoney, storeConfig } from "@/lib/store-config";
+import { STORE_LEGAL_PATHS, STORE_LEGAL_VERSIONS } from "@/lib/store-legal";
+import { calculateOnlineShippingMinor } from "@/lib/store-shipping";
 import { ProductVisual } from "./ProductVisual";
 import { useCart } from "./CartProvider";
 
@@ -49,6 +51,9 @@ declare global {
 const merchantId = process.env.NEXT_PUBLIC_OPENPAY_MERCHANT_ID || "";
 const publicKey = process.env.NEXT_PUBLIC_OPENPAY_PUBLIC_KEY || "";
 const openpayEnvironment = process.env.NEXT_PUBLIC_OPENPAY_ENVIRONMENT || "sandbox";
+const provinceQuoteUrl = `${storeConfig.whatsapp.replace(/\?.*$/, "")}?text=${encodeURIComponent(
+  "Hola Casa Atenta, quisiera cotizar un envío a provincia antes de comprar.",
+)}`;
 
 function tokenizeCard(card: OpenpayCard) {
   return new Promise<string>((resolve, reject) => {
@@ -82,7 +87,7 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
     discountMinor: number;
     shippingMinor: number;
   } | null>(null);
-  const estimatedShipping = subtotalMinor >= 70000 ? 0 : 1990;
+  const estimatedShipping = calculateOnlineShippingMinor(subtotalMinor);
   const activeCoupon = couponQuote?.subtotalMinor === subtotalMinor ? couponQuote : null;
   const finalShipping = activeCoupon?.shippingMinor ?? estimatedShipping;
   const discountMinor = activeCoupon?.discountMinor ?? 0;
@@ -198,6 +203,12 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
             : { type: "receipt" },
           couponCode: activeCoupon?.code || undefined,
           expectedTotalMinor: total,
+          legalAcceptance: {
+            accepted: form.get("legal_acceptance") === "yes",
+            privacyVersion: STORE_LEGAL_VERSIONS.privacy,
+            purchaseTermsVersion: STORE_LEGAL_VERSIONS.purchaseTerms,
+            fulfilmentVersion: STORE_LEGAL_VERSIONS.fulfilment,
+          },
         }),
       });
       const result = (await response.json()) as { error?: string; orderNumber?: string; redirectUrl?: string };
@@ -240,8 +251,12 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
 
   return (
     <>
-      <Script src="https://js.openpay.pe/openpay.v1.min.js" strategy="afterInteractive" onLoad={() => setScriptsReady(Boolean(window.OpenPay?.deviceData))} />
-      <Script src="https://js.openpay.pe/openpay-data.v1.min.js" strategy="afterInteractive" onLoad={() => setScriptsReady(Boolean(window.OpenPay))} />
+      {!storeConfig.preview && (
+        <>
+          <Script src="https://js.openpay.pe/openpay.v1.min.js" strategy="afterInteractive" onLoad={() => setScriptsReady(Boolean(window.OpenPay?.deviceData))} />
+          <Script src="https://js.openpay.pe/openpay-data.v1.min.js" strategy="afterInteractive" onLoad={() => setScriptsReady(Boolean(window.OpenPay))} />
+        </>
+      )}
       <form id="checkout-form" className="checkout-grid" onSubmit={submit}>
         <input type="hidden" name="device_session_id" defaultValue="" />
         <div className="checkout-forms">
@@ -261,13 +276,16 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
             <div className="form-grid">
               <label className="field field--full"><span>Dirección</span><input name="address_line_1" autoComplete="street-address" required placeholder="Avenida, calle y número" /></label>
               <label className="field field--full"><span>Departamento / interior (opcional)</span><input name="address_line_2" /></label>
-              <label className="field"><span>Departamento</span><select name="department" required defaultValue="Lima"><option>Lima</option><option>Callao</option><option>Otra provincia</option></select><ChevronDown size={15} /></label>
+              <label className="field"><span>Departamento</span><select name="department" required defaultValue="Lima"><option>Lima</option><option>Callao</option></select><ChevronDown size={15} /></label>
               <label className="field"><span>Distrito</span><input name="district" required /></label>
               <label className="field field--full"><span>Referencia para la entrega</span><input name="reference" placeholder="Color de puerta, acceso, contacto en obra…" /></label>
             </div>
             <div className="shipping-options">
-              <label><input type="radio" name="shipping_method" value="delivery" defaultChecked /><i><Truck size={19} /></i><span><strong>Despacho coordinado</strong><small>Fecha y tarifa confirmadas según peso y destino.</small></span><b>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</b></label>
+              <label><input type="radio" name="shipping_method" value="delivery" defaultChecked /><i><Truck size={19} /></i><span><strong>Despacho en Lima y Callao</strong><small>Tarifa plana mostrada antes del pago. Para provincias, solicita una cotización.</small></span><b>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</b></label>
             </div>
+            <p className="payment-security-note">
+              <Truck size={17} /> Ventana estimada: {storeConfig.deliveryWindow}. Para otros departamentos, <a href={provinceQuoteUrl} target="_blank" rel="noreferrer">cotiza el envío por WhatsApp</a> antes de pagar.
+            </p>
           </section>
 
           <section className="checkout-card">
@@ -294,13 +312,19 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
           <div className="checkout-summary__lines">
             {lines.map((line) => <div key={line.productId}><ProductVisual product={line.product} size="mini" /><p><strong>{line.product.shortName}</strong><span>{line.product.model} · Cant. {line.quantity}</span></p><b>{formatMoney(line.lineTotalMinor)}</b></div>)}
           </div>
-          <div className="checkout-summary__numbers"><p><span>Subtotal</span><strong>{formatMoney(subtotalMinor)}</strong></p><p><span>Envío estimado</span><strong>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</strong></p>{activeCoupon && discountMinor > 0 && <p className="is-discount"><span>Cupón {activeCoupon.code}</span><strong>−{formatMoney(discountMinor)}</strong></p>}</div>
+          <div className="checkout-summary__numbers"><p><span>Subtotal</span><strong>{formatMoney(subtotalMinor)}</strong></p><p><span>Envío Lima/Callao</span><strong>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</strong></p>{activeCoupon && discountMinor > 0 && <p className="is-discount"><span>Cupón {activeCoupon.code}</span><strong>−{formatMoney(discountMinor)}</strong></p>}</div>
           <div className="checkout-summary__total"><span>Total</span><strong>{formatMoney(total)}</strong></div>
           {validatingCoupon && <div className="coupon-status">Validando cupón…</div>}
           {couponError && <div className="form-error" role="alert">{couponError} Continuaremos sin aplicarlo.</div>}
           {error && <div className="form-error" role="alert">{error}</div>}
+          <label className="checkout-summary__consent">
+            <input type="checkbox" name="legal_acceptance" value="yes" required />
+            <span>
+              He leído y acepto los <Link href={STORE_LEGAL_PATHS.purchaseTerms} target="_blank">términos de compra</Link>, la <Link href={STORE_LEGAL_PATHS.privacy} target="_blank">política de privacidad</Link> y las <Link href={STORE_LEGAL_PATHS.fulfilment} target="_blank">condiciones de entrega, cambios y garantía</Link>.
+            </span>
+          </label>
           <button className="button button--primary" type="submit" disabled={processing || validatingCoupon}>{processing ? "Procesando…" : validatingCoupon ? "Validando cupón…" : storeConfig.preview ? "Checkout en preparación" : "Pagar de forma segura"}<ArrowRight size={17} /></button>
-          <p className="checkout-summary__legal">Al continuar aceptas los términos de compra, tratamiento de datos y políticas de entrega y devolución.</p>
+          <p className="checkout-summary__legal">La aceptación queda vinculada al pedido con la versión vigente de cada documento.</p>
           <div className="checkout-summary__openpay"><LockKeyhole size={16} /><span>Pago procesado por <strong>Openpay</strong></span></div>
         </aside>
       </form>

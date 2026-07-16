@@ -42,6 +42,14 @@ export function isAllowedStoreOrigin(request: Request) {
   if (!origin) return process.env.NODE_ENV !== "production";
 
   const allowed = new Set([new URL(storeConfig.url).origin]);
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+    for (const hostname of [
+      process.env.VERCEL_URL,
+      process.env.VERCEL_BRANCH_URL,
+    ]) {
+      if (hostname) allowed.add(`https://${hostname}`);
+    }
+  }
   if (process.env.NODE_ENV !== "production") {
     allowed.add("http://localhost:3000");
     allowed.add("http://127.0.0.1:3000");

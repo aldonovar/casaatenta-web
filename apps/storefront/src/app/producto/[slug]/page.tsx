@@ -16,8 +16,8 @@ import {
   Truck,
 } from "lucide-react";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductGallery } from "@/components/ProductGallery";
 import { ProductPurchasePanel } from "@/components/ProductPurchasePanel";
-import { ProductVisual } from "@/components/ProductVisual";
 import {
   discountPercent,
   getCategoryBySlug,
@@ -26,7 +26,7 @@ import {
   products,
 } from "@/data/catalog";
 import { getCatalogSources, catalogDataPolicy } from "@/data/catalog-sources";
-import { absoluteStoreUrl } from "@/lib/store-config";
+import { absoluteStoreUrl, storeConfig } from "@/lib/store-config";
 
 type ProductPageProps = { params: Promise<{ slug: string }> };
 
@@ -48,6 +48,9 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
       title: `${product.name} | Casa Atenta Tienda`,
       description: product.description,
       url: absoluteStoreUrl(`/producto/${product.slug}`),
+      images: product.media[0]
+        ? [{ url: absoluteStoreUrl(product.media[0].src), alt: product.media[0].alt }]
+        : undefined,
     },
   };
 }
@@ -69,6 +72,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     mpn: product.model,
     brand: { "@type": "Brand", name: product.brand },
     description: product.description,
+    image: product.media.map((image) => absoluteStoreUrl(image.src)),
     url: absoluteStoreUrl(`/producto/${product.slug}`),
   };
 
@@ -88,22 +92,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           </nav>
 
           <div className="product-detail">
-            <div className="product-gallery">
-              <div className="product-gallery__main">
-                <ProductVisual product={product} size="large" />
-                <div className="product-gallery__badges">
-                  {discount > 0 && <span className="badge badge--sale">-{discount}%</span>}
-                  {product.badge && <span className="badge">{product.badge}</span>}
-                </div>
-              </div>
-              <div className="product-gallery__thumbs" aria-label="Vistas del producto">
-                {["Vista principal", "Detalle técnico", "Contenido del kit"].map((label, index) => (
-                  <button key={label} className={index === 0 ? "is-active" : ""} aria-label={label}>
-                    <ProductVisual product={product} size="mini" />
-                  </button>
-                ))}
-              </div>
-            </div>
+            <ProductGallery product={product} discount={discount} />
 
             <div className="product-summary">
               <div className="product-summary__meta">
@@ -125,7 +114,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <section className="product-service-strip">
         <div className="store-container">
           {[
-            { icon: Truck, title: "Entrega coordinada", text: "Fecha, costo y condiciones visibles antes del pago." },
+            { icon: Truck, title: "Entrega coordinada", text: `Ventana estimada: ${storeConfig.deliveryWindow}. Costo y condiciones visibles antes del pago.` },
             { icon: ShieldCheck, title: "Garantía trazable", text: "Modelo, serial y atención registrados en tu cuenta." },
             { icon: Headphones, title: "Asesoría técnica", text: "Validamos que potencia y accesorios sean correctos." },
             { icon: RotateCcw, title: "Cambios claros", text: "Proceso digital según estado y motivo del producto." },

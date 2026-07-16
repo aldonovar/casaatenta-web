@@ -3,7 +3,9 @@ import { storeConfig } from "@/lib/store-config";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: "/", disallow: ["/auth/", "/cuenta/", "/checkout", "/carrito", "/api/"] }],
+    rules: storeConfig.preview
+      ? [{ userAgent: "*", disallow: "/" }]
+      : [{ userAgent: "*", allow: "/", disallow: ["/auth/", "/cuenta/", "/checkout", "/carrito", "/api/"] }],
     sitemap: `${storeConfig.url}/sitemap.xml`,
     host: storeConfig.url,
   };

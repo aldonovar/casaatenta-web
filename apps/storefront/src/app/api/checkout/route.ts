@@ -11,7 +11,18 @@ import {
   hashPayload,
   isAllowedStoreOrigin,
 } from "@/lib/server/security";
-import { storeConfig } from "@/lib/store-config";
+import {
+  getStoreLegalProviderSnapshot,
+  storeConfig,
+} from "@/lib/store-config";
+import { STORE_LEGAL_VERSIONS } from "@/lib/store-legal";
+import {
+  fulfilmentDocument,
+  privacyDocument,
+  purchaseTermsDocument,
+} from "@/lib/store-legal-documents";
+import { getStoreLegalEvidenceSha256 } from "@/lib/store-legal-hash";
+import { calculateOnlineShippingMinor } from "@/lib/store-shipping";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -43,7 +54,7 @@ const checkoutSchema = z.object({
   shipping: z.object({
     addressLine1: shortText(5, 240),
     addressLine2: z.string().trim().max(160).optional().default(""),
-    department: shortText(2, 80),
+    department: z.enum(["Lima", "Callao"]),
     province: z.string().trim().max(80).optional().default(""),
     district: shortText(2, 100),
     postalCode: z.string().trim().max(20).optional().default(""),
@@ -60,6 +71,12 @@ const checkoutSchema = z.object({
   ]),
   couponCode: z.string().trim().toUpperCase().regex(/^[A-Z0-9_-]{3,40}$/).optional(),
   expectedTotalMinor: z.number().int().nonnegative(),
+  legalAcceptance: z.object({
+    accepted: z.literal(true),
+    privacyVersion: z.literal(STORE_LEGAL_VERSIONS.privacy),
+    purchaseTermsVersion: z.literal(STORE_LEGAL_VERSIONS.purchaseTerms),
+    fulfilmentVersion: z.literal(STORE_LEGAL_VERSIONS.fulfilment),
+  }),
 });
 
 type CatalogueRow = {
@@ -236,7 +253,7 @@ export async function POST(request: Request) {
     (sum, item) => sum + item.unit_price_minor * item.quantity,
     0,
   );
-  let shippingMinor = subtotalMinor >= 70_000 ? 0 : 1_990;
+  let shippingMinor = calculateOnlineShippingMinor(subtotalMinor);
   let discountMinor = 0;
 
   let userId: string | null = null;
@@ -310,7 +327,22 @@ export async function POST(request: Request) {
         ? { business_name: input.invoice.businessName, ruc: input.invoice.ruc }
         : {},
     idempotency_key: idempotencyKey,
-    metadata: { request_fingerprint: fingerprint },
+    metadata: {
+      request_fingerprint: fingerprint,
+      legal_acceptance: {
+        accepted_at: new Date().toISOString(),
+        locale: "es-PE",
+        delivery_window: storeConfig.deliveryWindow,
+        privacy_version: input.legalAcceptance.privacyVersion,
+        privacy_sha256: getStoreLegalEvidenceSha256(privacyDocument),
+        purchase_terms_version: input.legalAcceptance.purchaseTermsVersion,
+        purchase_terms_sha256:
+          getStoreLegalEvidenceSha256(purchaseTermsDocument),
+        fulfilment_version: input.legalAcceptance.fulfilmentVersion,
+        fulfilment_sha256: getStoreLegalEvidenceSha256(fulfilmentDocument),
+        provider: getStoreLegalProviderSnapshot(),
+      },
+    },
   };
   const addressPayload = {
     recipient_name: orderPayload.customer_name,

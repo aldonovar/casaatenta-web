@@ -21,3 +21,9 @@ export function getSafeInternalPath(
     return fallback;
   }
 }
+
+export function getLegalConsentPath(next: string | null | undefined) {
+  const safeNext = getSafeInternalPath(next);
+  if (safeNext.startsWith("/auth/consentimiento")) return safeNext;
+  return `/auth/consentimiento?next=${encodeURIComponent(safeNext)}`;
+}

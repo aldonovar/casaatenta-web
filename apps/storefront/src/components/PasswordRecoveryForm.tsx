@@ -73,7 +73,17 @@ export function PasswordUpdateForm() {
     const form = new FormData(event.currentTarget);
     const password = String(form.get("password") || "");
     const confirmation = String(form.get("confirmation") || "");
-    if (password.length < 10) return setError("Usa al menos 10 caracteres.");
+    if (
+      password.length < 12 ||
+      !/[a-z]/.test(password) ||
+      !/[A-Z]/.test(password) ||
+      !/\d/.test(password) ||
+      !/[^A-Za-z0-9]/.test(password)
+    ) {
+      return setError(
+        "Usa al menos 12 caracteres, con mayúscula, minúscula, número y símbolo.",
+      );
+    }
     if (password !== confirmation) return setError("Las contraseñas no coinciden.");
 
     setPending(true);
@@ -94,8 +104,8 @@ export function PasswordUpdateForm() {
         <div className="form-success" role="status">Contraseña actualizada. <Link href="/auth/ingresar">Ingresa nuevamente.</Link></div>
       ) : (
         <form onSubmit={submit} className="auth-form">
-          <label className="field"><span>Nueva contraseña</span><div className="auth-input"><LockKeyhole size={17} /><input name="password" type="password" autoComplete="new-password" minLength={10} required /></div></label>
-          <label className="field"><span>Confirmar contraseña</span><div className="auth-input"><LockKeyhole size={17} /><input name="confirmation" type="password" autoComplete="new-password" minLength={10} required /></div></label>
+          <label className="field"><span>Nueva contraseña</span><div className="auth-input"><LockKeyhole size={17} /><input name="password" type="password" autoComplete="new-password" minLength={12} required /></div></label>
+          <label className="field"><span>Confirmar contraseña</span><div className="auth-input"><LockKeyhole size={17} /><input name="confirmation" type="password" autoComplete="new-password" minLength={12} required /></div></label>
           {error && <div className="form-error" role="alert">{error}</div>}
           <button className="button button--primary" disabled={pending}>{pending ? "Actualizando…" : "Guardar contraseña"}<ArrowRight size={17} /></button>
         </form>

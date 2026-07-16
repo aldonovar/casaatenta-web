@@ -7,5 +7,14 @@ export async function POST(request: Request) {
     const supabase = await createClient();
     await supabase.auth.signOut({ scope: "local" });
   }
-  return NextResponse.redirect(new URL("/", request.url), { status: 303 });
+  const response = NextResponse.redirect(new URL("/", request.url), {
+    status: 303,
+  });
+  response.headers.set(
+    "Cache-Control",
+    "private, no-cache, no-store, must-revalidate, max-age=0",
+  );
+  response.headers.set("Expires", "0");
+  response.headers.set("Pragma", "no-cache");
+  return response;
 }
