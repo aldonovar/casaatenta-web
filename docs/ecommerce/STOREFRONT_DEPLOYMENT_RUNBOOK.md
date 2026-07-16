@@ -43,19 +43,25 @@ raíz y serviría la web principal, no el storefront.
 - El primer intento de build (`dpl_6EN6xG5WxYP6oBN3X4xM65gN3SDm`) quedó en
   `ERROR` por la dependencia PostCSS antes de fijar el comando de instalación;
   no recibió alias ni dominio y no está sirviendo tráfico. No debe promoverse.
-- El commit `e906b5600b7771b502bd4f18d3f11ee4281271cc` quedó además como
-  deployment Production `READY` (`dpl_GzVWZ4FeLmwUgKefJAFYM5tXAbsW`), pero la
-  aplicación conserva sus valores por defecto de preview y el checkout responde
-  503. No se cargaron credenciales comerciales.
+- El commit `6e63c2944ba90a16c23ca806e1ecfd175ffbfe3c` quedó como deployment
+  Production `READY` (`dpl_4L8ssMMFrdR7gPzMyDADxAD6VnJ2`). La aplicación
+  conserva sus valores fail-closed de preview, responde 503 en checkout y ahora
+  publica además `X-Robots-Tag: noindex, nofollow` desde Next.js. No se cargaron
+  credenciales comerciales.
 - `tienda.casa-atenta.com` está asociado y verificado en el proyecto. Su alias
-  está fijado a `dpl_GzVWZ4FeLmwUgKefJAFYM5tXAbsW` y
-  `autoAssignCustomDomains=false` evita que un futuro deploy cambie el destino
-  sin revisión explícita.
+  continúa fijado al deployment precomercial anterior
+  `dpl_GzVWZ4FeLmwUgKefJAFYM5tXAbsW`, porque Vercel no puede emitir todavía el
+  certificado para reasignarlo mientras el host siga en NXDOMAIN. Ambos
+  deployments bloquean cobros; después de crear el DNS se debe mover el alias a
+  `dpl_4L8ssMMFrdR7gPzMyDADxAD6VnJ2`. `autoAssignCustomDomains=false` evita que
+  un deploy futuro cambie el destino sin revisión explícita.
 - El equipo `ALLYX` está actualmente en Hobby. Los términos vigentes de Vercel
   limitan Hobby a uso personal/no comercial; se requiere cambiar el equipo a
-  Pro antes de crear el CNAME que hará pública esta tienda empresarial. También
-  debe confirmarse la ejecución en producción del cron diario
-  `/api/cron/order-notifications`.
+  Pro antes de crear el CNAME que hará pública esta tienda empresarial.
+- Los Cron Jobs del proyecto están deshabilitados y el registro de
+  `/api/cron/order-notifications` fue retirado de `apps/storefront/vercel.json`.
+  Solo se debe reactivar después de configurar Supabase, Resend, `CRON_SECRET` y
+  la frecuencia operativa aprobada.
 - Cloudflare no tiene registro `tienda`; públicamente el host continúa en
   NXDOMAIN. No se modificaron apex, `www` ni `blog`.
 - La consulta posterior a la asociación recomienda como CNAME primario
@@ -79,19 +85,21 @@ raíz y serviría la web principal, no el storefront.
    **Completado para las variables no sensibles.**
 5. Validar la URL `vercel.app`: catálogo, imágenes, legales, carrito, headers y
    bloqueo de cobros. **Completado para el Preview actual.**
-6. Agregar `tienda.casa-atenta.com` al proyecto nuevo, fijar el alias y copiar el
-   destino CNAME exacto que indique Vercel. **Completado.**
+6. Agregar `tienda.casa-atenta.com` al proyecto nuevo, fijar un deployment
+   precomercial seguro y copiar el destino CNAME exacto que indique Vercel.
+   **Completado.**
 7. Cambiar el equipo Vercel `ALLYX` de Hobby a Pro para uso comercial.
 8. Crear en Cloudflare un solo CNAME:
    - nombre: `tienda`;
    - destino: valor indicado por Vercel;
    - proxy: DNS-only;
    - TTL: Auto.
-9. Esperar hasta que Vercel muestre el dominio verificado, alias sin error y
-   certificado activo.
-10. Verificar DNS, TLS, HSTS, canonical, `robots.txt` y rutas críticas.
-11. Configurar Supabase hospedado y ejecutar pruebas Auth/RLS. Solo después se
-    evalúa una activación comercial controlada.
+9. Esperar hasta que Vercel emita el certificado y mover el alias exacto a
+   `dpl_4L8ssMMFrdR7gPzMyDADxAD6VnJ2`.
+10. Confirmar dominio verificado, alias sin error y certificado activo.
+11. Verificar DNS, TLS, HSTS, canonical, `robots.txt` y rutas críticas.
+12. Configurar Supabase hospedado y ejecutar pruebas Auth/RLS. Solo después se
+   evalúa una activación comercial controlada.
 
 No reutilizar a ciegas el CNAME actual del blog: Vercel debe proporcionar el
 valor específico del nuevo proyecto. Referencia: [dominios personalizados de

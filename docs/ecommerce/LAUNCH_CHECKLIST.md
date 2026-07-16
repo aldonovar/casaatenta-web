@@ -65,6 +65,8 @@ Mantener `STORE_MODE=preview` hasta que todos los puntos críticos estén cerrad
   protegido validado.
 - [x] Dominio `tienda.casa-atenta.com` asociado en Vercel, alias fijado a un
   deployment verificado y autoasignación desactivada.
+- [x] Cron Jobs deshabilitados durante la etapa precomercial y programación
+  retirada del deployment; reactivar solo con backend y secretos listos.
 - [ ] Equipo Vercel `ALLYX` actualizado de Hobby a Pro para uso comercial.
 - [ ] DNS `tienda` conectado, TLS activo y redirección canónica verificada.
 - [ ] Variables de entorno cargadas según `.env.example`.
