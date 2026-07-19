@@ -149,6 +149,7 @@ export function StoreHeader() {
             </Link>
           ))}
           <Link href="/catalogo?ofertas=true" className="store-nav__sale">Ofertas</Link>
+          <Link href="/seguimiento">Seguir pedido</Link>
           <Link href="/ayuda">Ayuda</Link>
         </div>
       </nav>
@@ -195,6 +196,9 @@ export function StoreHeader() {
           ))}
           <Link href="/cuenta/pedidos" onClick={() => setMenuOpen(false)}>
             Mis pedidos <ChevronRight size={17} />
+          </Link>
+          <Link href="/seguimiento" onClick={() => setMenuOpen(false)}>
+            Seguir compra invitada <ChevronRight size={17} />
           </Link>
           <Link href="/ayuda" onClick={() => setMenuOpen(false)}>
             Ayuda y posventa <ChevronRight size={17} />

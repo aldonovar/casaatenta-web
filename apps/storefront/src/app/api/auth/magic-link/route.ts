@@ -73,7 +73,7 @@ export async function POST(request: Request) {
   )}`;
   let fingerprint = "";
   try {
-    fingerprint = getRequestFingerprint(request);
+    fingerprint = getRequestFingerprint(request, "store-magic-link");
   } catch (caught) {
     console.error(
       "store_magic_link_fingerprint_error",

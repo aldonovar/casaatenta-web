@@ -20,6 +20,9 @@ const couponSchema = z.object({
 type ProductRow = {
   id: string;
   price_minor: number | null;
+  currency: string;
+  tax_rate: number;
+  shipping_class: string;
   stock_quantity: number;
   status: string;
   commercial_status: string;
@@ -60,7 +63,7 @@ export async function POST(request: Request) {
   }
 
   const admin = getSupabaseAdmin();
-  const fingerprint = getRequestFingerprint(request);
+  const fingerprint = getRequestFingerprint(request, "store-coupon");
   const limited = await admin.rpc("check_submission_rate_limit", {
     p_fingerprint: fingerprint,
     p_scope: "store-coupon",
@@ -72,7 +75,7 @@ export async function POST(request: Request) {
 
   const catalogueResult = await admin
     .from("store_products")
-    .select("id,price_minor,stock_quantity,status,commercial_status")
+    .select("id,price_minor,currency,tax_rate,shipping_class,stock_quantity,status,commercial_status")
     .in("id", [...quantities.keys()]);
   if (catalogueResult.error) return reply({ error: "No pudimos validar el catálogo." }, 503);
   const products = (catalogueResult.data || []) as ProductRow[];
@@ -85,6 +88,11 @@ export async function POST(request: Request) {
       product.status !== "active" ||
       product.commercial_status !== "approved" ||
       product.price_minor === null ||
+      !Number.isSafeInteger(product.price_minor) ||
+      product.price_minor <= 0 ||
+      product.currency !== "PEN" ||
+      Number(product.tax_rate) !== 0.18 ||
+      product.shipping_class !== "standard" ||
       product.stock_quantity < quantity
     ) {
       return reply({ error: "Actualiza el carrito antes de aplicar el cupón." }, 409);
@@ -95,8 +103,12 @@ export async function POST(request: Request) {
   let userId: string | null = null;
   try {
     userId = (await getCurrentUser())?.id || null;
-  } catch {
-    // Guest quotes are revalidated with the final checkout email.
+  } catch (caught) {
+    console.error(
+      "coupon_auth_lookup_error",
+      caught instanceof Error ? caught.message : "No se pudo leer la sesión",
+    );
+    return reply({ error: "No pudimos validar la sesión del cupón." }, 503);
   }
   const shippingMinor = calculateOnlineShippingMinor(subtotalMinor);
   const quote = await admin.rpc("quote_store_coupon", {

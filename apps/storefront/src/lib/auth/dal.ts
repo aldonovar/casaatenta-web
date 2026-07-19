@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 import { redirect } from "next/navigation";
+import { isAuthSessionMissingError } from "@supabase/supabase-js";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { getLegalConsentPath } from "@/lib/auth/redirect";
@@ -12,10 +13,18 @@ export const getCurrentUser = cache(async () => {
   if (!isSupabaseConfigured()) return null;
   const supabase = await createClient();
   const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
-  if (claimsError || !claimsData?.claims?.sub) return null;
+  if (claimsError) {
+    if (isAuthSessionMissingError(claimsError)) return null;
+    throw new Error("No pudimos validar la sesión actual.");
+  }
+  if (!claimsData?.claims?.sub) return null;
 
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null;
+  if (error) {
+    if (isAuthSessionMissingError(error)) return null;
+    throw new Error("No pudimos verificar la identidad de la cuenta.");
+  }
+  if (!data.user) return null;
   return data.user;
 });
 

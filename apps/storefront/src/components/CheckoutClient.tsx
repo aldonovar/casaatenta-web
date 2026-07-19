@@ -19,6 +19,7 @@ import { formatMoney, storeConfig } from "@/lib/store-config";
 import { STORE_LEGAL_PATHS, STORE_LEGAL_VERSIONS } from "@/lib/store-legal";
 import { calculateOnlineShippingMinor } from "@/lib/store-shipping";
 import { ProductVisual } from "./ProductVisual";
+import { StoreTurnstileWidget } from "./StoreTurnstileWidget";
 import { useCart } from "./CartProvider";
 
 type OpenpayResponse = { data?: { id?: string; description?: string }; message?: string };
@@ -79,6 +80,11 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
   const [successOrder, setSuccessOrder] = useState("");
+  const [successTrackingUrl, setSuccessTrackingUrl] = useState("");
+  const [recoveryTrackingUrl, setRecoveryTrackingUrl] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
+  const successHeadingRef = useRef<HTMLHeadingElement>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(Boolean(initialCoupon));
   const [couponError, setCouponError] = useState("");
   const [couponQuote, setCouponQuote] = useState<{
@@ -144,9 +150,14 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
     return () => controller.abort();
   }, [estimatedShipping, hydrated, initialCoupon, lines, subtotalMinor]);
 
+  useEffect(() => {
+    if (successOrder) successHeadingRef.current?.focus();
+  }, [successOrder]);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setRecoveryTrackingUrl("");
 
     if (storeConfig.preview) {
       setError("El checkout está en modo precomercial. Valida catálogo, credenciales y políticas antes de activar cobros.");
@@ -154,6 +165,10 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
     }
     if (!merchantId || !publicKey || !window.OpenPay) {
       setError("Falta configurar Openpay en este entorno.");
+      return;
+    }
+    if (!turnstileToken) {
+      setError("Completa la verificación de seguridad antes de pagar.");
       return;
     }
 
@@ -179,6 +194,7 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
           "Idempotency-Key": idempotencyKey.current,
         },
         body: JSON.stringify({
+          turnstileToken,
           sourceId,
           deviceSessionId: deviceSessionId.current,
           items: lines.map((line) => ({ productId: line.productId, quantity: line.quantity })),
@@ -211,10 +227,21 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
           },
         }),
       });
-      const result = (await response.json()) as { error?: string; orderNumber?: string; redirectUrl?: string };
+      const result = (await response.json()) as {
+        error?: string;
+        code?: string;
+        orderNumber?: string;
+        redirectUrl?: string;
+        trackingUrl?: string;
+      };
       if (!response.ok) {
-        const requestError = new Error(result.error || "No pudimos procesar el pedido.") as Error & { status?: number };
+        if (result.trackingUrl) setRecoveryTrackingUrl(result.trackingUrl);
+        const requestError = new Error(result.error || "No pudimos procesar el pedido.") as Error & {
+          status?: number;
+          code?: string;
+        };
         requestError.status = response.status;
+        requestError.code = result.code;
         throw requestError;
       }
       if (result.redirectUrl) {
@@ -222,24 +249,29 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
         return;
       }
       setSuccessOrder(result.orderNumber || "Pedido creado");
+      setSuccessTrackingUrl(result.trackingUrl || "");
       clearCart();
     } catch (caught) {
-      if ((caught as Error & { status?: number })?.status === 402) {
+      const requestError = caught as Error & { status?: number; code?: string };
+      if (requestError?.status === 402 || requestError?.code === "attempt_failed") {
         idempotencyKey.current = "";
       }
       setError(caught instanceof Error ? caught.message : "No pudimos completar el pago.");
     } finally {
+      setTurnstileResetKey((key) => key + 1);
       setProcessing(false);
     }
   }
 
-  if (!hydrated) return <div className="checkout-loading" />;
+  if (!hydrated) return <div className="checkout-loading" role="status" aria-live="polite"><span className="sr-only">Cargando el resumen del pedido…</span></div>;
   if (successOrder) {
     return (
-      <div className="checkout-success">
-        <span><Check size={34} /></span><h1>Recibimos tu pedido.</h1>
+      <div className="checkout-success" role="status">
+        <span><Check size={34} /></span><h1 ref={successHeadingRef} tabIndex={-1}>Recibimos tu pedido.</h1>
         <p>Orden <strong>{successOrder}</strong>. Te enviaremos la confirmación y el seguimiento por correo.</p>
-        <Link href="/cuenta/pedidos" className="button button--dark">Ver mis pedidos</Link>
+        <Link href={successTrackingUrl || "/cuenta/pedidos"} className="button button--dark">
+          {successTrackingUrl ? "Seguir mi pedido" : "Ver mis pedidos"}
+        </Link>
       </div>
     );
   }
@@ -317,13 +349,24 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
           {validatingCoupon && <div className="coupon-status">Validando cupón…</div>}
           {couponError && <div className="form-error" role="alert">{couponError} Continuaremos sin aplicarlo.</div>}
           {error && <div className="form-error" role="alert">{error}</div>}
+          {recoveryTrackingUrl && (
+            <Link href={recoveryTrackingUrl} className="button button--outline">
+              Abrir seguimiento seguro
+            </Link>
+          )}
           <label className="checkout-summary__consent">
             <input type="checkbox" name="legal_acceptance" value="yes" required />
             <span>
               He leído y acepto los <Link href={STORE_LEGAL_PATHS.purchaseTerms} target="_blank">términos de compra</Link>, la <Link href={STORE_LEGAL_PATHS.privacy} target="_blank">política de privacidad</Link> y las <Link href={STORE_LEGAL_PATHS.fulfilment} target="_blank">condiciones de entrega, cambios y garantía</Link>.
             </span>
           </label>
-          <button className="button button--primary" type="submit" disabled={processing || validatingCoupon}>{processing ? "Procesando…" : validatingCoupon ? "Validando cupón…" : storeConfig.preview ? "Checkout en preparación" : "Pagar de forma segura"}<ArrowRight size={17} /></button>
+          {!storeConfig.preview && (
+            <StoreTurnstileWidget
+              onToken={setTurnstileToken}
+              resetKey={turnstileResetKey}
+            />
+          )}
+          <button className="button button--primary" type="submit" disabled={processing || validatingCoupon || (!storeConfig.preview && !turnstileToken)}>{processing ? "Procesando…" : validatingCoupon ? "Validando cupón…" : storeConfig.preview ? "Checkout en preparación" : "Pagar de forma segura"}<ArrowRight size={17} /></button>
           <p className="checkout-summary__legal">La aceptación queda vinculada al pedido con la versión vigente de cada documento.</p>
           <div className="checkout-summary__openpay"><LockKeyhole size={16} /><span>Pago procesado por <strong>Openpay</strong></span></div>
         </aside>

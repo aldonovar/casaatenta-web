@@ -19,6 +19,7 @@ const connectSources = [
   supabaseOrigin,
   "https://api.openpay.pe",
   "https://sandbox-api.openpay.pe",
+  "https://challenges.cloudflare.com",
   ...(isDevelopment ? ["ws:", "http://127.0.0.1:54321"] : []),
 ].filter(Boolean);
 
@@ -34,12 +35,12 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://js.openpay.pe`,
+  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://js.openpay.pe https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
   `img-src ${imageSources.join(" ")}`,
   "font-src 'self' data:",
   `connect-src ${connectSources.join(" ")}`,
-  "frame-src 'self' https://js.openpay.pe https://api.openpay.pe https://sandbox-api.openpay.pe",
+  "frame-src 'self' https://js.openpay.pe https://api.openpay.pe https://sandbox-api.openpay.pe https://challenges.cloudflare.com",
   "form-action 'self' https://api.openpay.pe https://sandbox-api.openpay.pe",
   "worker-src 'self' blob:",
   "media-src 'self'",
@@ -81,6 +82,13 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }],
       },
       {
+        source: "/seguimiento/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
         source: "/auth/:path*",
         headers: [
           { key: "Cache-Control", value: "private, no-store, max-age=0" },
@@ -93,6 +101,17 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "private, no-store, max-age=0" },
           { key: "Referrer-Policy", value: "no-referrer" },
         ],
+      },
+      {
+        source: "/api/orders/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/api/cron/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }],
       },
     ];
   },

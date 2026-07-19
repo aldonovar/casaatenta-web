@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock3, ShieldCheck } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth/dal";
 
 export const metadata: Metadata = {
   title: "Validando pago",
@@ -16,6 +17,7 @@ export default async function CheckoutReturnPage({
   const reference = order && /^[0-9a-f-]{36}$/i.test(order)
     ? order.slice(-8).toUpperCase()
     : null;
+  const user = await getCurrentUser().catch(() => null);
 
   return (
     <section className="checkout-return">
@@ -29,7 +31,9 @@ export default async function CheckoutReturnPage({
         </p>
         {reference && <small>Referencia técnica: {reference}</small>}
         <div className="checkout-return__actions">
-          <Link href="/cuenta/pedidos" className="button button--primary">Ver mis pedidos</Link>
+          <Link href={user ? "/cuenta/pedidos" : "/seguimiento/acceso"} className="button button--primary">
+            {user ? "Ver mis pedidos" : "Seguir este pedido"}
+          </Link>
           <Link href="/ayuda" className="button button--outline">Necesito ayuda</Link>
         </div>
         <div className="checkout-return__secure">

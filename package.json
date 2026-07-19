@@ -14,7 +14,8 @@
     "store:build": "npm --workspace @casa-atenta/storefront run build",
     "store:lint": "npm --workspace @casa-atenta/storefront run lint",
     "store:typecheck": "npm --workspace @casa-atenta/storefront run typecheck",
-    "check:all": "npm run lint && npm run build && npm run store:lint && npm run store:typecheck && npm run store:build"
+    "store:test": "npm --workspace @casa-atenta/storefront run test",
+    "check:all": "npm run lint && npm run build && npm run store:lint && npm run store:typecheck && npm run store:test && npm run store:build"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

@@ -16,9 +16,9 @@ export function AddToCartButton({
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
 
-  if (product.priceMinor === null) {
+  if (product.priceMinor === null || product.shippingClass !== "standard") {
     const message = encodeURIComponent(
-      `Hola Casa Atenta, quisiera cotizar ${product.name} (${product.model}).`,
+      `Hola Casa Atenta, quisiera cotizar ${product.name} (${product.model})${product.shippingClass !== "standard" ? " y su despacho" : ""}.`,
     );
     const url = storeConfig.whatsapp.replace(/\?.*$/, "") + `?text=${message}`;
     return (
@@ -28,7 +28,7 @@ export function AddToCartButton({
         rel="noreferrer"
         className={`button button--outline ${compact ? "button--compact" : ""}`}
       >
-        <MessageCircle size={17} /> Cotizar
+        <MessageCircle size={17} /> {product.shippingClass !== "standard" ? "Cotizar despacho" : "Cotizar"}
       </a>
     );
   }

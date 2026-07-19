@@ -14,9 +14,9 @@ la aprobación de un abogado peruano ni la configuración tributaria de un conta
 | Entrega | Tarifa online explícita para Lima/Callao; provincias antes de cobrar | Ventanas reales, transportista y reglas por peso/destino aprobadas |
 | Cambios/garantía | Política separa defecto legal de cambio voluntario | Plazos, logística inversa, diagnóstico y SLA aprobados por lote/marca |
 | SUNAT | Checkout recoge boleta/factura | PSE/OSE o SEE, XML/PDF/CDR, numeración y notas de crédito |
-| Pagos | Tokenización Openpay, idempotencia, webhooks y conciliación diseñados | Credenciales productivas, 3DS, pruebas reales y conciliación operativa |
+| Pagos | Tokenización Openpay, idempotencia, Turnstile, webhooks atómicos y reconciliación de reservas implementados en repositorio | Migración hospedada, claves productivas, 3DS, pruebas reales, cron y guardia operativa |
 | Cuentas | Contraseña, Magic Link, Google, TOTP, RLS y solicitudes de datos | Proyecto Supabase Casa Atenta, SMTP, CAPTCHA, recuperación MFA y pruebas E2E |
-| Infraestructura | App compilable, noindex/no-cobro, headers y proyecto Vercel separado con Preview protegido | CNAME `tienda`, TLS, plan operativo y observabilidad |
+| Infraestructura | App compilable, noindex/no-cobro, headers y Preview transitorio protegido | Integración en un solo proyecto Vercel, CNAME `tienda`, TLS, plan comercial y observabilidad |
 
 ## Reglas que no deben degradarse
 

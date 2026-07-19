@@ -31,6 +31,8 @@ Mantener `STORE_MODE=preview` hasta que todos los puntos críticos estén cerrad
 
 ## 3. Supabase y cuentas
 
+- [ ] Proyecto productivo único de Casa Atenta identificado y separado de
+  VANIA, ALLYX y cuentas personales.
 - [ ] Ejecutar migraciones en staging y luego producción; conservar respaldo.
 - [ ] Configurar Site URL y allow-list exacta de callbacks.
 - [ ] Configurar Google OAuth. Google debe usar el callback de Supabase
@@ -39,41 +41,67 @@ Mantener `STORE_MODE=preview` hasta que todos los puntos críticos estén cerrad
   [guía oficial](https://supabase.com/docs/guides/auth/social-login/auth-google).
 - [ ] SMTP transaccional, confirmación de correo y recuperación probados.
 - [ ] Dominio y remitente de Resend verificados; `RESEND_API_KEY`,
-  `RESEND_FROM_EMAIL`, `STORE_NOTIFICATION_REPLY_TO` y `CRON_SECRET` cargados
+  `STORE_RESEND_FROM_EMAIL`, `STORE_NOTIFICATION_REPLY_TO` y `CRON_SECRET` cargados
   como secretos de producción.
+- [ ] `STORE_GUEST_TRACKING_SECRET` aleatorio, exclusivo y de al menos 32 bytes;
+  recuperación invitada probada sin exponer email, dirección, UUID o proveedor.
 - [ ] La cola `store_outbox_events` se procesa cada 5 minutos o menos mediante
-  Vercel Pro o un programador externo. El cron diario de Vercel Hobby es solo
-  respaldo y no es suficiente para ventas activas.
+  Supabase Cron u otro programador autenticado. El cron diario de Vercel Hobby
+  no es suficiente para ventas activas.
 - [ ] TOTP habilitado y prueba de AAL2, recuperación y eliminación del factor.
 - [ ] RLS, Secret key y rotación de secretos revisados en producción.
+- [ ] Turnstile creado para `tienda.casa-atenta.com`; site/secret key separados
+  por entorno, acciones `store_checkout` y `store_guest_access`,
+  `STORE_TURNSTILE_ALLOWED_HOSTNAMES=tienda.casa-atenta.com` y replay rechazado;
+  validar según la [guía oficial de Siteverify](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
 
 ## 4. Openpay
 
+- [ ] Migración `20260719054500_commerce_integrity_v1.sql` aplicada y validada
+  con backup/rollback y las 74 aserciones pgTAP en verde sobre un reset limpio.
 - [ ] Credenciales de producción separadas de sandbox.
 - [ ] 3D Secure y device session ID probados con escenarios aprobado, pendiente,
   rechazado y abandonado.
 - [ ] Webhook HTTPS configurado con usuario/contraseña aleatorios y prueba de
   verificación.
 - [ ] Eventos duplicados, desordenados y reintentos validados.
-- [ ] Importe, moneda y UUID del intento coinciden antes de mutar el pedido.
-- [ ] Conciliación diaria y procedimiento manual para éxito tardío o discrepancia.
+- [ ] Eventos nuevos o payloads malformados quedan en cuarentena/
+  `needs_review` sin mutar pagos ni provocar reintentos infinitos.
+- [ ] Importe y UUID coinciden antes de mutar el pedido; moneda informada debe
+  ser PEN y, si Openpay la omite, el intento local autoritativo debe ser PEN.
+- [ ] Conciliación de reservas cada minuto configurada según
+  [ORDER_RECONCILIATION_RUNBOOK.md](./ORDER_RECONCILIATION_RUNBOOK.md), con dos
+  ciclos sanos y alertas.
+- [ ] Procedimiento manual ensayado para éxito tardío, cargo duplicado,
+  `needs_review` o discrepancia.
 - [ ] Reembolsos y contracargos probados sin devolver inventario automáticamente.
 
 ## 5. DNS, despliegue y observabilidad
 
-- [x] Proyecto Vercel separado con root `apps/storefront`, Node.js 22 y Preview
-  protegido validado.
-- [x] Dominio `tienda.casa-atenta.com` asociado en Vercel, alias fijado a un
-  deployment verificado y autoasignación desactivada.
-- [x] Cron Jobs deshabilitados durante la etapa precomercial y programación
-  retirada del deployment; reactivar solo con backend y secretos listos.
-- [ ] Equipo Vercel `ALLYX` actualizado de Hobby a Pro para uso comercial.
+- [x] Preview transitorio separado, protegido y fail-closed validado como
+  referencia/rollback; no se considera arquitectura final.
+- [ ] Web, blog y tienda integrados en un solo build y proyecto Vercel
+  `casaatenta-web`, root `.`, según
+  [SINGLE_PROJECT_ARCHITECTURE.md](./SINGLE_PROJECT_ARCHITECTURE.md).
+- [ ] Routing por host probado también para APIs, Auth, robots, sitemap,
+  manifest, errores y activos; prefijos internos no son públicos.
+- [ ] `tienda.casa-atenta.com` asociado al proyecto único y el proyecto
+  transitorio retirado después de la ventana de rollback.
+- [ ] Plan de Vercel apto para uso comercial. Hobby solo se usa para desarrollo
+  y Preview; no se habilitan cobros allí.
 - [ ] DNS `tienda` conectado, TLS activo y redirección canónica verificada.
 - [ ] Variables de entorno cargadas según `.env.example`.
+- [ ] La función de conciliación respeta `maxDuration=60` y el plan/configuración
+  de Vercel confirma al menos 60 segundos de ejecución (Fluid Compute activo si
+  el plan lo requiere).
 - [ ] Alertas para errores de checkout/webhook, colas de correo y conciliación.
+- [ ] La outbox descarta el correo inicial si el pago ya terminó y conserva el
+  correo de resultado; Turnstile y límites persistentes protegen la cuota Resend.
 - [ ] Backups, retención de logs sin PAN/CVV/PII innecesaria y plan de incidentes.
 - [ ] Lighthouse, accesibilidad por teclado, móvil y navegadores principales.
 - [ ] `npm run check:all` en verde antes de publicar.
+- [ ] `npm run store:test` y `npx --yes supabase@2.109.1 test db` en verde.
+- [ ] Estado final verificado: un único proyecto Vercel para los cuatro hosts.
 
 ## 6. Activación controlada
 

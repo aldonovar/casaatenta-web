@@ -4,6 +4,7 @@ import { DatabaseZap } from "lucide-react";
 import { PrivacyRequestForm } from "@/components/PrivacyRequestForm";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
+import { formatStoreDate } from "@/lib/order-presentation";
 
 export const metadata: Metadata = {
   title: "Mis datos personales",
@@ -69,7 +70,7 @@ export default async function AccountDataPage() {
               {requests.map((request) => (
                 <li key={request.id}>
                   <div><strong>{typeLabels[request.request_type] || request.request_type}</strong><span>{statusLabels[request.status] || request.status}</span></div>
-                  <time>{new Date(request.requested_at).toLocaleDateString("es-PE")}</time>
+                  <time>{formatStoreDate(request.requested_at)}</time>
                   <small>{request.id}</small>
                 </li>
               ))}

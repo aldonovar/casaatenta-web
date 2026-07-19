@@ -41,6 +41,7 @@ export function StoreFooter() {
           <h3>Tu cuenta</h3>
           <Link href="/auth/ingresar">Ingresar o registrarme</Link>
           <Link href="/cuenta/pedidos">Mis pedidos</Link>
+          <Link href="/seguimiento">Seguir compra invitada</Link>
           <Link href="/cuenta/direcciones">Direcciones</Link>
           <Link href="/cuenta/seguridad">Seguridad y 2FA</Link>
         </div>

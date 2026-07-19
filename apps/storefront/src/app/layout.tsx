@@ -65,9 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <div id="contenido">
-          <StoreShell>{children}</StoreShell>
-        </div>
+        <StoreShell>{children}</StoreShell>
       </body>
     </html>
   );

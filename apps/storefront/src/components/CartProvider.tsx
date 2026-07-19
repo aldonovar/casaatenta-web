@@ -59,7 +59,11 @@ function sanitizeLines(value: unknown): CartLine[] {
     }
 
     const product = products.find((candidate) => candidate.id === line.productId);
-    if (!product || product.priceMinor === null) return [];
+    if (
+      !product ||
+      product.priceMinor === null ||
+      product.shippingClass !== "standard"
+    ) return [];
 
     return [
       {
@@ -129,7 +133,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addItem = useCallback((productId: string, quantity = 1) => {
     const product = products.find((candidate) => candidate.id === productId);
-    if (!product || product.priceMinor === null) return;
+    if (
+      !product ||
+      product.priceMinor === null ||
+      product.shippingClass !== "standard"
+    ) return;
 
     updateCart((current) => {
       const existing = current.find((line) => line.productId === productId);

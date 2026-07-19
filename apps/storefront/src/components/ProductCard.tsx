@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, CircleCheck, Heart } from "lucide-react";
+import { ArrowUpRight, CircleCheck } from "lucide-react";
 import { discountPercent, type StoreProduct } from "@/data/catalog";
 import { formatMoney, storeConfig } from "@/lib/store-config";
 import { AddToCartButton } from "./AddToCartButton";
@@ -17,9 +17,6 @@ export function ProductCard({ product }: { product: StoreProduct }) {
           {discount > 0 && <span className="badge badge--sale">-{discount}%</span>}
           {product.badge && <span className="badge">{product.badge}</span>}
         </div>
-        <button className="product-card__wish" aria-label="Guardar en favoritos">
-          <Heart size={18} />
-        </button>
       </div>
       <div className="product-card__body">
         <div className="product-card__meta">
