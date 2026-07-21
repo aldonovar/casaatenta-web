@@ -87,7 +87,8 @@ export function formatMoney(amountMinor: number | null) {
   return new Intl.NumberFormat(storeConfig.locale, {
     style: "currency",
     currency: storeConfig.currency,
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amountMinor / 100);
 }
 

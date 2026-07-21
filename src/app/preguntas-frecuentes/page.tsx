@@ -160,7 +160,7 @@ const faqCategories: FAQCategory[] = [
 ];
 
 export default function PreguntasFrecuentesPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -187,7 +187,7 @@ export default function PreguntasFrecuentesPage() {
   }, []);
 
   return (
-    <div
+    <main
       ref={containerRef}
       className="bg-ca-bg-deep min-h-screen pt-36 pb-20 relative overflow-hidden"
     >
@@ -231,7 +231,7 @@ export default function PreguntasFrecuentesPage() {
 
         {/* CTA */}
         <div className="mt-24 text-center border-t border-white/[0.05] pt-16">
-          <p className="text-sm font-serif italic text-brand-light/50 mb-6">
+          <p className="text-sm font-serif italic text-brand-light/75 mb-6">
             ¿No encontraste lo que buscabas? Escríbenos directamente.
           </p>
           <a
@@ -245,6 +245,6 @@ export default function PreguntasFrecuentesPage() {
           </a>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

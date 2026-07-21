@@ -26,7 +26,7 @@ interface LinkItem {
 }
 
 export default function ConexionesPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -185,7 +185,7 @@ export default function ConexionesPage() {
   };
 
   return (
-    <div 
+    <main
       ref={containerRef}
       className="relative min-h-screen py-16 px-4 bg-[#07111D] flex flex-col items-center justify-between overflow-hidden"
     >
@@ -293,6 +293,6 @@ export default function ConexionesPage() {
         </div>
       </div>
 
-    </div>
+    </main>
   );
 }

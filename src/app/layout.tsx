@@ -27,7 +27,10 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: siteMeta.title,
+  title: {
+    default: siteMeta.title,
+    template: "%s | Casa Atenta",
+  },
   description: siteMeta.description,
   keywords: [
     "pérgolas lima",
@@ -39,7 +42,50 @@ export const metadata: Metadata = {
     "smart home perú",
     "domótica lima",
   ],
-  authors: [{ name: "Casa Atenta" }],
+  applicationName: siteMeta.name,
+  authors: [{ name: "Casa Atenta", url: SITE_URL }],
+  creator: "Casa Atenta",
+  publisher: "Casa Atenta",
+  category: "Diseño y automatización residencial",
+  alternates: {
+    canonical: SITE_URL,
+  },
+  openGraph: {
+    type: "website",
+    locale: siteMeta.locale,
+    url: SITE_URL,
+    siteName: siteMeta.name,
+    title: siteMeta.title,
+    description: siteMeta.description,
+    images: [
+      {
+        url: "/media/hero/hero-desktop-01.webp",
+        alt: "Terraza residencial diseñada por Casa Atenta con iluminación integrada",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteMeta.title,
+    description: siteMeta.description,
+    images: ["/media/hero/hero-desktop-01.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
 export default function RootLayout({

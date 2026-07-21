@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
-import { CatalogClient } from "@/components/CatalogClient";
+import { CatalogClient, type CatalogSortMode } from "@/components/CatalogClient";
+import { categories } from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "Catálogo de herramientas y maquinaria",
@@ -20,11 +21,23 @@ function one(value: string | string[] | undefined) {
 
 export default async function CatalogPage({ searchParams }: CatalogPageProps) {
   const params = await searchParams;
-  const initialQuery = one(params.q) || "";
-  const initialCategory = one(params.categoria) || "";
-  const initialUse = one(params.uso) || "";
+  const initialQuery = (one(params.q) || "").slice(0, 100);
+  const requestedCategory = one(params.categoria) || "";
+  const initialCategory = categories.some((item) => item.slug === requestedCategory)
+    ? requestedCategory
+    : "";
+  const requestedUse = one(params.uso) || "";
+  const initialUse = ["construccion", "metalmecanica", "instalacion", "taller"].includes(requestedUse)
+    ? requestedUse
+    : "";
   const initialOffers = one(params.ofertas) === "true";
   const initialFeatured = one(params.destacados) === "true";
+  const initialAvailable = one(params.disponibles) === "true";
+  const initialQuoted = one(params.cotizar) === "true";
+  const requestedSort = one(params.orden) || "featured";
+  const initialSort: CatalogSortMode = ["featured", "price-asc", "price-desc", "name"].includes(requestedSort)
+    ? requestedSort as CatalogSortMode
+    : "featured";
   return (
     <>
       <section className="catalog-hero">
@@ -41,12 +54,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
       </section>
       <section className="store-container catalog-section">
         <CatalogClient
-          key={`${initialQuery}|${initialCategory}|${initialUse}|${initialOffers}|${initialFeatured}`}
+          key={`${initialQuery}|${initialCategory}|${initialUse}|${initialOffers}|${initialFeatured}|${initialAvailable}|${initialQuoted}|${initialSort}`}
           initialQuery={initialQuery}
           initialCategory={initialCategory}
           initialUse={initialUse}
           initialOffers={initialOffers}
           initialFeatured={initialFeatured}
+          initialAvailable={initialAvailable}
+          initialQuoted={initialQuoted}
+          initialSort={initialSort}
         />
       </section>
     </>

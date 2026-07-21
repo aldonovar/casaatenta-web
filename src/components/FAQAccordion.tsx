@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { BrandText } from "./BrandText";
 import { ChevronDownIcon } from "./icons/AnimatedIcons";
 
@@ -28,7 +28,7 @@ export const FAQAccordion: React.FC<FAQAccordionProps> = ({
     <div className={`space-y-3 ${className}`}>
       {items.map((item, index) => (
         <AccordionItem
-          key={index}
+          key={item.question}
           item={item}
           isOpen={openIndex === index}
           onToggle={() => toggle(index)}
@@ -53,11 +53,20 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const id = useId();
+  const triggerId = `${id}-trigger`;
+  const panelId = `${id}-panel`;
 
   useEffect(() => {
-    if (contentRef.current) {
-      setHeight(isOpen ? contentRef.current.scrollHeight : 0);
-    }
+    const content = contentRef.current;
+    if (!content) return;
+
+    const updateHeight = () => setHeight(isOpen ? content.scrollHeight : 0);
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(content);
+    return () => observer.disconnect();
   }, [isOpen]);
 
   return (
@@ -69,9 +78,12 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
       }`}
     >
       <button
+        id={triggerId}
+        type="button"
         onClick={onToggle}
         className="w-full flex items-center justify-between gap-4 px-6 py-5 text-left cursor-pointer group"
         aria-expanded={isOpen}
+        aria-controls={panelId}
       >
         <span
           className={`text-sm font-display font-light tracking-wide transition-colors duration-300 ${
@@ -80,19 +92,22 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
         >
           <BrandText>{item.question}</BrandText>
         </span>
-        <ChevronDownIcon
-          size={16}
-          isOpen={isOpen}
-          className="shrink-0"
-        />
+        <span aria-hidden="true" className="shrink-0">
+          <ChevronDownIcon size={16} isOpen={isOpen} />
+        </span>
       </button>
       <div
+        id={panelId}
+        role="region"
+        aria-labelledby={triggerId}
+        aria-hidden={!isOpen}
+        inert={!isOpen}
         style={{ height }}
         className="transition-[height] duration-300 ease-in-out overflow-hidden"
       >
         <div ref={contentRef} className="px-6 pb-5">
           <div className="w-12 h-[1px] bg-gradient-to-r from-brand-gold/40 to-transparent mb-3" />
-          <p className="text-sm font-light text-brand-light/55 leading-relaxed">
+          <p className="text-sm font-light text-brand-light/75 leading-relaxed">
             {item.answer}
           </p>
         </div>

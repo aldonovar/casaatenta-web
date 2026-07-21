@@ -15,7 +15,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+    <main className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
       {/* Subtle glow accent */}
       <div className="absolute w-72 h-72 rounded-full bg-brand-gold/5 blur-[120px] pointer-events-none" />
 
@@ -77,6 +77,6 @@ export default function Error({
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

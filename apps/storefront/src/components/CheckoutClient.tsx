@@ -78,6 +78,7 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
   const [businessInvoice, setBusinessInvoice] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
+  const errorRef = useRef<HTMLDivElement>(null);
   const [successOrder, setSuccessOrder] = useState("");
   const [validatingCoupon, setValidatingCoupon] = useState(Boolean(initialCoupon));
   const [couponError, setCouponError] = useState("");
@@ -92,6 +93,18 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
   const finalShipping = activeCoupon?.shippingMinor ?? estimatedShipping;
   const discountMinor = activeCoupon?.discountMinor ?? 0;
   const total = subtotalMinor - discountMinor + finalShipping;
+
+  useEffect(() => {
+    if (!error) return;
+    const frame = requestAnimationFrame(() => {
+      errorRef.current?.focus({ preventScroll: true });
+      errorRef.current?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "center",
+      });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [error]);
 
   useEffect(() => {
     if (!scriptsReady || !merchantId || !publicKey || !window.OpenPay) return;
@@ -316,7 +329,7 @@ export function CheckoutClient({ initialCoupon = "" }: { initialCoupon?: string 
           <div className="checkout-summary__total"><span>Total</span><strong>{formatMoney(total)}</strong></div>
           {validatingCoupon && <div className="coupon-status">Validando cupón…</div>}
           {couponError && <div className="form-error" role="alert">{couponError} Continuaremos sin aplicarlo.</div>}
-          {error && <div className="form-error" role="alert">{error}</div>}
+          {error && <div ref={errorRef} className="form-error" role="alert" tabIndex={-1}>{error}</div>}
           <label className="checkout-summary__consent">
             <input type="checkbox" name="legal_acceptance" value="yes" required />
             <span>

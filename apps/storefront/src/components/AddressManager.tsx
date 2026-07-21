@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { MapPin, Plus, Star, Trash2, X } from "lucide-react";
+import { AlertTriangle, MapPin, Plus, Star, Trash2, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -20,7 +20,13 @@ export type CustomerAddress = {
   is_default: boolean;
 };
 
-export function AddressManager({ initialAddresses }: { initialAddresses: CustomerAddress[] }) {
+export function AddressManager({
+  initialAddresses,
+  loadState = "ready",
+}: {
+  initialAddresses: CustomerAddress[];
+  loadState?: "ready" | "unconfigured" | "error";
+}) {
   const [addresses, setAddresses] = useState(initialAddresses);
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -93,7 +99,7 @@ export function AddressManager({ initialAddresses }: { initialAddresses: Custome
     <>
       <div className="account-page-title account-page-title--action">
         <div><span className="eyebrow">Entregas</span><h1>Direcciones</h1><p>Guarda ubicaciones solo cuando las necesites. Los cambios sensibles pueden requerir 2FA.</p></div>
-        <button className="button button--dark" onClick={() => setOpen((value) => !value)}><Plus size={17} /> Nueva dirección</button>
+        {loadState === "ready" && <button className="button button--dark" onClick={() => setOpen((value) => !value)}><Plus size={17} /> Nueva dirección</button>}
       </div>
       {open && (
         <form className="address-form" onSubmit={createAddress}>
@@ -116,7 +122,13 @@ export function AddressManager({ initialAddresses }: { initialAddresses: Custome
         </form>
       )}
       {error && !open && <div className="form-error" role="alert">{error}</div>}
-      {addresses.length === 0 ? (
+      {loadState !== "ready" ? (
+        <div className="account-empty" role={loadState === "error" ? "alert" : "status"}>
+          <span><AlertTriangle size={30} /></span>
+          <h2>{loadState === "error" ? "No pudimos cargar tus direcciones" : "Direcciones no disponibles en esta vista"}</h2>
+          <p>{loadState === "error" ? "Tu información no se perdió. Intenta nuevamente en unos minutos." : "La conexión de cuenta todavía no está habilitada en este entorno de preparación."}</p>
+        </div>
+      ) : addresses.length === 0 ? (
         <div className="account-empty"><span><MapPin size={30} /></span><h2>No hay direcciones guardadas</h2><p>Puedes agregar tu casa, taller u obra ahora o durante el checkout.</p></div>
       ) : (
         <div className="address-grid">{addresses.map((address) => <article key={address.id}><div className="address-card__head"><span><MapPin size={18} /></span><div><strong>{address.label}</strong>{address.is_default && <small><Star size={11} /> Principal</small>}</div><button onClick={() => removeAddress(address.id)} disabled={pending} aria-label={`Eliminar ${address.label}`}><Trash2 size={16} /></button></div><address><strong>{address.recipient_name}</strong><span>{address.address_line_1}{address.address_line_2 ? `, ${address.address_line_2}` : ""}</span><span>{address.district}, {address.department}</span><span>{address.phone}</span>{address.reference && <small>Ref.: {address.reference}</small>}</address></article>)}</div>

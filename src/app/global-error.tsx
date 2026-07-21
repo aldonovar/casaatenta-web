@@ -24,7 +24,7 @@ export default function GlobalError({
           fontFamily: "Inter, sans-serif",
         }}
       >
-        <div
+        <main
           style={{
             textAlign: "center",
             maxWidth: "420px",
@@ -94,7 +94,7 @@ export default function GlobalError({
           >
             Reintentar
           </button>
-        </div>
+        </main>
       </body>
     </html>
   );

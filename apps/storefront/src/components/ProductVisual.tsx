@@ -10,6 +10,11 @@ import {
 } from "lucide-react";
 import type { StoreProduct } from "@/data/catalog";
 
+export type ProductVisualProduct = Pick<
+  StoreProduct,
+  "category" | "media" | "tone" | "name" | "model"
+>;
+
 const imageSizes = {
   card: "(max-width: 480px) calc(100vw - 1rem), (max-width: 760px) 50vw, (max-width: 1120px) 33vw, 25vw",
   large: "(max-width: 760px) calc(100vw - 2.5rem), 52vw",
@@ -30,7 +35,7 @@ export function ProductVisual({
   size = "card",
   eager = false,
 }: {
-  product: StoreProduct;
+  product: ProductVisualProduct;
   size?: "card" | "large" | "mini";
   eager?: boolean;
 }) {
@@ -48,6 +53,7 @@ export function ProductVisual({
           fill
           sizes={imageSizes[size]}
           loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : "auto"}
           className="product-visual__image"
         />
       </div>
