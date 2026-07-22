@@ -5,7 +5,9 @@ import {
   contactReceiptEmail,
   newsletterConfirmationEmail,
   newsletterWelcomeEmail,
+  quotationDeliveryEmail,
 } from "@/lib/server/email";
+import type { QuotationEmailData } from "@/lib/quotation-email/core";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -45,17 +47,32 @@ const claim = {
   goodType: "Servicio",
   productDescription: "Sistema de iluminación inteligente",
   claimedAmount: 3200,
-  claimDetail: "La escena nocturna dejó de activar una de las luminarias de la terraza.",
-  consumerRequest: "Solicito coordinar una inspección técnica y restablecer la automatización.",
+  claimDetail:
+    "La escena nocturna dejó de activar una de las luminarias de la terraza.",
+  consumerRequest:
+    "Solicito coordinar una inspección técnica y restablecer la automatización.",
   createdAt: "13 de julio de 2026, 4:30 p. m.",
 };
+
+const quotation = {
+  treatment: "Dra.",
+  clientName: "Elena Vargas",
+  quotationNumber: "DEMO-0001",
+  project: "Cobertura de terraza",
+  location: "Miraflores, Lima",
+  total: 5_000,
+  recipients: ["internal-one@example.com", "internal-two@example.com"],
+  isTest: true,
+  productionDocumentConfirmed: false,
+} satisfies QuotationEmailData;
 
 export async function GET(request: Request) {
   if (process.env.NODE_ENV !== "development") {
     return new Response("Not found", { status: 404 });
   }
 
-  const key = new URL(request.url).searchParams.get("template") || "contact-receipt";
+  const key =
+    new URL(request.url).searchParams.get("template") || "contact-receipt";
   const templates = {
     "contact-notification": contactNotificationEmail(contact),
     "contact-receipt": contactReceiptEmail(contact.name, contact.id),
@@ -69,6 +86,7 @@ export async function GET(request: Request) {
       contact.name,
       "https://www.casa-atenta.com/newsletter/baja-confirmada",
     ),
+    "quotation-delivery": quotationDeliveryEmail(quotation),
   } satisfies Record<string, { html: string }>;
   const template = templates[key as keyof typeof templates];
 

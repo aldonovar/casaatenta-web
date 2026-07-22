@@ -1,6 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is the Casa Atenta web platform, built with
+[Next.js](https://nextjs.org).
 
-La configuración de correo, Cloudflare Email Routing, Resend, Supabase y Turnstile está documentada en [`docs/EMAIL_SECURITY_SETUP.md`](docs/EMAIL_SECURITY_SETUP.md). Copia `.env.example` como referencia y nunca confirmes secretos reales en Git.
+La operación de correo usa Cloudflare como DNS autoritativo, Namecheap Private
+Email como buzón receptor actual y Resend para salida transaccional. La guía
+general está en [`docs/EMAIL_SECURITY_SETUP.md`](docs/EMAIL_SECURITY_SETUP.md) y
+el flujo privado de cotizaciones en
+[`docs/QUOTATION_EMAIL_SYSTEM.md`](docs/QUOTATION_EMAIL_SYSTEM.md). No se debe
+cambiar MX ni activar Cloudflare Email Routing sin una migración aprobada.
+
+Supabase y Resend pertenecen a la infraestructura separada de Casa Atenta. El
+acceso MCP exclusivo del repositorio se explica en
+[`.codex/README.md`](.codex/README.md); sus tokens OAuth no sustituyen las
+variables runtime. Copia `.env.example` solo como referencia y nunca confirmes
+secretos, destinatarios internos ni datos de clientes en Git.
 
 ## Getting Started
 
@@ -33,6 +45,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El despliegue debe cargar las variables privadas directamente en Vercel. Antes
+de promover cambios de correo a producción, usa un Preview, ejecuta el modo de
+prueba y verifica los IDs individuales de Resend y la auditoría en Supabase.
+Los envíos de cotizaciones reales permanecen bloqueados salvo que la bandera
+server-side se habilite expresamente y se completen las dos confirmaciones
+humanas descritas en la guía del sistema.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

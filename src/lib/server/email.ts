@@ -2,6 +2,12 @@ import "server-only";
 
 import { Resend } from "resend";
 import { LEGAL_PROVIDER, LEGAL_PROVIDER_LABEL } from "@/constants/legal";
+import {
+  QUOTATION_REPLY_TO,
+  quotationPreheader,
+  quotationSubject,
+  type QuotationEmailData,
+} from "@/lib/quotation-email/core";
 import { getResendConfig, getSiteUrl } from "./env";
 import { escapeHtml } from "./security";
 
@@ -17,8 +23,7 @@ const PAGE_BACKGROUND = "#f4f0e8";
 const AUTOMATED_SENDER_ADDRESS = "notificaciones@casa-atenta.com";
 const OPERATIONAL_CONTACT_ADDRESS = "info@casa-atenta.com";
 const EMAIL_LOGO_SVG_PATH = "/email/casa-atenta-wordmark-white-v2.svg";
-const EMAIL_LOGO_FALLBACK_PATH =
-  "/email/casa-atenta-wordmark-white-v2@2x.png";
+const EMAIL_LOGO_FALLBACK_PATH = "/email/casa-atenta-wordmark-white-v2@2x.png";
 
 function formatClaimAmount(value: number | null) {
   return value === null
@@ -85,8 +90,9 @@ function inlineText(value: unknown, maxLength = 120) {
 function encodeHtmlForEmail(value: string) {
   return value
     .normalize("NFC")
-    .replace(/[^\u0000-\u007f]/gu, (character) =>
-      `&#${character.codePointAt(0)};`,
+    .replace(
+      /[^\u0000-\u007f]/gu,
+      (character) => `&#${character.codePointAt(0)};`,
     );
 }
 
@@ -155,6 +161,7 @@ type EmailShellOptions = {
   body: string;
   footerNote?: string;
   audience?: EmailAudience;
+  senderNotice?: { html: string; text: string };
 };
 
 function emailShell({
@@ -163,6 +170,7 @@ function emailShell({
   body,
   footerNote,
   audience = "external",
+  senderNotice: configuredSenderNotice,
 }: EmailShellOptions) {
   const safeTitle = escapeHtml(title);
   const safePreheader = escapeHtml(preheader);
@@ -174,7 +182,8 @@ function emailShell({
   const logoFallbackUrl = escapeHtml(
     new URL(EMAIL_LOGO_FALLBACK_PATH, siteUrl).href,
   );
-  const senderNotice = automatedSenderNotice(audience);
+  const senderNotice =
+    configuredSenderNotice || automatedSenderNotice(audience);
   const legalIdentity = escapeHtml(
     `${LEGAL_PROVIDER.tradeName} · ${LEGAL_PROVIDER.displayName} · RUC ${LEGAL_PROVIDER.ruc}`,
   );
@@ -339,7 +348,9 @@ function transactionalEmail({
 
 function rows(values: Array<[string, unknown]>) {
   const renderedRows = values
-    .filter(([, value]) => value !== null && value !== undefined && value !== "")
+    .filter(
+      ([, value]) => value !== null && value !== undefined && value !== "",
+    )
     .map(
       ([label, value]) => `<tr>
         <th scope="row" width="35%" valign="top" align="left" bgcolor="#f7f7f5" class="data-label" style="width:35%;background-color:#f7f7f5;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#e5e3dd;font-family:${FONT_FAMILY};font-size:13px;line-height:20px;font-weight:700;color:${MUTED_TEXT};padding-top:10px;padding-right:12px;padding-bottom:10px;padding-left:12px;mso-line-height-rule:exactly;">${escapeHtml(label)}</th>
@@ -349,6 +360,85 @@ function rows(values: Array<[string, unknown]>) {
     .join("");
 
   return `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;border-top-width:1px;border-top-style:solid;border-top-color:#e5e3dd;mso-table-lspace:0pt;mso-table-rspace:0pt;">${renderedRows}</table>`;
+}
+
+function quotationGreeting(
+  data: Pick<QuotationEmailData, "treatment" | "clientName">,
+) {
+  const feminine = new Set(["Sra.", "Srta.", "Dra."]);
+  const adjective = feminine.has(data.treatment) ? "Estimada" : "Estimado";
+  return `${adjective} ${data.treatment} ${data.clientName}:`;
+}
+
+function quotationObjectPronoun(treatment: QuotationEmailData["treatment"]) {
+  return new Set(["Sra.", "Srta.", "Dra."]).has(treatment) ? "la" : "lo";
+}
+
+export function quotationDeliveryEmail(data: QuotationEmailData) {
+  const greeting = quotationGreeting(data);
+  const objectPronoun = quotationObjectPronoun(data.treatment);
+  const testNotice = data.isTest
+    ? `${callout("Prueba interna", "Validación operativa. No reenviar a la cliente.")}`
+    : "";
+  const renderDescription = data.renderLink
+    ? `junto con el <a href="${escapeHtml(data.renderLink)}" class="email-link" style="color:#07111d;text-decoration:underline;">render referencial correspondiente</a>`
+    : "junto con el render referencial correspondiente";
+
+  const renderButton = data.renderLink
+    ? actionButton(data.renderLink, "Ver render referencial")
+    : "";
+
+  const body = `${testNotice}
+    ${paragraph(escapeHtml(greeting))}
+    ${paragraph("Esperamos que se encuentre muy bien.")}
+    ${paragraph(`Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, ${renderDescription}.`)}
+    ${renderButton}
+    ${paragraph("En el documento encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.")}
+    ${paragraph("Si tuviera alguna consulta o deseara realizar algún ajuste sobre la propuesta presentada, estaremos atentos para atenderla y absolver cualquier inquietud.")}
+    ${paragraph(`Agradecemos la confianza depositada en Casa Atenta y esperamos poder acompañar${objectPronoun} en la ejecución de este proyecto.`)}
+    ${paragraph("Reciba un cordial saludo.")}
+    ${paragraph('<strong class="email-strong" style="color:#07111d;">Equipo Casa Atenta</strong><br><a href="mailto:info@casa-atenta.com" class="email-link" style="color:#07111d;text-decoration:underline;">info@casa-atenta.com</a><br>+51 908 550 942<br><a href="https://www.casa-atenta.com" class="email-link" style="color:#07111d;text-decoration:underline;">www.casa-atenta.com</a>')}`;
+  const text = [
+    ...(data.isTest
+      ? ["PRUEBA INTERNA — Validación operativa. No reenviar a la cliente.", ""]
+      : []),
+    greeting,
+    "",
+    "Esperamos que se encuentre muy bien.",
+    "",
+    data.renderLink
+      ? `Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, junto con el render referencial correspondiente: ${data.renderLink}`
+      : "Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, junto con el render referencial correspondiente.",
+    "",
+    "En el documento encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.",
+    "",
+    "Si tuviera alguna consulta o deseara realizar algún ajuste sobre la propuesta presentada, estaremos atentos para atenderla y absolver cualquier inquietud.",
+    "",
+    `Agradecemos la confianza depositada en Casa Atenta y esperamos poder acompañar${objectPronoun} en la ejecución de este proyecto.`,
+    "",
+    "Reciba un cordial saludo.",
+    "",
+    "Equipo Casa Atenta",
+    "info@casa-atenta.com",
+    "+51 908 550 942",
+    "www.casa-atenta.com",
+  ].join("\n");
+
+  return {
+    subject: quotationSubject(data),
+    html: emailShell({
+      title: "Propuesta técnica",
+      preheader: quotationPreheader(data),
+      body,
+      footerNote:
+        "Esta propuesta fue preparada por Casa Atenta para el proyecto indicado.",
+      senderNotice: {
+        html: `<p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:8px;margin-left:0;">Puede responder directamente a este mensaje; la respuesta será atendida en <a href="mailto:${QUOTATION_REPLY_TO}" class="email-link" style="color:${BRAND_NAVY};text-decoration:underline;">${QUOTATION_REPLY_TO}</a>.</p>`,
+        text: `Puede responder directamente a este mensaje en ${QUOTATION_REPLY_TO}.`,
+      },
+    }),
+    text,
+  };
 }
 
 export type ContactEmailData = {
@@ -388,7 +478,8 @@ export function contactNotificationEmail(data: ContactEmailData) {
     preheader: "Hay una nueva solicitud pendiente de revisión.",
     body,
     audience: "internal",
-    footerNote: "Notificación interna de Casa Atenta. Contiene datos personales; no la reenvíes fuera del equipo autorizado.",
+    footerNote:
+      "Notificación interna de Casa Atenta. Contiene datos personales; no la reenvíes fuera del equipo autorizado.",
     text: [
       "Nueva solicitud web de Casa Atenta",
       `Registro: ${data.id}`,
@@ -481,7 +572,8 @@ export function claimNotificationEmail(data: ClaimEmailData) {
     preheader: "Nueva entrada registrada en el Libro de Reclamaciones.",
     body,
     audience: "internal",
-    footerNote: "Notificación interna de Casa Atenta. Contiene datos personales; no la reenvíes fuera del equipo autorizado.",
+    footerNote:
+      "Notificación interna de Casa Atenta. Contiene datos personales; no la reenvíes fuera del equipo autorizado.",
     text: [
       `${data.claimType} ${data.code}`,
       `ID interno: ${data.id}`,
@@ -545,7 +637,8 @@ export function claimReceiptEmail(data: ClaimEmailData) {
     title: `Registro ${data.code}`,
     preheader: `Tu registro fue recibido con el código ${data.code}.`,
     body,
-    footerNote: "Copia digital del registro enviado al Libro de Reclamaciones de Casa Atenta.",
+    footerNote:
+      "Copia digital del registro enviado al Libro de Reclamaciones de Casa Atenta.",
     text: [
       textGreeting,
       "",
@@ -580,7 +673,10 @@ export function claimReceiptEmail(data: ClaimEmailData) {
   });
 }
 
-export function newsletterConfirmationEmail(name: string | null, token: string) {
+export function newsletterConfirmationEmail(
+  name: string | null,
+  token: string,
+) {
   const confirmationUrl = new URL("/newsletter/confirmar", getSiteUrl());
   confirmationUrl.searchParams.set("token", token);
   const displayName = name ? inlineText(name) : "";
@@ -594,7 +690,8 @@ export function newsletterConfirmationEmail(name: string | null, token: string) 
   return transactionalEmail({
     subject: "Confirma tu suscripción | Casa Atenta",
     title: "Confirma tu suscripción",
-    preheader: "Confirma tu correo para completar la suscripción a Casa Atenta.",
+    preheader:
+      "Confirma tu correo para completar la suscripción a Casa Atenta.",
     body,
     footerNote: "Mensaje de verificación solicitado desde casa-atenta.com.",
     text: `${displayName ? `Hola ${displayName}` : "Hola"},\n\nRecibimos una solicitud para suscribirte a las novedades de Casa Atenta. Confirma que este correo es tuyo abriendo el siguiente enlace:\n${confirmationUrl.href}\n\nEl enlace caduca en 24 horas. Si no realizaste la solicitud, ignora este mensaje; no quedarás suscrito.`,
@@ -618,7 +715,8 @@ export function newsletterWelcomeEmail(
     title: "Tu suscripción está activa",
     preheader: "Tu correo quedó confirmado correctamente.",
     body,
-    footerNote: "Recibes este mensaje porque confirmaste tu suscripción en casa-atenta.com.",
+    footerNote:
+      "Recibes este mensaje porque confirmaste tu suscripción en casa-atenta.com.",
     text: `${displayName ? `Hola ${displayName}` : "Hola"},\n\nTu correo quedó confirmado. A partir de ahora podrás recibir novedades, ideas y contenidos de Casa Atenta.\n\nVisita: ${siteUrl}\n\nPuedes cancelar la suscripción en cualquier momento: ${unsubscribeUrl}`,
   });
 }

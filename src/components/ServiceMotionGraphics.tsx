@@ -1,188 +1,354 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  isServiceMotionSlug,
+  ServiceMotionScene,
+  type ServiceMotionSlug,
+} from "./service-motion/ServiceMotionScene";
 
-gsap.registerPlugin(ScrollTrigger);
-
-interface ServiceMotionGraphicsProps {
-  slug: string;
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-export const ServiceMotionGraphics: React.FC<ServiceMotionGraphicsProps> = ({ slug }) => {
+type ServiceMotionGraphicsProps = {
+  slug: string;
+  className?: string;
+  decorative?: boolean;
+};
+
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function animateRoof(root: HTMLDivElement, select: gsap.utils.SelectorFunc) {
+  const slats = select("[data-roof-slat]");
+  const slatCount = slats.length;
+
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: "top 84%",
+        end: "bottom 22%",
+        scrub: 0.8,
+      },
+    })
+    .to(
+      slats,
+      {
+        scaleY: 0.2,
+        rotation: -7,
+        stagger: 0.025,
+        ease: "none",
+        duration: 0.45,
+      },
+      0,
+    )
+    .to(
+      slats,
+      {
+        x: (index) => (slatCount - 1 - index) * 34,
+        stagger: 0.018,
+        ease: "power2.inOut",
+        duration: 0.55,
+      },
+      0.42,
+    )
+    .to("[data-roof-shadow]", { opacity: 0.2, duration: 0.6 }, 0)
+    .to("[data-roof-rays]", { opacity: 0.86, duration: 0.46 }, 0)
+    .to(
+      "[data-roof-carriage]",
+      { x: 274, duration: 0.55, ease: "power2.inOut" },
+      0.42,
+    )
+    .to("[data-roof-measure]", { opacity: 0.62, duration: 0.22 }, 0.76);
+
+  gsap.to("[data-roof-sun]", {
+    scale: 1.09,
+    opacity: 0.78,
+    duration: 2.6,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+    scrollTrigger: {
+      trigger: root,
+      start: "top bottom",
+      end: "bottom top",
+      toggleActions: "play pause resume pause",
+    },
+  });
+}
+
+function animateLighting(root: HTMLDivElement) {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: "top 86%",
+        end: "bottom 22%",
+        scrub: 0.85,
+      },
+    })
+    .to("[data-light-knob]", { x: 340, ease: "none", duration: 1 }, 0)
+    .to(
+      "[data-light-warm]",
+      {
+        opacity: 0.82,
+        scale: 1.12,
+        transformOrigin: "50% 50%",
+        duration: 0.54,
+      },
+      0,
+    )
+    .to(
+      "[data-light-cool]",
+      { opacity: 0.14, scale: 0.9, transformOrigin: "50% 50%", duration: 0.54 },
+      0,
+    )
+    .to("[data-light-warm]", { opacity: 0.2, duration: 0.46 }, 0.54)
+    .to(
+      "[data-light-cool]",
+      { opacity: 0.82, scale: 1.1, duration: 0.46 },
+      0.54,
+    )
+    .to("[data-light-beams]", { opacity: 0.74, duration: 0.7 }, 0.18);
+
+  gsap.to("[data-light-orbit]", {
+    rotation: 360,
+    transformOrigin: "50% 50%",
+    duration: 26,
+    repeat: -1,
+    ease: "none",
+    scrollTrigger: {
+      trigger: root,
+      start: "top bottom",
+      end: "bottom top",
+      toggleActions: "play pause resume pause",
+    },
+  });
+}
+
+function animateSmartHome(
+  root: HTMLDivElement,
+  select: gsap.utils.SelectorFunc,
+) {
+  gsap.to("[data-smart-links]", {
+    strokeDashoffset: -88,
+    duration: 3,
+    repeat: -1,
+    ease: "none",
+    scrollTrigger: {
+      trigger: root,
+      start: "top bottom",
+      end: "bottom top",
+      toggleActions: "play pause resume pause",
+    },
+  });
+
+  gsap.to("[data-smart-node]", {
+    scale: 1.1,
+    opacity: 0.98,
+    stagger: { each: 0.18, from: "center" },
+    duration: 1.5,
+    repeat: -1,
+    yoyo: true,
+    ease: "sine.inOut",
+    scrollTrigger: {
+      trigger: root,
+      start: "top bottom",
+      end: "bottom top",
+      toggleActions: "play pause resume pause",
+    },
+  });
+
+  const packets = select("[data-smart-packet]");
+  const destinations = [
+    { x: -152, y: -24 },
+    { x: 152, y: -24 },
+    { x: -112, y: 106 },
+    { x: 112, y: 106 },
+  ];
+  packets.forEach((packet, index) => {
+    gsap.to(packet, {
+      ...destinations[index],
+      opacity: 0,
+      duration: 1.8,
+      delay: index * 0.24,
+      repeat: -1,
+      ease: "power1.inOut",
+      scrollTrigger: {
+        trigger: root,
+        start: "top bottom",
+        end: "bottom top",
+        toggleActions: "play pause resume pause",
+      },
+    });
+  });
+}
+
+function animateTerrace(root: HTMLDivElement) {
+  gsap.set("[data-terrace-volume], [data-terrace-furniture]", {
+    opacity: 0.04,
+    y: 28,
+  });
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: "top 86%",
+        end: "bottom 20%",
+        scrub: 0.8,
+      },
+    })
+    .to("[data-terrace-plan]", { opacity: 0.28, y: -18, duration: 0.62 }, 0.24)
+    .to("[data-terrace-volume]", { opacity: 0.88, y: 0, duration: 0.62 }, 0.18)
+    .to(
+      "[data-terrace-furniture]",
+      { opacity: 0.76, y: 0, duration: 0.34 },
+      0.62,
+    )
+    .to("[data-terrace-circulation]", { opacity: 0.64, duration: 0.3 }, 0.7)
+    .to("[data-measure]", { opacity: 0.72, duration: 0.28 }, 0.72);
+}
+
+function animateMaintenance(root: HTMLDivElement) {
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: root,
+        start: "top 86%",
+        end: "bottom 20%",
+        scrub: 0.8,
+      },
+    })
+    .to("[data-maintenance-scan]", { x: 500, ease: "none", duration: 0.5 }, 0)
+    .to("[data-maintenance-damage]", { opacity: 0.08, duration: 0.34 }, 0.42)
+    .to("[data-maintenance-layers]", { opacity: 0.64, duration: 0.28 }, 0.22)
+    .to(
+      "[data-maintenance-layer]",
+      {
+        x: (index) => (index - 1) * 22,
+        y: (index) => (index - 1) * -14,
+        stagger: 0.04,
+        duration: 0.34,
+      },
+      0.24,
+    )
+    .to(
+      "[data-maintenance-layer]",
+      { x: 0, y: 0, stagger: 0.04, duration: 0.26 },
+      0.58,
+    )
+    .to("[data-maintenance-finish]", { opacity: 0.72, duration: 0.28 }, 0.7)
+    .to(
+      "[data-maintenance-bubble]",
+      { x: 44, duration: 0.72, ease: "power2.out" },
+      0.14,
+    );
+}
+
+export function ServiceMotionGraphics({
+  slug,
+  className = "",
+  decorative = false,
+}: ServiceMotionGraphicsProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = containerRef.current;
-    if (!root) return;
+    if (!root || !isServiceMotionSlug(slug)) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) return;
+    const reducedMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches;
+    const context = gsap.context(() => {
+      const select = gsap.utils.selector(root);
+      const svg = root.querySelector<SVGSVGElement>("svg") ?? undefined;
+      if (!svg) return;
+      const revealTargets = select("[data-reveal]");
+      const drawTargets = select("[data-draw]");
 
-    const ctx = gsap.context(() => {
-      if (slug === "techos-sol-y-sombra") {
-        gsap.to(".roof-panel", {
-          x: 92,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root,
-            start: "top 80%",
-            end: "bottom 25%",
-            scrub: true,
-          },
-        });
-        gsap.to(".pulley-line", {
-          strokeDashoffset: -30,
-          duration: 2.2,
-          repeat: -1,
-          ease: "none",
-        });
-        gsap.to(".motor-core", {
-          rotate: 360,
-          transformOrigin: "50% 50%",
-          duration: 3,
-          repeat: -1,
-          ease: "none",
-        });
+      gsap.set(svg, { autoAlpha: 1 });
+      if (reducedMotion) {
+        if (revealTargets.length) {
+          gsap.set(revealTargets, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            scale: 1,
+            rotation: 0,
+          });
+        }
+        if (drawTargets.length) {
+          gsap.set(drawTargets, { strokeDashoffset: 0 });
+        }
+        return;
       }
 
-      if (slug === "iluminacion-inteligente") {
-        gsap.to(".circadian-wave", {
-          scale: 1.18,
-          opacity: 0.12,
-          transformOrigin: "50% 50%",
-          duration: 2.6,
-          repeat: -1,
-          yoyo: true,
-          stagger: 0.3,
-          ease: "sine.inOut",
-        });
-      }
+      const entrance = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: {
+          trigger: root,
+          start: "top 90%",
+          once: true,
+        },
+      });
 
-      if (slug === "smart-homes") {
-        gsap.to(".network-node", {
-          scale: 1.15,
-          opacity: 0.95,
-          transformOrigin: "50% 50%",
-          duration: 1.8,
-          repeat: -1,
-          yoyo: true,
-          stagger: 0.2,
-          ease: "sine.inOut",
-        });
-      }
+      entrance.fromTo(
+        svg,
+        { autoAlpha: 0, scale: 0.96 },
+        { autoAlpha: 1, scale: 1, duration: 0.75 },
+      );
 
-      if (slug === "diseno-terrazas") {
-        gsap.fromTo(
-          ".blueprint-line",
-          { opacity: 0.2 },
-          {
-            opacity: 0.75,
-            stagger: 0.08,
-            scrollTrigger: {
-              trigger: root,
-              start: "top 82%",
-              end: "bottom 28%",
-              scrub: true,
-            },
-          },
+      if (revealTargets.length) {
+        entrance.fromTo(
+          revealTargets,
+          { autoAlpha: 0, y: 12 },
+          { autoAlpha: 1, y: 0, duration: 0.55, stagger: 0.045 },
+          "-=0.46",
         );
       }
 
-      if (slug === "mantenimiento-general") {
-        gsap.to(".level-bubble", {
-          x: 45,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: root,
-            start: "top 80%",
-            end: "bottom 25%",
-            scrub: true,
-          },
+      root
+        .querySelectorAll<SVGGeometryElement>("[data-draw]")
+        .forEach((path) => {
+          const length =
+            typeof path.getTotalLength === "function"
+              ? path.getTotalLength()
+              : 0;
+          if (!length) return;
+          gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+          entrance.to(
+            path,
+            { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" },
+            "<0.03",
+          );
         });
-      }
+
+      const animations: Record<ServiceMotionSlug, () => void> = {
+        "techos-sol-y-sombra": () => animateRoof(root, select),
+        "iluminacion-inteligente": () => animateLighting(root),
+        "smart-homes": () => animateSmartHome(root, select),
+        "diseno-terrazas": () => animateTerrace(root),
+        "mantenimiento-general": () => animateMaintenance(root),
+      };
+      animations[slug]();
     }, root);
 
-    return () => ctx.revert();
+    return () => context.revert();
   }, [slug]);
 
-  const renderGraphic = () => {
-    switch (slug) {
-      case "techos-sol-y-sombra":
-        return (
-          <svg viewBox="0 0 400 300" className="h-full w-full fill-none stroke-brand-gold opacity-70" role="img" aria-label="Cubierta Sol y Sombra corrediza por polea, gancho o motor">
-            <rect x="48" y="54" width="304" height="190" strokeWidth="1.4" opacity="0.45" />
-            <line x1="72" y1="82" x2="328" y2="82" strokeWidth="1" opacity="0.4" />
-            <line x1="72" y1="104" x2="328" y2="104" strokeWidth="1" opacity="0.4" />
-            <g className="roof-panel">
-              <rect x="72" y="92" width="164" height="96" rx="4" fill="#D8B36A" fillOpacity="0.12" strokeWidth="1.4" />
-              {[90, 112, 134, 156, 178, 200, 222].map((x) => (
-                <line key={x} x1={x} y1="98" x2={x} y2="182" strokeWidth="5" strokeLinecap="round" opacity="0.58" />
-              ))}
-            </g>
-            <circle cx="82" cy="214" r="10" strokeWidth="1.4" />
-            <circle cx="82" cy="214" r="3" fill="#D8B36A" stroke="none" />
-            <path d="M82 204V128H236" className="pulley-line" strokeDasharray="9 6" strokeWidth="1.3" />
-            <path d="M236 128l12 8-12 8" strokeWidth="1.4" />
-            <path d="M66 238c10-18 22-18 32 0M82 238v18" strokeWidth="1.3" />
-            <rect x="314" y="112" width="36" height="28" rx="5" strokeWidth="1.4" />
-            <circle cx="332" cy="126" r="7" className="motor-core" strokeWidth="1.4" />
-            <path d="M332 119V133M325 126H339" strokeWidth="1" />
-            <text x="50" y="274" className="fill-brand-gold stroke-none font-mono text-[8px] tracking-[0.16em]">POLEA · GANCHO · MOTOR</text>
-            <text x="50" y="292" className="fill-brand-gold stroke-none font-mono text-[7px] tracking-[0.11em]">LAMAS ORIENTABLES: SOLUCIÓN ESPECIAL SUJETA A EVALUACIÓN</text>
-          </svg>
-        );
-      case "iluminacion-inteligente":
-        return (
-          <svg viewBox="0 0 400 300" className="h-full w-full fill-none stroke-brand-gold opacity-70" role="img" aria-label="Esquema de iluminación por escenas">
-            <circle cx="200" cy="135" r="42" className="circadian-wave" strokeWidth="0.8" />
-            <circle cx="200" cy="135" r="82" className="circadian-wave" strokeWidth="0.6" strokeDasharray="4 5" />
-            <circle cx="200" cy="135" r="122" className="circadian-wave" strokeWidth="0.35" />
-            <circle cx="200" cy="135" r="24" fill="#D8B36A" fillOpacity="0.32" stroke="none" />
-            <path d="M190 126C190 111 210 111 210 126C210 139 202 144 200 152V157M193 157H207" strokeWidth="1.5" />
-            <text x="50" y="276" className="fill-brand-gold stroke-none font-mono text-[8px] tracking-[0.18em]">INTENSIDAD · TEMPERATURA · ESCENAS</text>
-          </svg>
-        );
-      case "smart-homes":
-        return (
-          <svg viewBox="0 0 400 300" className="h-full w-full fill-none stroke-brand-gold opacity-70" role="img" aria-label="Red local de automatización residencial">
-            <path d="M100 80Q200 80 200 140M300 80Q200 80 200 140M200 140L130 210M200 140L270 210" strokeWidth="1" strokeDasharray="8 6" />
-            {[[100,80,6],[300,80,6],[200,140,10],[130,210,6],[270,210,6]].map(([cx, cy, r]) => (
-              <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r={r} className="network-node" strokeWidth="1.3" fill="#07111D" />
-            ))}
-            <text x="50" y="276" className="fill-brand-gold stroke-none font-mono text-[8px] tracking-[0.18em]">RED LOCAL · SENSORES · CONTROL</text>
-          </svg>
-        );
-      case "diseno-terrazas":
-        return (
-          <svg viewBox="0 0 400 300" className="h-full w-full fill-none stroke-brand-gold opacity-70" role="img" aria-label="Plano de distribución de terraza">
-            <rect x="70" y="60" width="260" height="160" className="blueprint-line" strokeWidth="1" />
-            <circle cx="200" cy="140" r="50" className="blueprint-line" strokeWidth="0.75" strokeDasharray="3 3" />
-            <path d="M70 60L330 220M200 60V220M70 140H330" className="blueprint-line" strokeWidth="0.55" />
-            <text x="50" y="276" className="fill-brand-gold stroke-none font-mono text-[8px] tracking-[0.18em]">MEDIDAS · APOYOS · ORIENTACIÓN</text>
-          </svg>
-        );
-      case "mantenimiento-general":
-        return (
-          <svg viewBox="0 0 400 300" className="h-full w-full fill-none stroke-brand-gold opacity-70" role="img" aria-label="Control de nivel y acabado">
-            <rect x="80" y="110" width="240" height="45" rx="22.5" strokeWidth="1.5" />
-            <line x1="160" y1="110" x2="160" y2="155" strokeWidth="1" />
-            <line x1="240" y1="110" x2="240" y2="155" strokeWidth="1" />
-            <ellipse cx="155" cy="132.5" rx="15" ry="11" fill="#D8B36A" className="level-bubble" stroke="none" opacity="0.5" />
-            <text x="50" y="276" className="fill-brand-gold stroke-none font-mono text-[8px] tracking-[0.18em]">NIVEL · ALINEACIÓN · ACABADO</text>
-          </svg>
-        );
-      default:
-        return null;
-    }
-  };
+  if (!isServiceMotionSlug(slug)) return null;
 
   return (
-    <div ref={containerRef} className="flex aspect-square h-full w-full max-w-[280px] items-center justify-center rounded-2xl border border-white/[0.07] bg-white/[0.01] p-5 shadow-[inset_0_12px_24px_rgba(0,0,0,0.3)] backdrop-blur-sm">
-      {renderGraphic()}
+    <div
+      ref={containerRef}
+      data-service-motion={slug}
+      className={`group relative flex aspect-[4/3] w-full max-w-[440px] items-center justify-center overflow-hidden rounded-[1.5rem] border border-white/[0.09] bg-[radial-gradient(circle_at_48%_34%,rgba(216,179,106,0.09),transparent_58%),linear-gradient(145deg,rgba(255,255,255,0.035),rgba(255,255,255,0.006))] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),inset_0_-40px_100px_rgba(0,0,0,0.28),0_30px_80px_rgba(0,0,0,0.16)] backdrop-blur-sm sm:p-5 ${className}`}
+    >
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(112deg,transparent_18%,rgba(255,255,255,0.035)_50%,transparent_82%)] opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
+      <ServiceMotionScene slug={slug} decorative={decorative} />
     </div>
   );
-};
+}
 
 export default ServiceMotionGraphics;

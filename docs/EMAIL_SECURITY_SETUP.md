@@ -1,45 +1,67 @@
-# Saneamiento de correo de Casa Atenta
+# Correo y autenticación de dominio de Casa Atenta
 
-Auditoría realizada el 13 de julio de 2026 para `casa-atenta.com`.
+Documento operativo actualizado el 16 de julio de 2026 para
+`casa-atenta.com`. La auditoría del 13 de julio se conserva más abajo como
+historial, pero no representa una autorización para cambiar DNS.
 
-## Arquitectura objetivo
+## Arquitectura vigente
 
-- Cloudflare será el DNS autoritativo y gestionará la recepción mediante Email Routing.
-- Las cuatro identidades autorizadas se reenviarán a los dos destinos
-  operativos mediante un Email Worker de Cloudflare.
-- Resend enviará correos transaccionales y, en el futuro, el newsletter.
-- Supabase conservará solicitudes, consentimientos, reclamos, suscriptores y eventos de entrega.
-- Cloudflare Turnstile protegerá cada formulario antes de escribir o enviar correo.
-- Namecheap no gestionará DNS ni correo. Si continúa siendo el registrador, solo conservará la renovación del dominio. Para eliminar también esa dependencia se debe transferir el registro a Cloudflare Registrar.
+- Cloudflare es el DNS autoritativo y la cuenta compartida desde la que se
+  administran los registros de la zona.
+- **Namecheap Private Email es el servicio de recepción y el buzón actual de
+  `info@casa-atenta.com`.** Sus MX no se deben sustituir ni eliminar sin una
+  migración de correo aprobada, una ventana de cambio y pruebas de recepción.
+- Resend, en la infraestructura separada de Casa Atenta, es el proveedor de
+  salida transaccional.
+- Las cotizaciones salen exactamente como
+  `Casa Atenta <info@casa-atenta.com>` y usan
+  `Reply-To: info@casa-atenta.com`; la respuesta vuelve al buzón de Namecheap.
+- Supabase, también bajo la infraestructura separada de Casa Atenta, conserva
+  datos operativos y auditoría server-side. Turnstile protege los formularios
+  públicos que lo requieren.
+- Vercel ejecuta la aplicación. Los secretos runtime se cargan allí y no se
+  obtienen de los accesos OAuth/MCP de Codex.
 
-### Identidades y recepción
+### Flujo actual de una cotización
 
-| Dirección de Casa Atenta | Uso de salida | Tratamiento de entrada |
-| --- | --- | --- |
-| `info@casa-atenta.com` | Atención y respuesta operativa | Email Worker → ambos destinos operativos verificados |
-| `notificaciones@casa-atenta.com` | Automatizaciones de la web | Email Worker → ambos destinos; no se presenta como bandeja monitoreada |
-| `febjon@casa-atenta.com` | Gerencia, solo bajo instrucción explícita | Email Worker → ambos destinos operativos |
-| `aldonovar@casa-atenta.com` | Gerencia, solo bajo instrucción explícita | Email Worker → ambos destinos operativos |
+1. La aplicación entrega el mensaje y el PDF a Resend mediante HTTPS.
+2. Resend autentica y envía el correo usando los registros SPF/DKIM ya
+   verificados para su flujo de salida.
+3. Si la destinataria responde, su proveedor consulta los MX de
+   `casa-atenta.com`.
+4. Esos MX conducen la respuesta a Namecheap Private Email, donde se atiende el
+   buzón `info@casa-atenta.com`.
 
-Las cuatro reglas entrantes deben terminar en el Worker
-`casa-atenta-email-router`. Este solo admite las cuatro direcciones literales y
-reenvía cada mensaje a ambos destinos mediante `Promise.all`. No se debe usar
-`info@casa-atenta.com` como destino de otra regla del propio dominio, porque
-esa cadena puede crear un bucle. Las direcciones externas no se guardan en el
-repositorio: viven como secretos cifrados del Worker.
+Cloudflare no almacena ese buzón y Resend no recibe las respuestas. Ser DNS
+autoritativo tampoco convierte a Cloudflare en proveedor de correo.
 
-`notificaciones@casa-atenta.com` es un remitente automático. Todas sus
-plantillas indican que esa dirección no se monitorea y que cualquier contacto
-debe dirigirse a `info@casa-atenta.com`. `febjon@casa-atenta.com` y
-`aldonovar@casa-atenta.com` no pueden ser utilizados por formularios, tareas
-programadas, webhooks ni newsletters; se reservan para envíos manuales de
-gerencia solicitados expresamente.
+### MX frente a SPF, DKIM y DMARC
 
-## Estado público encontrado
+| Registro o servicio           | Función                                                               | Qué no hace                       |
+| ----------------------------- | --------------------------------------------------------------------- | --------------------------------- |
+| MX de Namecheap Private Email | Decide dónde se recibe el correo dirigido a `@casa-atenta.com`        | No autoriza a Resend para enviar  |
+| SPF                           | Declara qué infraestructura puede enviar para un hostname/Return-Path | No crea ni mueve buzones          |
+| DKIM                          | Firma el mensaje y permite verificar dominio e integridad             | No controla la ruta de respuestas |
+| DMARC                         | Exige alineación con el dominio visible y define política/reportes    | No reemplaza MX, SPF ni DKIM      |
+| Resend                        | Envía y reporta eventos transaccionales                               | No es el buzón de `info@`         |
+
+Debe existir un solo registro SPF por hostname. Los registros solicitados por
+Resend suelen vivir en su selector DKIM y/o subdominio de Return-Path; no se
+debe crear un segundo SPF raíz. Cambiar SPF/DKIM/DMARC no migra la recepción,
+pero cambiar MX sí puede interrumpirla.
+
+## Auditoría histórica y plan anterior
+
+El 13 de julio de 2026 se evaluó migrar la recepción a Cloudflare Email Routing
+y un Email Worker. Ese plan quedó **superado por la confirmación posterior de
+que Namecheap Private Email es el buzón/MX operativo**. Los datos siguientes se
+conservan como snapshot histórico y deben verificarse de nuevo antes de usarse:
 
 - Nameservers activos: `fish.ns.cloudflare.com` y `jimmy.ns.cloudflare.com`.
-- MX heredados: `eforward1` a `eforward5.registrar-servers.com`.
-- SPF heredado: `v=spf1 include:spf.efwd.registrar-servers.com ~all`.
+- En ese snapshot se observaron MX `eforward1` a
+  `eforward5.registrar-servers.com` y SPF
+  `v=spf1 include:spf.efwd.registrar-servers.com ~all`; no deben asumirse como
+  el estado actual ni modificarse a partir de este documento.
 - DMARC Management está activo con una política inicial `p=none` y reportes agregados en Cloudflare.
 - Resend verificó el dominio, DKIM y el Return-Path `send.casa-atenta.com`.
 - No existe registro MTA-STS en `_mta-sts.casa-atenta.com`.
@@ -47,11 +69,11 @@ gerencia solicitados expresamente.
 - No se encontró DS público; DNSSEC debe revisarse y activarse después de estabilizar la zona.
 - El Worker `casa-atenta-email-router` ya está desplegado, sin endpoint
   `workers.dev`, con ambos destinos configurados como secretos.
-- Cloudflare Email Routing aún está desactivado. Uno de los dos destinos ya
-  está verificado y el segundo sigue pendiente; se reenvió su correo de
-  verificación el 14 de julio de 2026.
+- Cloudflare Email Routing estaba desactivado. Uno de los dos destinos del plan
+  anterior estaba verificado y el segundo seguía pendiente.
 
-No se deben eliminar los MX heredados hasta que el destino de Cloudflare Email Routing esté verificado. El cambio debe realizarse en una misma ventana para evitar pérdida de mensajes.
+No se autoriza activar ese plan, cambiar MX, cancelar Namecheap Private Email ni
+alterar la recepción desde esta tarea.
 
 ### Transferencia del registrador
 
@@ -59,24 +81,32 @@ No se deben eliminar los MX heredados hasta que el destino de Cloudflare Email R
 - El dominio quedó nuevamente bloqueado en Namecheap mientras vence ese plazo. No debe permanecer desbloqueado sin una transferencia activa.
 - Cloudflare mostró un precio de `10,46 US$` antes de impuestos, con un año adicional de registro y renovación al mismo precio vigente. Cualquier cobro debe confirmarse nuevamente en la fecha de transferencia.
 - En la fecha elegible: desbloquear, solicitar un Auth/EPP nuevo, volver a comprobar en Cloudflare y completar el pago. El Auth/EPP es confidencial y solo debe introducirse directamente en Cloudflare.
-- Namecheap muestra un plan Private Email separado, con un buzón en uso y vigencia hasta el 18 de julio de 2027. Transferir el dominio no cancela automáticamente ese producto. No se debe cancelar ni cambiar los MX hasta validar el nuevo destino de recepción.
+- Namecheap muestra un plan Private Email separado, con un buzón en uso y
+  vigencia hasta el 18 de julio de 2027. Transferir el dominio no cancela
+  automáticamente ese producto. La declaración operativa posterior confirma
+  que ese servicio es la recepción actual.
 
-## 1. Cloudflare Email Routing
+## 1. Plan anterior: Cloudflare Email Routing (no ejecutar)
+
+Esta sección se conserva para trazabilidad. No describe la arquitectura actual
+y no autoriza ninguna acción. Solo podría reactivarse como proyecto de
+migración separado, con inventario de buzones, exportación/retención,
+verificación de destinos, rollback y aprobación explícita.
 
 En Cloudflare: **Compute → Email Service → Email Routing**.
 
-1. Completar la verificación de los dos destinos operativos. No activar la
+1. [Histórico] Completar la verificación de los dos destinos operativos. No activar la
    recepción mientras alguno continúe pendiente.
 2. Activar Email Routing para `casa-atenta.com`.
 3. Permitir que Cloudflare cree y bloquee sus registros administrados:
    - MX `@` hacia `route1.mx.cloudflare.net`, `route2.mx.cloudflare.net` y `route3.mx.cloudflare.net`.
    - SPF único en `@`: `v=spf1 include:_spf.mx.cloudflare.net ~all`.
    - DKIM de enrutamiento con el selector entregado por Cloudflare.
-4. Crear las reglas `info@casa-atenta.com`,
-   `notificaciones@casa-atenta.com`, `febjon@casa-atenta.com` y
-   `aldonovar@casa-atenta.com` hacia el Worker
-   `casa-atenta-email-router`.
-5. Crear `dmarc@casa-atenta.com` y `tls-reports@casa-atenta.com` hacia un buzón o servicio de reportes separado.
+4. Inventariar las identidades funcionales e internas en un registro operativo
+   privado antes de crear reglas hacia el Worker; las direcciones personales y
+   de destino no se documentan en Git.
+5. Definir los destinos de reportes DMARC/TLS-RPT directamente en el proveedor,
+   sin confirmar sus direcciones en este repositorio.
 6. Mantener el catch-all desactivado o configurado para descartar. Esto evita recibir spam dirigido a direcciones inventadas.
 7. Después de validar la recepción, retirar los cinco MX `eforward*` y el SPF de `spf.efwd.registrar-servers.com` si Cloudflare no los reemplazó automáticamente.
 
@@ -84,17 +114,19 @@ Debe existir un solo TXT que empiece por `v=spf1` en cada hostname. No se crear�
 
 Cloudflare Email Routing reenvía mensajes; no es un buzón con carpetas. El filtrado final, las respuestas manuales y la cuarentena también dependen del proveedor de la dirección de destino.
 
-Si una persona responde desde el Gmail de destino, el cliente verá ese Gmail.
-Las respuestas de negocio deben enviarse desde una identidad autorizada
-`@casa-atenta.com`; el reenvío entrante no convierte Gmail en un buzón de
-salida corporativo.
+La observación histórica sobre respuestas desde Gmail solo aplicaba al plan de
+reenvío. En la arquitectura vigente se responde desde el buzón corporativo de
+Namecheap Private Email.
 
 ## 2. Resend para salida
 
 1. El dominio `casa-atenta.com` ya está verificado en Resend para enviar desde la región `sa-east-1`.
 2. DKIM y el Return-Path `send` ya están verificados en Cloudflare como registros DNS.
-3. No añadir un segundo SPF en `@`. Resend normalmente autentica el Return-Path en un subdominio; si el panel pidiera modificar el SPF raíz, se debe fusionar con el de Cloudflare en un único registro.
-4. Configurar el remitente de la aplicación como `Casa Atenta <notificaciones@casa-atenta.com>` y `Reply-To: info@casa-atenta.com`. El pie compartido advierte, tanto en HTML como en texto plano, que `notificaciones@casa-atenta.com` es una dirección automática no monitoreada.
+3. No añadir un segundo SPF en `@`. Resend normalmente autentica el Return-Path en un subdominio; si el panel pidiera modificar el SPF raíz, se debe detener el cambio y revisar el registro existente antes de proponer una única política combinada.
+4. Para cotizaciones, configurar el remitente exactamente como
+   `Casa Atenta <info@casa-atenta.com>` y
+   `Reply-To: info@casa-atenta.com`. El servidor rechaza una configuración de
+   remitente distinta.
 5. Después de publicar la nueva versión, crear un webhook en Resend hacia:
 
    `https://www.casa-atenta.com/api/webhooks/resend`
@@ -103,16 +135,16 @@ salida corporativo.
 
 La aplicación usa claves de idempotencia, verifica la firma Svix del webhook y suprime automáticamente del newsletter las direcciones con rebote permanente o queja de spam.
 
+Resend solo maneja la salida y sus eventos. La entrega de una respuesta a
+`info@casa-atenta.com` depende de los MX y del buzón de Namecheap Private Email.
+No se requiere cambiar MX para usar Resend como emisor.
+
 ## 3. DMARC por etapas
 
-Cloudflare DMARC Management publicó la etapa inicial de observación el 13 de julio de 2026:
-
-```dns
-Type: TXT
-Name: _dmarc
-Value: v=DMARC1; p=none; rua=mailto:9bd5c0ba3788471da92d93b215d45e45@dmarc-reports.cloudflare.net
-TTL: Auto
-```
+Cloudflare DMARC Management publicó la etapa inicial de observación el 13 de
+julio de 2026. La dirección de reportes se conserva únicamente en el proveedor
+y no se reproduce en Git; verificar allí el TXT vigente antes de proponer un
+cambio.
 
 Mantener `p=none` hasta observar que Cloudflare, Resend y cualquier otra fuente legítima pasan DMARC. Después:
 
@@ -123,7 +155,14 @@ Mantener `p=none` hasta observar que Cloudflare, Resend y cualquier otra fuente 
 
 No se debe publicar `p=reject` el primer día: podría bloquear fuentes legítimas todavía desconocidas.
 
-## 4. MTA-STS y TLS-RPT
+## 4. Plan anterior: MTA-STS y TLS-RPT para MX de Cloudflare
+
+El archivo y los registros descritos en esta sección se prepararon para el plan
+anterior de Cloudflare Email Routing. **No se deben publicar ni promover a
+`enforce` mientras Namecheap Private Email sea el receptor actual.** Cualquier
+política MTA-STS futura debe listar exactamente los MX vigentes del proveedor
+receptor; publicar una política para hosts distintos puede bloquear correo
+entrante legítimo.
 
 El repositorio incluye `public/.well-known/mta-sts.txt` en modo `testing` para los tres MX de Cloudflare.
 
@@ -141,12 +180,13 @@ Value: v=STSv1; id=20260713
 TTL: Auto
 ```
 
-4. Publicar TLS-RPT:
+4. Publicar TLS-RPT solo con una dirección de reportes verificada y administrada
+   fuera del repositorio:
 
 ```dns
 Type: TXT
 Name: _smtp._tls
-Value: v=TLSRPTv1; rua=mailto:tls-reports@casa-atenta.com
+Value: v=TLSRPTv1; rua=mailto:REPLACE_WITH_VERIFIED_REPORT_ADDRESS
 TTL: Auto
 ```
 
@@ -159,15 +199,36 @@ El proyecto gratuito `casa-atenta-production` está activo en la región
 `20260714030330`:
 `supabase/migrations/20260714030330_email_forms_foundation.sql`.
 
-1. La migración ya fue aplicada y las seis tablas remotas tienen RLS activo.
-2. `anon` y `authenticated` no tienen permisos sobre estas tablas ni sobre la función de rate limiting; `service_role` conserva solo los permisos explícitos necesarios.
-3. Los Database Advisors no reportan errores ni advertencias de seguridad. Los avisos informativos de RLS sin políticas son intencionales porque no existe acceso directo desde clientes.
-4. Configurar una Secret key moderna `sb_secret_...` como `SUPABASE_SECRET_KEY`. `service_role` solo queda como compatibilidad temporal.
-5. No exponer ninguna de estas claves con el prefijo `NEXT_PUBLIC_`.
+La cuenta de Supabase de este proyecto es distinta del conector global/personal
+de Codex. El MCP local se configura en `.codex/config.toml` y ya está fijado al
+`project_ref` verificado `vywtnakijogqoiumnqaa`, con `read_only=true`. OAuth de
+Codex no sustituye `SUPABASE_URL` ni
+`SUPABASE_SECRET_KEY` del runtime.
+
+1. La migración base `20260714030330_email_forms_foundation.sql` debe aparecer
+   aplicada antes de operar los formularios.
+2. La migración de cotizaciones debe crear
+   `quotation_email_deliveries`; verificarla de forma independiente antes del
+   primer envío.
+3. `anon` y `authenticated` no tienen permisos sobre estas tablas ni sobre la
+   función de rate limiting; `service_role` conserva solo los permisos
+   explícitos necesarios.
+4. Los avisos informativos de RLS sin políticas son intencionales cuando no
+   existe acceso directo desde clientes; todo error o advertencia adicional de
+   Database Advisors se debe resolver antes de desplegar.
+5. Configurar una Secret key moderna `sb_secret_...` como
+   `SUPABASE_SECRET_KEY`. `service_role` solo queda como compatibilidad
+   temporal.
+6. No exponer ninguna de estas claves con el prefijo `NEXT_PUBLIC_`.
 
 Las tablas tienen RLS activo, no conceden acceso a `anon` ni `authenticated` y solo la capa de servidor recibe permisos explícitos.
 
-La tarea programada aplica minimización de datos: elimina las huellas de contacto y reclamos a los 30 días, las huellas del historial de consentimiento a los 90 días, redacta destinatario y carga completa de webhooks a los 30 días y elimina su metadata a los 180 días. El historial de consentimiento conserva evento, versión y fecha.
+La tarea programada aplica minimización de datos: elimina las huellas de
+contacto y reclamos a los 30 días, las huellas del historial de consentimiento
+a los 90 días, redacta destinatario y carga completa de webhooks a los 30 días,
+elimina su metadata a los 180 días y elimina las auditorías técnicas de
+cotizaciones al cumplir 365 días. El historial de consentimiento conserva
+evento, versión y fecha.
 
 ## 6. Turnstile
 
@@ -184,7 +245,11 @@ Las claves de `.env.local` fueron comparadas por huella criptográfica con Cloud
 
 ## 7. Variables de despliegue
 
-Copiar los nombres de `.env.example` a Vercel o al proveedor de hosting. Los secretos reales no deben guardarse en el repositorio.
+Copiar los nombres de `.env.example` a Vercel o al proveedor de hosting. Los
+secretos reales no deben guardarse en el repositorio. Resend y Supabase usan la
+infraestructura separada de Casa Atenta; las sesiones OAuth de los MCP locales
+`casaatenta_resend` y `casaatenta_supabase` son independientes de estos secretos
+runtime y no se deben reutilizar fuera de este proyecto.
 
 ### Reintentos automáticos
 
@@ -209,7 +274,13 @@ Variables obligatorias:
 - `RESEND_API_KEY`
 - `RESEND_WEBHOOK_SECRET`
 - `RESEND_FROM_EMAIL`
+- `QUOTATION_RESEND_FROM_EMAIL` (opcional; solo acepta el `From` exacto de cotizaciones)
+- `QUOTATION_AUDIT_SECRET`
+- `QUOTATION_TEST_RECIPIENTS`
+- `QUOTATION_PRODUCTION_ENABLED` (fail-closed; mantener `false` hasta autorización expresa)
 - `CONTACT_INBOX`
+- `QUOTATION_ADMIN_ACCESS_TOKEN`
+- `QUOTATION_ADMIN_SESSION_SECRET`
 - `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
 - `TURNSTILE_SECRET_KEY`
 - `TURNSTILE_ALLOWED_HOSTNAMES`
@@ -218,6 +289,22 @@ Variables obligatorias:
 - `NEXT_PUBLIC_SITE_URL`
 
 `NEWSLETTER_TOKEN_SECRET` debe mantenerse estable: rotarlo invalida los enlaces de baja enviados anteriormente.
+
+Para habilitar la consola de cotizaciones y su auditoría, los tres secretos
+`QUOTATION_AUDIT_SECRET`, `QUOTATION_ADMIN_ACCESS_TOKEN` y
+`QUOTATION_ADMIN_SESSION_SECRET` deben tener al menos 32 caracteres, ser
+independientes y no reutilizar
+`RESEND_API_KEY`, claves de Supabase ni contraseñas de Namecheap.
+`RESEND_FROM_EMAIL` conserva el remitente general de la web; el módulo de
+cotizaciones fija por defecto `Casa Atenta <info@casa-atenta.com>` y solo acepta
+`QUOTATION_RESEND_FROM_EMAIL` cuando coincide exactamente con ese valor. El
+storefront mantiene su propia configuración en su entorno independiente.
+
+La ausencia de cualquiera de los secretos requeridos deja la consola
+indisponible. Enviar a producción exige, además, que
+`QUOTATION_PRODUCTION_ENABLED` sea exactamente `true`, que el PDF haya sido
+confirmado como revisado y que el operador escriba la frase literal asociada al
+número de cotización. El modo de prueba no elimina ni satisface esos controles.
 
 ## 8. Verificación de salida
 
@@ -230,6 +317,18 @@ Después del despliegue:
 5. Probar rebote con una dirección de prueba de Resend y verificar la supresión.
 6. Verificar que un token Turnstile repetido sea rechazado.
 7. Revisar semanalmente reportes DMARC, rebotes y quejas durante el primer mes.
+8. Desde `/admin/cotizaciones`, ejecutar primero el modo de prueba; la allowlist
+   solo admite los dos destinatarios internos autorizados y crea un envío
+   individual por dirección.
+9. Confirmar en cada resultado un ID de Resend y una fila de auditoría
+   server-side sin PDF ni correo completo.
+10. Responder a un mensaje de prueba y comprobar que la respuesta llega a
+    `info@casa-atenta.com` en Namecheap Private Email.
+11. No cambiar DNS durante esta verificación. SPF, DKIM y DMARC se inspeccionan;
+    los MX actuales se conservan.
+
+El procedimiento completo, incluidos errores, idempotencia, rollback y
+corrección/reenvío, está en `docs/QUOTATION_EMAIL_SYSTEM.md`.
 
 ## 9. Reputación, filtrado y presencia de marca
 

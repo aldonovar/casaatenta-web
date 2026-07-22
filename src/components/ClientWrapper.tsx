@@ -17,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const adminSurface = pathname.startsWith("/admin");
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -60,6 +61,14 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  if (adminSurface) {
+    return (
+      <div className="min-h-[100dvh] bg-[#07111d] font-sans text-brand-light antialiased">
+        {children}
+      </div>
+    );
+  }
+
   const showShell = pathname !== "/about/conexiones";
 
   return (
@@ -75,7 +84,10 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       />
       {showShell && <Header />}
       {showShell && pathname !== "/" ? <PageRail /> : null}
-      <div id="app-content" className="relative z-10 w-full flex-grow bg-transparent">
+      <div
+        id="app-content"
+        className="relative z-10 w-full flex-grow bg-transparent"
+      >
         {children}
       </div>
       <WhatsAppButton variant="floating" label="Cuéntanos qué debe responder" />

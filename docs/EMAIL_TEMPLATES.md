@@ -32,15 +32,19 @@ conveniente asumir el certificado requerido, BIMI.
 
 ## Política de remitentes
 
-- `notificaciones@casa-atenta.com` es la identidad exclusiva para los envíos
-  automáticos de formularios, Libro de Reclamaciones y newsletter. No es una
-  bandeja independiente ni monitoreada.
+- Las familias heredadas de formularios, Libro de Reclamaciones y newsletter
+  usan la política de remitente automático documentada para
+  `notificaciones@casa-atenta.com`.
 - Todas las plantillas informan que no se debe escribir directamente a
   `notificaciones@casa-atenta.com` y remiten cualquier comunicación a
   `info@casa-atenta.com`.
 - Los mensajes automáticos dirigidos a clientes usan
   `Reply-To: info@casa-atenta.com`, por lo que la respuesta llega a la bandeja
   operativa aunque el remitente visible sea `notificaciones@casa-atenta.com`.
+- **Las cotizaciones son una excepción deliberada:** salen exactamente como
+  `Casa Atenta <info@casa-atenta.com>` y usan
+  `Reply-To: info@casa-atenta.com`. Ese buzón sí existe y se atiende en
+  Namecheap Private Email; Resend solo realiza la salida.
 - `febjon@casa-atenta.com` y `aldonovar@casa-atenta.com` quedan reservados para
   correos manuales de gerencia enviados únicamente bajo instrucción explícita.
   Ningún formulario, cron, webhook o campaña puede seleccionarlos de forma
@@ -48,14 +52,15 @@ conveniente asumir el certificado requerido, BIMI.
 
 ## Familias disponibles
 
-| Clave de vista previa | Uso |
-| --- | --- |
-| `contact-receipt` | Acuse de recibo para solicitudes y cotizaciones |
-| `contact-notification` | Aviso interno de una nueva solicitud |
-| `claim-receipt` | Copia del Libro de Reclamaciones para el consumidor |
-| `claim-notification` | Aviso interno de un reclamo o una queja |
+| Clave de vista previa     | Uso                                                                       |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `quotation-delivery`      | Entrega formal de cotización/render con PDF adjunto y modo de prueba      |
+| `contact-receipt`         | Acuse de recibo para solicitudes y cotizaciones                           |
+| `contact-notification`    | Aviso interno de una nueva solicitud                                      |
+| `claim-receipt`           | Copia del Libro de Reclamaciones para el consumidor                       |
+| `claim-notification`      | Aviso interno de un reclamo o una queja                                   |
 | `newsletter-confirmation` | Doble confirmación de la suscripción, protegida ante escáneres de enlaces |
-| `newsletter-welcome` | Bienvenida después de confirmar, con baja en un clic |
+| `newsletter-welcome`      | Bienvenida después de confirmar, con baja en un clic                      |
 
 ## Vista previa local
 
@@ -67,6 +72,11 @@ Cambia el valor de `template` por cualquiera de las claves de la tabla. La
 validación final debe hacerse enviando un ejemplar real a Gmail, Outlook y, si
 está disponible, Apple Mail, porque cada cliente aplica reglas propias.
 
+La vista `quotation-delivery` solo previsualiza HTML; no adjunta ni publica el
+PDF y no ejecuta Resend. El archivo real se procesa en memoria desde la consola
+privada, con máximo 4 MiB, MIME `application/pdf`, firma `%PDF-` y nombre
+`Casa-Atenta-Cotizacion-<numero>.pdf`.
+
 ## Criterio de aprobación
 
 1. SPF, DKIM y DMARC deben mostrar `pass` en los encabezados recibidos.
@@ -77,3 +87,9 @@ está disponible, Apple Mail, porque cada cliente aplica reglas propias.
    (`image/svg+xml` e `image/png`) desde producción antes de una prueba real.
 6. Los botones y enlaces de texto deben abrir únicamente `https://www.casa-atenta.com`.
 7. Los mensajes de newsletter deben incluir `List-Unsubscribe` y baja en un clic.
+8. Una cotización de prueba debe incluir `[PRUEBA INTERNA]` en el asunto y
+   limitarse a la allowlist server-side; cada destinatario recibe un mensaje e
+   ID de Resend independientes.
+9. Una respuesta a la cotización debe llegar a `info@casa-atenta.com` en
+   Namecheap Private Email. La aceptación de Resend no valida por sí sola ese
+   recorrido de respuesta.
