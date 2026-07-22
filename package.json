@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test --test-isolation=none tests/quotation-email/*.test.ts",
+    "test": "node --conditions=react-server --import tsx --test --experimental-test-isolation=none tests/quotation-email/*.test.ts",
     "quotation:test:send": "node --conditions=react-server --import tsx scripts/send-quotation-internal-tests.ts",
     "store:dev": "npm --workspace @casa-atenta/storefront run dev",
     "store:build": "npm --workspace @casa-atenta/storefront run build",
