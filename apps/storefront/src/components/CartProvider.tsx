@@ -12,7 +12,11 @@ import {
 import { products, type StoreProduct } from "@/data/catalog";
 import { useBodyScrollLock } from "@/lib/use-body-scroll-lock";
 
-const STORAGE_KEY = "casa-atenta-store-cart-v1";
+const STORAGE_KEY = "casa-atenta-store-cart-v3";
+const LEGACY_STORAGE_KEYS = [
+  "casa-atenta-store-cart-v2",
+  "casa-atenta-store-cart-v1",
+] as const;
 const EMPTY_LINES: CartLine[] = [];
 let browserSnapshot: CartLine[] | null = null;
 const cartListeners = new Set<() => void>();
@@ -43,42 +47,89 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+function purchasableProduct(productId: string) {
+  return products.find(
+    (candidate) =>
+      candidate.id === productId &&
+      candidate.priceMinor !== null &&
+      candidate.stock > 0 &&
+      candidate.shippingClass === "standard",
+  );
+}
+
 function sanitizeLines(value: unknown): CartLine[] {
   if (!Array.isArray(value)) return [];
 
-  return value.flatMap((line) => {
+  const byProduct = new Map<string, CartLine>();
+  for (const line of value.slice(0, 50)) {
     if (
       typeof line !== "object" ||
       line === null ||
       !("productId" in line) ||
       !("quantity" in line) ||
       typeof line.productId !== "string" ||
-      typeof line.quantity !== "number"
+      typeof line.quantity !== "number" ||
+      !Number.isFinite(line.quantity)
     ) {
-      return [];
+      continue;
     }
 
-    const product = products.find((candidate) => candidate.id === line.productId);
-    if (
-      !product ||
-      product.priceMinor === null ||
-      product.shippingClass !== "standard"
-    ) return [];
+    const product = purchasableProduct(line.productId);
+    if (!product) continue;
 
-    return [
-      {
-        productId: line.productId,
-        quantity: Math.max(1, Math.min(20, Math.floor(line.quantity))),
-      },
-    ];
-  });
+    const previous = byProduct.get(product.id)?.quantity ?? 0;
+    const requested = Math.max(1, Math.floor(line.quantity));
+    byProduct.set(product.id, {
+      productId: product.id,
+      quantity: Math.min(20, product.stock, previous + requested),
+    });
+  }
+
+  return [...byProduct.values()];
+}
+
+function parseStoredLines(serialized: string) {
+  const parsed = JSON.parse(serialized) as unknown;
+  if (!Array.isArray(parsed)) return [];
+
+  return sanitizeLines(
+    parsed.map((line) => {
+      if (typeof line !== "object" || line === null) return line;
+      if ("productId" in line) return line;
+      if (
+        "product" in line &&
+        typeof line.product === "object" &&
+        line.product !== null &&
+        "id" in line.product
+      ) {
+        return {
+          productId: line.product.id,
+          quantity: "quantity" in line ? line.quantity : 1,
+        };
+      }
+      return line;
+    }),
+  );
 }
 
 function readBrowserSnapshot() {
   if (browserSnapshot) return browserSnapshot;
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    browserSnapshot = saved ? sanitizeLines(JSON.parse(saved)) : [];
+    if (saved) {
+      browserSnapshot = parseStoredLines(saved);
+      return browserSnapshot;
+    }
+
+    for (const legacyKey of LEGACY_STORAGE_KEYS) {
+      const legacy = window.localStorage.getItem(legacyKey);
+      if (!legacy) continue;
+      browserSnapshot = parseStoredLines(legacy);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(browserSnapshot));
+      return browserSnapshot;
+    }
+
+    browserSnapshot = [];
   } catch {
     browserSnapshot = [];
   }
@@ -106,9 +157,13 @@ function subscribeToCart(listener: () => void) {
 }
 
 function updateCart(updater: (current: CartLine[]) => CartLine[]) {
-  const next = updater(readBrowserSnapshot());
+  const next = sanitizeLines(updater(readBrowserSnapshot()));
   browserSnapshot = next;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // El carrito en memoria sigue operativo si el almacenamiento no está disponible.
+  }
   cartListeners.forEach((listener) => listener());
 }
 
@@ -132,23 +187,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useBodyScrollLock(drawerOpen);
 
   const addItem = useCallback((productId: string, quantity = 1) => {
-    const product = products.find((candidate) => candidate.id === productId);
-    if (
-      !product ||
-      product.priceMinor === null ||
-      product.shippingClass !== "standard"
-    ) return;
+    const product = purchasableProduct(productId);
+    if (!product) return;
+
+    const requested = Number.isFinite(quantity)
+      ? Math.max(1, Math.floor(quantity))
+      : 1;
+    const limit = Math.min(20, product.stock);
 
     updateCart((current) => {
       const existing = current.find((line) => line.productId === productId);
       if (existing) {
         return current.map((line) =>
           line.productId === productId
-            ? { ...line, quantity: Math.min(20, line.quantity + quantity) }
+            ? { ...line, quantity: Math.min(limit, line.quantity + requested) }
             : line,
         );
       }
-      return [...current, { productId, quantity: Math.max(1, quantity) }];
+      return [...current, { productId, quantity: Math.min(limit, requested) }];
     });
     setDrawerOpen(true);
   }, []);
@@ -160,10 +216,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
       );
       return;
     }
+
+    const product = purchasableProduct(productId);
+    if (!product) {
+      updateCart((current) =>
+        current.filter((line) => line.productId !== productId),
+      );
+      return;
+    }
+
     updateCart((current) =>
       current.map((line) =>
         line.productId === productId
-          ? { ...line, quantity: Math.min(20, Math.floor(quantity)) }
+          ? {
+              ...line,
+              quantity: Math.min(
+                20,
+                product.stock,
+                Math.max(1, Math.floor(quantity)),
+              ),
+            }
           : line,
       ),
     );
@@ -178,7 +250,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const lines = useMemo<ResolvedCartLine[]>(
     () =>
       rawLines.flatMap((line) => {
-        const product = products.find((candidate) => candidate.id === line.productId);
+        const product = purchasableProduct(line.productId);
         if (!product || product.priceMinor === null) return [];
         return [
           {

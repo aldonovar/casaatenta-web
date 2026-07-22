@@ -11,5 +11,10 @@ export const BrandText: React.FC<BrandTextProps> = ({ children, className = '' }
   }
   
   const formatted = children.toUpperCase().replace(/A/g, '\u039B');
-  return <span className={className}>{formatted}</span>;
+  return (
+    <span className={className}>
+      <span className="sr-only">{children}</span>
+      <span aria-hidden="true">{formatted}</span>
+    </span>
+  );
 };

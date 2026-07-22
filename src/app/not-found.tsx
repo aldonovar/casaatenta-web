@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+    <main className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
       {/* Subtle glow accent */}
       <div className="absolute w-72 h-72 rounded-full bg-ca-deep-blue/20 blur-[120px] pointer-events-none" />
 
@@ -76,6 +76,6 @@ export default function NotFound() {
           </Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

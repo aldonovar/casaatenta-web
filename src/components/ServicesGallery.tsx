@@ -111,7 +111,7 @@ export const ServicesGallery: React.FC = () => {
                   <span className="text-[9px] font-mono uppercase tracking-[0.24em] text-ca-text/60">
                     CASA ATENTA / {service.title}
                   </span>
-                  <span className="text-[10px] font-mono text-ca-text/35">
+                  <span className="text-[10px] font-mono text-ca-text-secondary">
                     0{index + 1} / 0{servicesData.length}
                   </span>
                 </div>

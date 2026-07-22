@@ -168,7 +168,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                         ? "text-brand-gold font-semibold"
                         : step > s
                         ? "text-ca-text/60"
-                        : "text-ca-text-muted/40"
+                        : "text-ca-text-muted"
                     }`}
                   >
                     0{s} / {label}
@@ -232,7 +232,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                             <span className="text-ca-text-muted">{opt.code}</span>
                             <span
                               className={`text-[9px] ${
-                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted/40"
+                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted"
                               }`}
                             >
                               {isSelected ? "[X]" : "[ ]"}
@@ -308,7 +308,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                             <span className="text-ca-text-muted">{opt.code}</span>
                             <span
                               className={`text-[9px] ${
-                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted/40"
+                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted"
                               }`}
                             >
                               {isSelected ? "[X]" : "[ ]"}
@@ -397,7 +397,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                             <span className="text-ca-text-muted">{opt.code}</span>
                             <span
                               className={`text-[9px] ${
-                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted/40"
+                                isSelected ? "text-brand-gold font-bold" : "text-ca-text-muted"
                               }`}
                             >
                               {isSelected ? "[X]" : "[ ]"}
@@ -580,7 +580,7 @@ Me gustaría recibir asesoría para integrar este diseño en mi residencia.`;
                   <h3 className="text-xl md:text-2xl font-display text-brand-light font-extralight uppercase">
                     <BrandText>¡Configuración Registrada!</BrandText>
                   </h3>
-                  <p className="text-xs font-light text-brand-light/50 leading-relaxed font-sans max-w-md mx-auto">
+                  <p className="text-xs font-light text-ca-text-secondary leading-relaxed font-sans max-w-md mx-auto">
                     Tu selección técnica fue registrada de forma segura. También enviamos una copia a tu correo.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4 pt-6">
