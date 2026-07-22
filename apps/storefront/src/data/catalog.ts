@@ -20,6 +20,12 @@ export type ProductSpec = {
   value: string;
 };
 
+export type ProductImage = {
+  src: string;
+  alt: string;
+  label: string;
+};
+
 export type StoreProduct = {
   id: string;
   slug: string;
@@ -45,6 +51,104 @@ export type StoreProduct = {
   shippingClass: "standard" | "heavy";
   tone: "blue" | "cyan" | "amber" | "steel" | "navy" | "mint";
   searchTerms: string[];
+  media: ProductImage[];
+};
+
+type CatalogProduct = Omit<StoreProduct, "media">;
+
+const productViewLabels = [
+  "Vista principal",
+  "Detalle del producto",
+  "Vista adicional",
+] as const;
+
+function createProductMedia(
+  slug: string,
+  productName: string,
+  count = 3,
+): ProductImage[] {
+  return productViewLabels.slice(0, count).map((label, index) => ({
+    src: `/products/${slug}/${String(index + 1).padStart(2, "0")}.webp`,
+    alt: `${productName}. ${label}.`,
+    label,
+  }));
+}
+
+const productMediaBySlug: Record<string, ProductImage[]> = {
+  "amoladora-inalambrica-dcsm04-125pfk-20v": createProductMedia(
+    "amoladora-inalambrica-dcsm04-125pfk-20v",
+    "Amoladora angular inalámbrica Dongcheng DCSM04-125PFK",
+  ),
+  "martillo-demoledor-dzg10-sds-max-1500w": createProductMedia(
+    "martillo-demoledor-dzg10-sds-max-1500w",
+    "Martillo demoledor Dongcheng DZG10",
+  ),
+  "taladro-magnetico-djc02-23-1600w": createProductMedia(
+    "taladro-magnetico-djc02-23-1600w",
+    "Taladro magnético Dongcheng DJC02-23",
+  ),
+  "aspiradora-industrial-dvc30-30l-1200w": createProductMedia(
+    "aspiradora-industrial-dvc30-30l-1200w",
+    "Aspiradora industrial Dongcheng DVC30",
+  ),
+  "compresora-silenciosa-dqe1200-30l": createProductMedia(
+    "compresora-silenciosa-dqe1200-30l",
+    "Compresora silenciosa Dongcheng DQE1200/30L",
+  ),
+  "martillo-demoledor-dzg06-6s-1400w": createProductMedia(
+    "martillo-demoledor-dzg06-6s-1400w",
+    "Martillo demoledor Dongcheng DZG06-6S",
+  ),
+  "multiherramienta-dcmd20em-20v-brushless": createProductMedia(
+    "multiherramienta-dcmd20em-20v-brushless",
+    "Multiherramienta oscilante Dongcheng DCMD20EM",
+  ),
+  "bateria-dongcheng-ffbl2040-20v-4ah": createProductMedia(
+    "bateria-dongcheng-ffbl2040-20v-4ah",
+    "Batería Dongcheng FFBL2040",
+  ),
+  "bateria-dongcheng-ffbl2050-20v-5ah": createProductMedia(
+    "bateria-dongcheng-ffbl2050-20v-5ah",
+    "Batería Dongcheng FFBL2050",
+  ),
+  "bateria-dongcheng-ffbl2060-20v-6ah": createProductMedia(
+    "bateria-dongcheng-ffbl2060-20v-6ah",
+    "Batería Dongcheng FFBL2060",
+  ),
+  "llave-impacto-dcpb698-20v-brushless": createProductMedia(
+    "llave-impacto-dcpb698-20v-brushless",
+    "Llave de impacto Dongcheng DCPB698FK",
+  ),
+  "sierra-circular-dcmy02-185-20v-brushless": createProductMedia(
+    "sierra-circular-dcmy02-185-20v-brushless",
+    "Sierra circular Dongcheng DCMY02-185BM",
+    1,
+  ),
+  "lijadora-roto-orbital-dsa02-125-125mm": createProductMedia(
+    "lijadora-roto-orbital-dsa02-125-125mm",
+    "Lijadora roto orbital Dongcheng DSA02-125",
+  ),
+  "taladro-percutor-dcjz03-13em-20v-120nm": createProductMedia(
+    "taladro-percutor-dcjz03-13em-20v-120nm",
+    "Taladro percutor Dongcheng DCJZ03-13EM",
+    1,
+  ),
+  "llave-impacto-dcpb1218fk-20v-1218nm": createProductMedia(
+    "llave-impacto-dcpb1218fk-20v-1218nm",
+    "Llave de impacto Dongcheng DCPB1218FK",
+  ),
+  "combo-dckit26am-taladro-atornillador-impacto-20v": createProductMedia(
+    "combo-dckit26am-taladro-atornillador-impacto-20v",
+    "Combo inalámbrico Dongcheng DCKIT26AM",
+  ),
+  "amoladora-angular-dsm03-115s-950w": createProductMedia(
+    "amoladora-angular-dsm03-115s-950w",
+    "Amoladora angular Dongcheng DSM03-115S",
+  ),
+  "electrosierra-dccs40161h2s-40v-16": createProductMedia(
+    "electrosierra-dccs40161h2s-40v-16",
+    "Electrosierra Dongcheng DCCS40161H2S",
+  ),
 };
 
 export const categories: ProductCategory[] = [
@@ -107,7 +211,7 @@ export const categories: ProductCategory[] = [
 // Catálogo de referencia para validar la experiencia. Los modelos y atributos
 // provienen de oferta pública Dongcheng; precio, stock y garantía se confirman
 // con el proveedor antes de activar NEXT_PUBLIC_STORE_MODE=live.
-export const products: StoreProduct[] = [
+const catalogProducts: CatalogProduct[] = [
   {
     id: "0d74ff65-8f44-4af9-aadc-622d74c53103",
     slug: "amoladora-inalambrica-dcsm04-125pfk-20v",
@@ -635,6 +739,11 @@ export const products: StoreProduct[] = [
     searchTerms: ["electrosierra", "motosierra", "16 pulgadas", "40v", "dcs40161", "poda"],
   },
 ];
+
+export const products: StoreProduct[] = catalogProducts.map((product) => ({
+  ...product,
+  media: productMediaBySlug[product.slug] ?? [],
+}));
 
 export function getProductBySlug(slug: string) {
   return products.find((product) => product.slug === slug);

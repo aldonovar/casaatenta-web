@@ -1,7 +1,9 @@
 import "server-only";
 
 import { createHash, createHmac, timingSafeEqual } from "node:crypto";
+import { isIP } from "node:net";
 import { storeConfig } from "@/lib/store-config";
+import { assertSecretValue } from "@/lib/server/live-commerce-config";
 
 export function getClientIp(request: Request) {
   return (
@@ -13,14 +15,25 @@ export function getClientIp(request: Request) {
   );
 }
 
-export function getRequestFingerprint(request: Request) {
-  const secret =
-    process.env.RATE_LIMIT_SECRET || process.env.OPENPAY_PRIVATE_KEY || "";
-  if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error("Falta configurar RATE_LIMIT_SECRET.");
+export function getVerifiedClientIp(request: Request) {
+  const candidate = getClientIp(request);
+  return isIP(candidate) ? candidate : null;
+}
+
+export function getRequestFingerprint(
+  request: Request,
+  scope = "store-request",
+) {
+  if (!/^[a-z0-9-]{3,80}$/.test(scope)) {
+    throw new Error("El alcance del fingerprint no es válido.");
   }
+  const configuredSecret = process.env.RATE_LIMIT_SECRET;
+  const secret =
+    process.env.NODE_ENV === "production"
+      ? assertSecretValue("RATE_LIMIT_SECRET", configuredSecret)
+      : configuredSecret?.trim() || "local-development-only";
   return createHmac("sha256", secret || "local-development-only")
-    .update(`store-checkout:${getClientIp(request)}`)
+    .update(`${scope}:${getClientIp(request)}`)
     .digest("hex");
 }
 
@@ -42,6 +55,14 @@ export function isAllowedStoreOrigin(request: Request) {
   if (!origin) return process.env.NODE_ENV !== "production";
 
   const allowed = new Set([new URL(storeConfig.url).origin]);
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+    for (const hostname of [
+      process.env.VERCEL_URL,
+      process.env.VERCEL_BRANCH_URL,
+    ]) {
+      if (hostname) allowed.add(`https://${hostname}`);
+    }
+  }
   if (process.env.NODE_ENV !== "production") {
     allowed.add("http://localhost:3000");
     allowed.add("http://127.0.0.1:3000");

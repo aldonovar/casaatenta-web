@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isIP } from "node:net";
 import { storeConfig } from "@/lib/store-config";
 
 type OpenpayEnvironment = "sandbox" | "production";
@@ -20,6 +21,7 @@ export type OpenpayCharge = {
   amount: number;
   currency: string;
   order_id?: string;
+  card?: OpenpayCardSummary;
   payment_method?: {
     type?: string;
     url?: string;
@@ -34,6 +36,7 @@ type CreateChargeInput = {
   paymentAttemptId: string;
   orderNumber: string;
   amountMinor: number;
+  customerIp: string;
   customer: {
     firstName: string;
     lastName: string;
@@ -83,10 +86,39 @@ function getOpenpayConfig() {
   };
 }
 
+function validateRedirectUrl(
+  value: unknown,
+  config: ReturnType<typeof getOpenpayConfig>,
+) {
+  if (value === undefined || value === null || value === "") return undefined;
+  if (typeof value !== "string" || value.length > 2_048) {
+    throw new OpenpayError("Openpay devolvió un redirect inválido.", 502);
+  }
+  try {
+    const url = new URL(value);
+    const expected = new URL(config.apiBase);
+    if (
+      url.protocol !== "https:" ||
+      url.hostname !== expected.hostname ||
+      url.port ||
+      url.username ||
+      url.password
+    ) {
+      throw new Error("unexpected_redirect_origin");
+    }
+    return url.toString();
+  } catch {
+    throw new OpenpayError("Openpay devolvió un redirect no permitido.", 502);
+  }
+}
+
 export async function createOpenpayCharge(
   input: CreateChargeInput,
 ): Promise<OpenpayCharge> {
   const config = getOpenpayConfig();
+  if (!isIP(input.customerIp)) {
+    throw new OpenpayError("La IP del comprador no es válida.", 400);
+  }
   const use3dSecure = process.env.OPENPAY_USE_3DS !== "false";
   const payload = {
     method: "card",
@@ -121,6 +153,7 @@ export async function createOpenpayCharge(
         "Content-Type": "application/json",
         Accept: "application/json",
         "User-Agent": "CasaAtentaStore/1.0",
+        "X-Forwarded-For": input.customerIp,
       },
       body: JSON.stringify(payload),
       cache: "no-store",
@@ -141,12 +174,93 @@ export async function createOpenpayCharge(
       body.category,
     );
   }
-  if (!body.id) throw new OpenpayError("Respuesta inválida de Openpay.", 502);
-  return body;
+  if (
+    typeof body.id !== "string" ||
+    typeof body.status !== "string" ||
+    typeof body.amount !== "number" ||
+    !Number.isFinite(body.amount) ||
+    typeof body.currency !== "string" ||
+    (body.order_id !== undefined && body.order_id !== input.paymentAttemptId)
+  ) {
+    throw new OpenpayError("Respuesta inválida de Openpay.", 502);
+  }
+  if (
+    body.payment_method !== undefined &&
+    (body.payment_method === null || typeof body.payment_method !== "object")
+  ) {
+    throw new OpenpayError("Openpay devolvió un método de pago inválido.", 502);
+  }
+  const redirectUrl = validateRedirectUrl(body.payment_method?.url, config);
+  return {
+    ...body,
+    payment_method: body.payment_method
+      ? { ...body.payment_method, url: redirectUrl }
+      : undefined,
+  };
+}
+
+export async function listOpenpayChargesByOrderId(
+  orderId: string,
+): Promise<OpenpayCharge[]> {
+  const config = getOpenpayConfig();
+  const query = new URLSearchParams({ order_id: orderId, limit: "10" });
+  const response = await fetch(
+    `${config.apiBase}/v1/${encodeURIComponent(config.merchantId)}/charges?${query.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${config.privateKey}:`).toString("base64")}`,
+        Accept: "application/json",
+        "User-Agent": "CasaAtentaStore/1.0",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(20_000),
+    },
+  );
+
+  const body = (await response.json().catch(() => null)) as unknown;
+  if (!response.ok) {
+    const errorBody = body as {
+      description?: string;
+      error_code?: number;
+      category?: string;
+    } | null;
+    throw new OpenpayError(
+      errorBody?.description || "No pudimos conciliar el cargo en Openpay.",
+      response.status,
+      errorBody?.error_code,
+      errorBody?.category,
+    );
+  }
+  if (!Array.isArray(body)) {
+    throw new OpenpayError("Openpay devolvió una lista de cargos inválida.", 502);
+  }
+
+  for (const candidate of body) {
+    const charge = candidate as Partial<OpenpayCharge> | null;
+    if (
+      !charge ||
+      typeof charge !== "object" ||
+      typeof charge.id !== "string" ||
+      typeof charge.status !== "string" ||
+      typeof charge.amount !== "number" ||
+      !Number.isFinite(charge.amount) ||
+      typeof charge.currency !== "string" ||
+      typeof charge.order_id !== "string" ||
+      charge.order_id !== orderId
+    ) {
+      throw new OpenpayError(
+        "Openpay devolvió un cargo con estructura o identidad inesperada.",
+        502,
+      );
+    }
+  }
+
+  return body as OpenpayCharge[];
 }
 
 export function safeChargeSnapshot(charge: OpenpayCharge) {
-  const card = charge.payment_method?.card;
+  const card = charge.card || charge.payment_method?.card;
   const cardDigits = String(card?.card_number || "").replace(/\D/g, "");
   return {
     id: charge.id,
@@ -157,7 +271,10 @@ export function safeChargeSnapshot(charge: OpenpayCharge) {
     order_id: charge.order_id || null,
     payment_method: {
       type: charge.payment_method?.type || null,
-      url: charge.payment_method?.url || null,
+      // Redirect URLs can contain short-lived transaction credentials. The
+      // caller may return it to the browser once, but it must not be persisted
+      // in the payment-event audit payload.
+      has_redirect: Boolean(charge.payment_method?.url),
       card: card
         ? {
             brand: card.brand || null,

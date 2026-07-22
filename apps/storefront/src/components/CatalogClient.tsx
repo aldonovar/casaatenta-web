@@ -33,16 +33,40 @@ export function CatalogClient({
   const [sort, setSort] = useState<SortMode>("featured");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterSheetRef = useRef<HTMLElement>(null);
+  const filterTriggerRef = useRef<HTMLButtonElement>(null);
+  const filtersWereOpen = useRef(false);
 
   useBodyScrollLock(filtersOpen);
 
   useEffect(() => {
-    if (!filtersOpen) return;
+    if (!filtersOpen) {
+      if (filtersWereOpen.current) filterTriggerRef.current?.focus();
+      filtersWereOpen.current = false;
+      return;
+    }
+    filtersWereOpen.current = true;
     const frame = requestAnimationFrame(() =>
       filterSheetRef.current?.querySelector<HTMLElement>("button, input, select, a")?.focus(),
     );
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setFiltersOpen(false);
+      if (event.key === "Escape") {
+        setFiltersOpen(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const nodes = filterSheetRef.current?.querySelectorAll<HTMLElement>(
+        'a, button, input, select, [tabindex]:not([tabindex="-1"])',
+      );
+      if (!nodes?.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     addEventListener("keydown", onKeyDown);
     return () => {
@@ -172,6 +196,7 @@ export function CatalogClient({
             {query && <button type="button" onClick={() => setQuery("")} aria-label="Limpiar búsqueda"><X size={15} /></button>}
           </label>
           <button
+            ref={filterTriggerRef}
             type="button"
             className="catalog-mobile-filter"
             onClick={() => setFiltersOpen(true)}
@@ -180,7 +205,7 @@ export function CatalogClient({
           >
             <Filter size={17} /> Filtros {activeCount > 0 && <b>{activeCount}</b>}
           </button>
-          <span className="catalog-results__count"><strong>{filtered.length}</strong> resultados</span>
+          <span className="catalog-results__count" aria-live="polite"><strong>{filtered.length}</strong> resultados</span>
           <label className="catalog-sort">
             <span>Ordenar por</span>
             <select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}>

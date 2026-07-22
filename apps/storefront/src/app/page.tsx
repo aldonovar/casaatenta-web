@@ -100,7 +100,7 @@ export default function StoreHomePage() {
           </div>
           <div className="store-hero__visual">
             <div className="store-hero__product-main">
-              <ProductVisual product={heroProduct} size="large" />
+              <ProductVisual product={heroProduct} size="large" eager />
               <div className="store-hero__product-label">
                 <span>Selección profesional</span>
                 <strong>{heroProduct.shortName}</strong>

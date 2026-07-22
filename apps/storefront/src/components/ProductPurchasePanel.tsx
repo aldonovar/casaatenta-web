@@ -49,7 +49,7 @@ export function ProductPurchasePanel({ product }: { product: StoreProduct }) {
         <div className="delivery-checker__form">
           <label>
             <MapPin size={16} />
-            <select value={district} onChange={(event) => { setDistrict(event.target.value); setDeliveryChecked(false); }}>
+            <select aria-label="Zona de entrega" value={district} onChange={(event) => { setDistrict(event.target.value); setDeliveryChecked(false); }}>
               <option value="">Selecciona tu zona</option>
               <option value="lima-centro">Lima Centro</option>
               <option value="lima-norte">Lima Norte</option>
@@ -64,7 +64,7 @@ export function ProductPurchasePanel({ product }: { product: StoreProduct }) {
         </div>
         {deliveryChecked && (
           <p className="delivery-checker__result">
-            <Check size={14} /> El costo y fecha exactos se mostrarán en checkout según peso y dirección.
+            <Check size={14} /> El checkout online cubre Lima y Callao. Para provincias confirmamos tarifa y fecha antes de cobrar.
           </p>
         )}
       </div>

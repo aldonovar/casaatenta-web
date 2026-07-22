@@ -8,7 +8,7 @@ export function StoreShell({ children }: { children: ReactNode }) {
   return (
     <CartProvider>
       <StoreHeader />
-      <main className="store-main">{children}</main>
+      <main id="contenido" className="store-main" tabIndex={-1}>{children}</main>
       <StoreFooter />
       <CartDrawer />
     </CartProvider>

@@ -5,6 +5,14 @@ import { ArrowLeft, Check, CreditCard, MapPin, PackageCheck, Truck } from "lucid
 import { requireUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
 import { formatMoney } from "@/lib/store-config";
+import {
+  formatStoreDate,
+  formatStoreDateTime,
+  orderStateLabel,
+  paymentStateLabel,
+  safeExternalTrackingUrl,
+  shipmentStateLabel,
+} from "@/lib/order-presentation";
 
 export const metadata: Metadata = {
   title: "Detalle del pedido",
@@ -12,16 +20,6 @@ export const metadata: Metadata = {
 };
 
 type OrderDetailProps = { params: Promise<{ id: string }> };
-
-const stateLabels: Record<string, string> = {
-  payment_pending: "Pago pendiente",
-  confirmed: "Pedido confirmado",
-  processing: "En preparación",
-  ready_to_ship: "Listo para despacho",
-  shipped: "En camino",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
-};
 
 export default async function OrderDetailPage({ params }: OrderDetailProps) {
   const { id } = await params;
@@ -41,17 +39,18 @@ export default async function OrderDetailPage({ params }: OrderDetailProps) {
   const address = addressResult.data;
   const events = eventsResult.data || [];
   const shipment = shipmentResult.data;
+  const shipmentUrl = safeExternalTrackingUrl(shipment?.tracking_url);
 
   return (
     <div className="order-detail">
       <Link href="/cuenta/pedidos" className="order-detail__back"><ArrowLeft size={16} /> Mis pedidos</Link>
       <div className="order-detail__head">
-        <div><span className="eyebrow">Pedido {order.order_number}</span><h1>{stateLabels[order.order_state] || order.order_state}</h1><p>Creado el {new Date(order.created_at).toLocaleDateString("es-PE", { dateStyle: "long" })}</p></div>
-        <span className={`order-state order-state--${order.order_state}`}>{stateLabels[order.order_state] || order.order_state}</span>
+        <div><span className="eyebrow">Pedido {order.order_number}</span><h1>{orderStateLabel(order.order_state)}</h1><p>Creado el {formatStoreDate(order.created_at, "long")}</p></div>
+        <span className={`order-state order-state--${order.order_state}`}>{orderStateLabel(order.order_state)}</span>
       </div>
 
       <div className="order-detail__grid">
-        <main>
+        <div>
           <section className="order-panel">
             <h2><PackageCheck size={19} /> Productos</h2>
             <div className="order-items">{items.map((item) => <div key={item.id}><span><strong>{item.name}</strong><small>{item.sku} · Cantidad {item.quantity}</small></span><b>{formatMoney(item.total_minor)}</b></div>)}</div>
@@ -59,12 +58,12 @@ export default async function OrderDetailPage({ params }: OrderDetailProps) {
           </section>
           <section className="order-panel">
             <h2><Truck size={19} /> Seguimiento</h2>
-            <div className="order-timeline">{events.map((event) => <div key={event.id}><span><Check size={13} /></span><p><strong>{event.public_message}</strong><time>{new Date(event.created_at).toLocaleString("es-PE", { dateStyle: "medium", timeStyle: "short" })}</time></p></div>)}</div>
-            {shipment?.tracking_number && <a className="button button--outline" href={shipment.tracking_url || "#"} target={shipment.tracking_url ? "_blank" : undefined} rel="noreferrer">Rastrear {shipment.carrier || "envío"}: {shipment.tracking_number}</a>}
+            <div className="order-timeline">{events.length > 0 ? events.map((event) => <div key={event.id}><span><Check size={13} /></span><p><strong>{event.public_message}</strong><time>{formatStoreDateTime(event.created_at)}</time></p></div>) : <p>Publicaremos aquí cada actualización confirmada del pedido.</p>}</div>
+            {shipment?.tracking_number && (shipmentUrl ? <a className="button button--outline" href={shipmentUrl} target="_blank" rel="noreferrer">Rastrear {shipment.carrier || "envío"}: {shipment.tracking_number}</a> : <p>Código de seguimiento: <strong>{shipment.tracking_number}</strong></p>)}
           </section>
-        </main>
+        </div>
         <aside>
-          <section className="order-panel order-panel--compact"><h2><CreditCard size={18} /> Pago</h2><p><span>Estado</span><strong>{order.payment_state}</strong></p><p><span>Comprobante</span><strong>{order.invoice_type === "invoice" ? "Factura" : "Boleta"}</strong></p></section>
+          <section className="order-panel order-panel--compact"><h2><CreditCard size={18} /> Pago</h2><p><span>Estado</span><strong>{paymentStateLabel(order.payment_state)}</strong></p><p><span>Tipo solicitado</span><strong>{order.invoice_type === "invoice" ? "Factura" : "Boleta"}</strong></p><p><span>Emisión tributaria</span><strong>Pendiente de emisión y entrega</strong></p>{shipment && <p><span>Despacho</span><strong>{shipmentStateLabel(shipment.state)}</strong></p>}</section>
           {address && <section className="order-panel order-panel--compact"><h2><MapPin size={18} /> Entrega</h2><address><strong>{address.recipient_name}</strong><span>{address.address_line_1}{address.address_line_2 ? `, ${address.address_line_2}` : ""}</span><span>{address.district}, {address.department}</span>{address.reference && <small>Ref.: {address.reference}</small>}</address></section>}
         </aside>
       </div>
