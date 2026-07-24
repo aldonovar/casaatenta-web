@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function ConexionesRedirect() {
+export default function QRRedirect() {
   redirect("/links");
 }
