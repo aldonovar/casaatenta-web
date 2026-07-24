@@ -179,12 +179,12 @@ export default function LinksPage() {
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Subfirma: ZENIT DESIGN en caligrafía corrida */}
+          {/* Subfirma: ZENIT DESIGN en caligrafía Copperplate de alta gama */}
           <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
             <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
             <span 
-              className="text-2xl md:text-3xl text-[#D8B36A] font-normal tracking-normal capitalize"
-              style={{ fontFamily: "'Great Vibes', 'Alex Brush', cursive, serif" }}
+              className="text-2xl md:text-3xl text-[#D8B36A] font-normal tracking-wide capitalize"
+              style={{ fontFamily: "'Pinyon Script', var(--font-cormorant), 'Cormorant Garamond', serif" }}
             >
               Zenit Design
             </span>
