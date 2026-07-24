@@ -183,13 +183,13 @@ export default function LinksPage() {
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Subfirma: ZENIT DESIGN en caligrafía corrida garantizada por next/font/google */}
+          {/* Subfirma: ZENIT DESIGN en caligrafía corrida (todo en minúsculas) */}
           <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
             <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
             <span 
-              className={`${pinyonScript.className} text-3xl md:text-4xl text-[#D8B36A] font-normal tracking-normal capitalize leading-none drop-shadow-[0_2px_10px_rgba(216,179,106,0.25)]`}
+              className={`${pinyonScript.className} text-3xl md:text-4xl text-[#D8B36A] font-normal tracking-normal lowercase leading-none drop-shadow-[0_2px_10px_rgba(216,179,106,0.25)]`}
             >
-              Zenit Design
+              zenit design
             </span>
             <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
           </div>
