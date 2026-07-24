@@ -34,7 +34,7 @@ export default function LinksPage() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set(".animate-header", { opacity: 0, y: -15 });
-      gsap.set(".animate-[#D8B36A]-subfirm", { opacity: 0, scale: 0.95 });
+      gsap.set(".animate-subfirm", { opacity: 0, scale: 0.95 });
       gsap.set(".animate-socials", { opacity: 0, y: 10 });
       gsap.set(".animate-vcard", { opacity: 0, y: 10 });
       gsap.set(".animate-main-links", { opacity: 0, y: 15 });
@@ -48,6 +48,12 @@ export default function LinksPage() {
         duration: 0.8,
         ease: "power3.out",
       })
+      .to(".animate-subfirm", {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: "power2.out",
+      }, "-=0.5")
       .to(".animate-socials", {
         opacity: 1,
         y: 0,
@@ -174,7 +180,7 @@ export default function LinksPage() {
           </h1>
 
           {/* Subfirma: ZENIT DESIGN en caligrafía serif italiana de alto nivel */}
-          <div className="flex items-center justify-center gap-3 my-1">
+          <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
             <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
             <span className="font-serif italic font-normal text-lg md:text-xl tracking-[0.2em] text-[#D8B36A] lowercase capitalize">
               Zenit Design
