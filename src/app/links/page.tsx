@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
+import { Pinyon_Script } from "next/font/google";
 import { 
   MessageCircle, 
   ArrowRight, 
@@ -12,16 +13,19 @@ import {
   UserPlus, 
   Share2, 
   Check, 
-  ArrowLeft,
-  Sliders,
-  Layers,
-  Cpu
+  ArrowLeft
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { WHATSAPP_LINK } from "@/constants/contact";
 import { STORE_URL } from "@/data/navigation";
 import { BLOG_URL } from "@/lib/urls";
 import { downloadVCard } from "@/lib/vcard";
+
+const pinyonScript = Pinyon_Script({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function LinksPage() {
   const containerRef = useRef<HTMLElement>(null);
@@ -124,7 +128,7 @@ export default function LinksPage() {
     {
       name: "Instagram",
       href: "https://instagram.com/casaatenta",
-      path: "M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M18,5A1,1 0 0,1 19,6A1,1 0 0,1 17,6A1,1 0 0,1 17,6A1,1 0 0,1 18,5Z",
+      path: "M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 12,9M18,5A1,1 0 0,1 19,6A1,1 0 0,1 17,6A1,1 0 0,1 17,6A1,1 0 0,1 18,5Z",
     },
     {
       name: "TikTok",
@@ -175,16 +179,15 @@ export default function LinksPage() {
           </div>
 
           {/* Official Slogan */}
-          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-3">
+          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-2">
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Subfirma: ZENIT DESIGN en caligrafía Copperplate de alta gama */}
+          {/* Subfirma: ZENIT DESIGN en caligrafía corrida garantizada por next/font/google */}
           <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
             <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
             <span 
-              className="text-2xl md:text-3xl text-[#D8B36A] font-normal tracking-wide capitalize"
-              style={{ fontFamily: "'Pinyon Script', var(--font-cormorant), 'Cormorant Garamond', serif" }}
+              className={`${pinyonScript.className} text-3xl md:text-4xl text-[#D8B36A] font-normal tracking-normal capitalize leading-none drop-shadow-[0_2px_10px_rgba(216,179,106,0.25)]`}
             >
               Zenit Design
             </span>
