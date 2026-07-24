@@ -16,6 +16,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ZenitDesignSignature } from "@/components/links/ZenitDesignSignature";
 import { WHATSAPP_LINK } from "@/constants/contact";
 import { STORE_URL } from "@/data/navigation";
 import { BLOG_URL } from "@/lib/urls";
@@ -179,19 +180,15 @@ export default function LinksPage() {
           </div>
 
           {/* Official Slogan */}
-          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-2">
+          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-1">
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Subfirma: ZENIT DESIGN en caligrafía corrida (todo en minúsculas) */}
-          <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
-            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
-            <span 
-              className={`${pinyonScript.className} text-3xl md:text-4xl text-[#D8B36A] font-normal tracking-normal lowercase leading-none drop-shadow-[0_2px_10px_rgba(216,179,106,0.25)]`}
-            >
-              zenit design
-            </span>
-            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
+          {/* Subfirma: ZENIT DESIGN en firma caligráfica artesanal vectorial */}
+          <div className="animate-subfirm flex items-center justify-center gap-2 my-1">
+            <span className="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#D8B36A]/40 to-transparent" />
+            <ZenitDesignSignature className="w-48 sm:w-56 h-auto" />
+            <span className="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#D8B36A]/40 to-transparent" />
           </div>
         </div>
 
