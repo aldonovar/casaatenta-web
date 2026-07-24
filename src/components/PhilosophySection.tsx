@@ -126,7 +126,7 @@ export const PhilosophySection: React.FC = () => {
               
               {/* Pillar 1: Arte */}
               <div className="philosophy-item space-y-4">
-                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text/40 block">01 / ARTE Y ESTRUCTURA</span>
+                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text-secondary block">01 / ARTE Y ESTRUCTURA</span>
                 <h3 className="text-2xl md:text-4xl font-display font-light uppercase tracking-wider text-ca-text">
                   <BrandText>Líneas Limpias</BrandText>
                 </h3>
@@ -137,7 +137,7 @@ export const PhilosophySection: React.FC = () => {
 
               {/* Pillar 2: Tecnología */}
               <div className="philosophy-item space-y-4">
-                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text/40 block">02 / TECNOLOGÍA INVISIBLE</span>
+                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text-secondary block">02 / TECNOLOGÍA INVISIBLE</span>
                 <h3 className="text-2xl md:text-4xl font-display font-light uppercase tracking-wider text-ca-text">
                   <BrandText>Presencia Oculta</BrandText>
                 </h3>
@@ -148,7 +148,7 @@ export const PhilosophySection: React.FC = () => {
 
               {/* Pillar 3: Atmósfera */}
               <div className="philosophy-item space-y-4">
-                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text/40 block">03 / ATMÓSFERA SENSORIAL</span>
+                <span className="text-[10px] font-mono tracking-[0.3em] text-ca-text-secondary block">03 / ATMÓSFERA SENSORIAL</span>
                 <h3 className="text-2xl md:text-4xl font-display font-light uppercase tracking-wider text-ca-text">
                   <BrandText>Armonía Circadiana</BrandText>
                 </h3>

@@ -61,7 +61,11 @@ export const ServicesGallery: React.FC = () => {
   }, []);
 
   return (
-    <div ref={containerRef} id="servicios" className="relative w-full border-t border-ca-border bg-ca-bg-surface">
+    <div
+      ref={containerRef}
+      id="servicios"
+      className="relative w-full border-t border-ca-border bg-ca-bg-surface"
+    >
       <div className="mx-auto max-w-7xl px-6 pb-16 pt-32 md:px-16 lg:px-28">
         <SectionHeading
           number="04"
@@ -72,7 +76,10 @@ export const ServicesGallery: React.FC = () => {
       </div>
 
       <div className="relative w-full overflow-hidden">
-        <div ref={trackRef} className="flex w-full flex-col lg:w-max lg:flex-row">
+        <div
+          ref={trackRef}
+          className="flex w-full flex-col lg:w-max lg:flex-row"
+        >
           {servicesData.map((service, index) => (
             <section
               key={service.id}
@@ -88,7 +95,7 @@ export const ServicesGallery: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ca-bg-deep via-ca-bg-deep/30 to-transparent" />
                 <div className="absolute inset-0 flex items-center justify-center p-8 md:p-12">
-                  <ServiceMotionGraphics slug={service.motionSlug} />
+                  <ServiceMotionGraphics slug={service.motionSlug} decorative />
                 </div>
 
                 <span className="absolute left-5 top-5 z-10 border border-white/10 bg-ca-bg-deep/80 px-3 py-2 text-[8px] font-mono uppercase tracking-[0.18em] text-ca-text backdrop-blur-md">
@@ -104,7 +111,7 @@ export const ServicesGallery: React.FC = () => {
                   <span className="text-[9px] font-mono uppercase tracking-[0.24em] text-ca-text/60">
                     CASA ATENTA / {service.title}
                   </span>
-                  <span className="text-[10px] font-mono text-ca-text/35">
+                  <span className="text-[10px] font-mono text-ca-text-secondary">
                     0{index + 1} / 0{servicesData.length}
                   </span>
                 </div>
@@ -119,7 +126,10 @@ export const ServicesGallery: React.FC = () => {
 
                 <ul className="grid w-full grid-cols-1 gap-3 pt-1 sm:grid-cols-2">
                   {service.includes.map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-[9px] font-mono uppercase tracking-[0.14em] text-ca-text/80 sm:text-[10px]">
+                    <li
+                      key={item}
+                      className="flex items-center gap-3 text-[9px] font-mono uppercase tracking-[0.14em] text-ca-text/80 sm:text-[10px]"
+                    >
                       <span className="h-1.5 w-1.5 rounded-full bg-brand-gold" />
                       <span>{item}</span>
                     </li>

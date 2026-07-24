@@ -136,7 +136,7 @@ export function CartDrawer() {
             </div>
             <div className="cart-drawer__summary">
               <div><span>Subtotal</span><strong>{formatMoney(subtotalMinor)}</strong></div>
-              <p>El envío se calcula con tu distrito y el peso del pedido.</p>
+              <p>El checkout muestra la tarifa para Lima y Callao. Provincias se cotizan antes de cobrar.</p>
               <Link href="/checkout" className="button button--primary" onClick={closeDrawer}>
                 Continuar compra
               </Link>

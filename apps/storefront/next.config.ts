@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
+const isStorePreview =
+  (process.env.NEXT_PUBLIC_STORE_MODE || "preview") !== "live";
 
 function originOf(value: string | undefined) {
   if (!value) return null;
@@ -17,6 +19,7 @@ const connectSources = [
   supabaseOrigin,
   "https://api.openpay.pe",
   "https://sandbox-api.openpay.pe",
+  "https://challenges.cloudflare.com",
   ...(isDevelopment ? ["ws:", "http://127.0.0.1:54321"] : []),
 ].filter(Boolean);
 
@@ -32,12 +35,12 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "object-src 'none'",
   "frame-ancestors 'none'",
-  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://js.openpay.pe`,
+  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://js.openpay.pe https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline'",
   `img-src ${imageSources.join(" ")}`,
   "font-src 'self' data:",
   `connect-src ${connectSources.join(" ")}`,
-  "frame-src 'self' https://js.openpay.pe https://api.openpay.pe https://sandbox-api.openpay.pe",
+  "frame-src 'self' https://js.openpay.pe https://api.openpay.pe https://sandbox-api.openpay.pe https://challenges.cloudflare.com",
   "form-action 'self' https://api.openpay.pe https://sandbox-api.openpay.pe",
   "worker-src 'self' blob:",
   "media-src 'self'",
@@ -50,6 +53,9 @@ const nextConfig: NextConfig = {
   async headers() {
     const securityHeaders = [
       { key: "Content-Security-Policy", value: contentSecurityPolicy },
+      ...(isStorePreview
+        ? [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]
+        : []),
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "X-Frame-Options", value: "DENY" },
@@ -73,6 +79,38 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/cuenta/:path*",
+        headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }],
+      },
+      {
+        source: "/seguimiento/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/auth/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/api/auth/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/api/orders/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
+      {
+        source: "/api/cron/:path*",
         headers: [{ key: "Cache-Control", value: "private, no-store, max-age=0" }],
       },
     ];

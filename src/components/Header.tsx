@@ -3,24 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { mainNavigation } from "@/data/navigation";
 import { BLOG_URL, SITE_URL } from "@/lib/urls";
 import { BrandText } from "./BrandText";
 import { Logo } from "./Logo";
-import { MoonIcon, SunIcon } from "./icons/AnimatedIcons";
-
-const STORE_URL =
-  process.env.NEXT_PUBLIC_STORE_URL || "https://tienda.casa-atenta.com";
-
-const items = [
-  ["Automatización", "/servicios/smart-homes"],
-  ["Servicios", "/servicios"],
-  ["Tienda", STORE_URL],
-  ["Proyectos", "/proyectos"],
-  ["Proceso", "/proceso"],
-  ["Nosotros", "/nosotros"],
-  ["Editorial", BLOG_URL],
-  ["Contacto", "/contacto"],
-] as const;
 
 function isActive(pathname: string, href: string, blogSurface: boolean) {
   if (href === BLOG_URL) return blogSurface;
@@ -31,7 +17,6 @@ function isActive(pathname: string, href: string, blogSurface: boolean) {
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [light, setLight] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -40,17 +25,6 @@ export function Header() {
 
   const siteHref = (href: string) =>
     href.startsWith("/") && blogSurface ? `${SITE_URL}${href}` : href;
-
-  useEffect(() => {
-    const saved = localStorage.getItem("casa-atenta-theme");
-    const next =
-      saved === "light" ||
-      (!saved && matchMedia("(prefers-color-scheme: light)").matches);
-
-    document.documentElement.classList.toggle("light", next);
-    const frame = requestAnimationFrame(() => setLight(next));
-    return () => cancelAnimationFrame(frame);
-  }, []);
 
   useEffect(() => {
     const update = () => setScrolled(window.scrollY > 18);
@@ -129,13 +103,6 @@ export function Header() {
     };
   }, [open]);
 
-  const toggleTheme = () => {
-    const next = !light;
-    document.documentElement.classList.toggle("light", next);
-    localStorage.setItem("casa-atenta-theme", next ? "light" : "dark");
-    setLight(next);
-  };
-
   return (
     <>
       <header
@@ -155,7 +122,7 @@ export function Header() {
           </Link>
 
           <nav aria-label="Navegación principal" className="hidden items-center gap-6 xl:flex">
-            {items.map(([label, href]) => (
+            {mainNavigation.map(({ label, href }) => (
               <Link
                 key={href}
                 href={siteHref(href)}
@@ -172,14 +139,6 @@ export function Header() {
           </nav>
 
           <div className="relative z-[60] flex shrink-0 items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              aria-label={light ? "Usar tema oscuro" : "Usar tema claro"}
-              className="grid h-10 w-10 place-items-center rounded-full border border-ca-border bg-ca-glass-bg/40 backdrop-blur-md transition hover:border-brand-gold hover:text-brand-gold"
-            >
-              {light ? <MoonIcon size={16} /> : <SunIcon size={16} />}
-            </button>
             <button
               ref={buttonRef}
               type="button"
@@ -229,7 +188,7 @@ export function Header() {
             Casa Atenta / Tu hogar responde
           </span>
           <nav aria-label="Menú móvil" className="mt-6 grid sm:mt-8">
-            {items.map(([label, href], index) => (
+            {mainNavigation.map(({ label, href }, index) => (
               <Link
                 key={href}
                 href={siteHref(href)}
@@ -240,7 +199,7 @@ export function Header() {
                 }`}
               >
                 <BrandText>{label}</BrandText>
-                <span className="shrink-0 font-mono text-[8px] text-ca-text/40">
+                <span className="shrink-0 font-mono text-[8px] text-ca-text-secondary">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </Link>

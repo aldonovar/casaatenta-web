@@ -343,6 +343,78 @@ export type Database = {
         }
         Relationships: []
       }
+      quotation_email_deliveries: {
+        Row: {
+          attachment_bytes: number
+          attachment_filename: string
+          attempt_count: number
+          bounced_at: string | null
+          complained_at: string | null
+          created_at: string
+          delivered_at: string | null
+          failed_at: string | null
+          id: string
+          idempotency_key: string
+          is_test: boolean
+          last_event_at: string | null
+          quotation_number: string
+          recipient_fingerprint: string
+          recipient_masked: string
+          resend_email_id: string | null
+          sanitized_error: string | null
+          sent_at: string | null
+          status: string
+          suppressed_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          attachment_bytes: number
+          attachment_filename: string
+          attempt_count?: number
+          bounced_at?: string | null
+          complained_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key: string
+          is_test?: boolean
+          last_event_at?: string | null
+          quotation_number: string
+          recipient_fingerprint: string
+          recipient_masked: string
+          resend_email_id?: string | null
+          sanitized_error?: string | null
+          sent_at?: string | null
+          status?: string
+          suppressed_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attachment_bytes?: number
+          attachment_filename?: string
+          attempt_count?: number
+          bounced_at?: string | null
+          complained_at?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          failed_at?: string | null
+          id?: string
+          idempotency_key?: string
+          is_test?: boolean
+          last_event_at?: string | null
+          quotation_number?: string
+          recipient_fingerprint?: string
+          recipient_masked?: string
+          resend_email_id?: string | null
+          sanitized_error?: string | null
+          sent_at?: string | null
+          status?: string
+          suppressed_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       submission_rate_limits: {
         Row: {
           attempt_count: number

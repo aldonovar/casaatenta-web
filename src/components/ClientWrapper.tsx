@@ -17,6 +17,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function ClientWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const adminSurface = pathname.startsWith("/admin");
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -60,10 +61,29 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  if (adminSurface) {
+    return (
+      <div className="min-h-[100dvh] bg-[#07111d] font-sans text-brand-light antialiased">
+        {children}
+      </div>
+    );
+  }
+
   const showShell = pathname !== "/about/conexiones";
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col overflow-x-clip bg-ca-bg-deep font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark">
+      <a
+        href="#main-content"
+        onClick={() => {
+          requestAnimationFrame(() =>
+            document.getElementById("main-content")?.focus(),
+          );
+        }}
+        className="fixed left-4 top-3 z-[10000] -translate-y-24 bg-brand-gold px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#07111d] shadow-xl transition-transform focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-brand-gold-light focus:ring-offset-2 focus:ring-offset-ca-bg-deep"
+      >
+        Saltar al contenido
+      </a>
       <InjectIconStyles />
       <SmoothScroll />
       <ZenitMotionSystem />
@@ -75,7 +95,11 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       />
       {showShell && <Header />}
       {showShell && pathname !== "/" ? <PageRail /> : null}
-      <div id="app-content" className="relative z-10 w-full flex-grow bg-transparent">
+      <div
+        id="main-content"
+        tabIndex={-1}
+        className="relative z-10 w-full flex-grow bg-transparent focus:outline-none"
+      >
         {children}
       </div>
       <WhatsAppButton variant="floating" label="Cuéntanos qué debe responder" />

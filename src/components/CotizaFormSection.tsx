@@ -15,7 +15,7 @@ const services = [
   "Aún no lo tengo definido",
 ];
 const field =
-  "w-full rounded-sm border border-ca-border bg-ca-bg-deep/70 px-4 py-3.5 text-sm text-ca-text outline-none transition placeholder:text-ca-text/35 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/35";
+  "w-full rounded-sm border border-ca-border bg-ca-bg-deep/70 px-4 py-3.5 text-sm text-ca-text outline-none transition placeholder:text-ca-text-secondary/75 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold/35";
 
 type FormState = {
   name: string;
@@ -124,7 +124,7 @@ export function CotizaFormSection({ source = "contact" }: CotizaFormSectionProps
           <span className="mb-5 block font-mono text-[10px] uppercase tracking-[.28em] text-brand-gold">Evaluación inicial</span>
           <h2 className="font-display text-4xl font-light uppercase leading-[1.02] md:text-6xl"><BrandText>Cuéntanos qué debe responder.</BrandText></h2>
           <p className="mt-7 max-w-lg text-sm leading-7 text-ca-text-secondary">Indica las funciones, ambientes o problemas actuales. Para exteriores, añade medidas y fotos de apoyos. Para automatización, incluye equipos, red y zonas prioritarias.</p>
-          <div className="mt-10 border-t border-ca-border pt-6 text-xs leading-6 text-ca-text/50"><p>La solicitud se almacena de forma segura y queda protegida contra envíos automatizados.</p></div>
+          <div className="mt-10 border-t border-ca-border pt-6 text-xs leading-6 text-ca-text-secondary"><p>La solicitud se almacena de forma segura y queda protegida contra envíos automatizados.</p></div>
         </div>
 
         <form onSubmit={submit} className="glass-panel grid gap-5 p-6 md:grid-cols-2 md:p-8 lg:col-span-7" aria-label="Solicitud de evaluación">

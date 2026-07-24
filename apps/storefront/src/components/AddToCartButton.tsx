@@ -15,10 +15,16 @@ export function AddToCartButton({
 }) {
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
+  const requiresQuote = product.priceMinor === null || product.shippingClass !== "standard";
+  const outOfStock = product.stock <= 0;
 
-  if (product.priceMinor === null) {
+  if (requiresQuote || outOfStock) {
     const message = encodeURIComponent(
-      `Hola Casa Atenta, quisiera cotizar ${product.name} (${product.model}).`,
+      product.shippingClass !== "standard"
+        ? `Hola Casa Atenta, quisiera cotizar ${product.name} (${product.model}) y su despacho.`
+        : product.priceMinor === null
+          ? `Hola Casa Atenta, quisiera cotizar ${product.name} (${product.model}).`
+          : `Hola Casa Atenta, quisiera consultar disponibilidad de ${product.name} (${product.model}).`,
     );
     const url = storeConfig.whatsapp.replace(/\?.*$/, "") + `?text=${message}`;
     return (
@@ -28,13 +34,19 @@ export function AddToCartButton({
         rel="noreferrer"
         className={`button button--outline ${compact ? "button--compact" : ""}`}
       >
-        <MessageCircle size={17} /> Cotizar
+        <MessageCircle size={17} />
+        {product.shippingClass !== "standard"
+          ? "Cotizar despacho"
+          : product.priceMinor === null
+            ? "Cotizar"
+            : "Consultar stock"}
       </a>
     );
   }
 
   return (
     <button
+      type="button"
       className={`button button--primary ${compact ? "button--compact" : ""}`}
       onClick={() => {
         addItem(product.id);

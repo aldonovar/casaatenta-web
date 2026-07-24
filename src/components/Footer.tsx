@@ -1,21 +1,10 @@
 import Link from "next/link";
 import { WHATSAPP_LINK } from "@/constants/contact";
-import { BLOG_URL, SITE_URL } from "@/lib/urls";
+import { legalNavigation, mainNavigation } from "@/data/navigation";
+import { socialLinks } from "@/data/site";
+import { SITE_URL } from "@/lib/urls";
 import { BrandText } from "./BrandText";
 import { Logo } from "./Logo";
-
-const STORE_URL = process.env.NEXT_PUBLIC_STORE_URL || "https://tienda.casa-atenta.com";
-
-const nav = [
-  ["Automatización", `${SITE_URL}/servicios/smart-homes`],
-  ["Servicios", `${SITE_URL}/servicios`],
-  ["Tienda", STORE_URL],
-  ["Proyectos", `${SITE_URL}/proyectos`],
-  ["Proceso", `${SITE_URL}/proceso`],
-  ["Nosotros", `${SITE_URL}/nosotros`],
-  ["Editorial", BLOG_URL],
-  ["Contacto", `${SITE_URL}/contacto`],
-] as const;
 
 const services = [
   "Automatización del hogar",
@@ -24,6 +13,9 @@ const services = [
   "Diseño de terrazas",
   "Mantenimiento y acabados",
 ];
+
+const footerHref = (href: string) =>
+  href.startsWith("/") ? `${SITE_URL}${href}` : href;
 
 export function Footer() {
   return (
@@ -54,8 +46,8 @@ export function Footer() {
           <div className="lg:col-span-3">
             <span className="font-mono text-[9px] uppercase tracking-[.22em] text-brand-gold">Navegación</span>
             <nav className="mt-6 grid gap-3" aria-label="Pie de página">
-              {nav.map(([label, href]) => (
-                <Link key={href} href={href} className="text-sm text-ca-text-secondary transition hover:text-brand-gold">
+              {mainNavigation.map(({ label, href }) => (
+                <Link key={href} href={footerHref(href)} className="text-sm text-ca-text-secondary transition hover:text-brand-gold">
                   {label}
                 </Link>
               ))}
@@ -75,12 +67,21 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 pt-7 font-mono text-[8px] uppercase tracking-[.18em] text-ca-text/40 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-5 pt-7 font-mono text-[9px] uppercase tracking-[.16em] text-ca-text-secondary lg:flex-row lg:items-center lg:justify-between">
           <span>Casa Atenta · Lima, Perú</span>
-          <div className="flex flex-wrap gap-5">
-            <a href="https://www.instagram.com/casaatenta/" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a href="https://www.tiktok.com/@casaatenta" target="_blank" rel="noopener noreferrer">TikTok</a>
-            <a href="https://www.facebook.com/casaatenta" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <nav aria-label="Información legal" className="flex flex-wrap gap-x-5 gap-y-3">
+            {legalNavigation.map(({ label, href }) => (
+              <Link key={href} href={footerHref(href)} className="transition hover:text-brand-gold">
+                {label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-wrap gap-x-5 gap-y-3">
+            {socialLinks.map(({ label, href }) => (
+              <a key={href} href={href} target="_blank" rel="noopener noreferrer" className="transition hover:text-brand-gold">
+                {label}
+              </a>
+            ))}
           </div>
         </div>
       </div>

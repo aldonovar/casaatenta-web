@@ -1,0 +1,22 @@
+# Casa Atenta uses provider accounts that are intentionally separate from the
+# user's global Codex connectors. Keep these integrations project-scoped and
+# authenticate them with the Casa Atenta identities only.
+
+[apps.supabase]
+enabled = false
+
+# Hosted project verified through Casa Atenta OAuth on 2026-07-16. Keep the
+# project_ref and read_only=true so account-level tools and writes stay blocked.
+[mcp_servers.casaatenta_supabase]
+url = "https://mcp.supabase.com/mcp?project_ref=vywtnakijogqoiumnqaa&read_only=true&features=database,debugging,development,docs"
+enabled = true
+default_tools_approval_mode = "prompt"
+# Defense in depth: the server advertises this write tool even when the URL is
+# read_only. Future migrations require a deliberate temporary CLI override.
+disabled_tools = ["apply_migration"]
+
+# OAuth is initiated with `codex mcp login`. Request `full_access` explicitly
+# in that command; Codex does not persist OAuth scopes in this TOML entry.
+[mcp_servers.casaatenta_resend]
+url = "https://mcp.resend.com/mcp"
+default_tools_approval_mode = "prompt"

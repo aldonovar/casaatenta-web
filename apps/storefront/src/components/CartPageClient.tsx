@@ -4,12 +4,13 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { ArrowRight, Minus, PackageOpen, Plus, ShieldCheck, Trash2, Truck } from "lucide-react";
 import { formatMoney } from "@/lib/store-config";
+import { calculateOnlineShippingMinor } from "@/lib/store-shipping";
 import { ProductVisual } from "./ProductVisual";
 import { useCart } from "./CartProvider";
 
 export function CartPageClient() {
   const { lines, subtotalMinor, updateQuantity, removeItem, hydrated } = useCart();
-  const estimatedShipping = subtotalMinor >= 70000 ? 0 : 1990;
+  const estimatedShipping = calculateOnlineShippingMinor(subtotalMinor);
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState("");
   const [validatingCoupon, setValidatingCoupon] = useState(false);
@@ -85,9 +86,9 @@ export function CartPageClient() {
               <small>{line.product.stockLabel}</small>
             </div>
             <div className="quantity-control quantity-control--large">
-              <button onClick={() => updateQuantity(line.productId, line.quantity - 1)}><Minus size={15} /></button>
+              <button onClick={() => updateQuantity(line.productId, line.quantity - 1)} aria-label={`Restar una unidad de ${line.product.shortName}`}><Minus size={15} /></button>
               <span>{line.quantity}</span>
-              <button onClick={() => updateQuantity(line.productId, line.quantity + 1)}><Plus size={15} /></button>
+              <button onClick={() => updateQuantity(line.productId, line.quantity + 1)} aria-label={`Sumar una unidad de ${line.product.shortName}`}><Plus size={15} /></button>
             </div>
             <strong className="cart-page-line__total">{formatMoney(line.lineTotalMinor)}</strong>
             <button className="cart-page-line__remove" onClick={() => removeItem(line.productId)} aria-label="Eliminar producto"><Trash2 size={17} /></button>
@@ -101,7 +102,7 @@ export function CartPageClient() {
         <h2>Tu pedido</h2>
         <div className="order-summary-card__rows">
           <p><span>Subtotal</span><strong>{formatMoney(subtotalMinor)}</strong></p>
-          <p><span>Envío estimado</span><strong>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</strong></p>
+          <p><span>Envío Lima/Callao</span><strong>{finalShipping === 0 ? "Sin costo" : formatMoney(finalShipping)}</strong></p>
           {activeCoupon && discountMinor > 0 && <p className="is-discount"><span>Cupón {activeCoupon.code}</span><strong>−{formatMoney(discountMinor)}</strong></p>}
         </div>
         <form className="coupon-input" onSubmit={applyCoupon}>
@@ -110,11 +111,11 @@ export function CartPageClient() {
           {couponError ? <small className="coupon-input__error" role="alert">{couponError}</small> : activeCoupon ? <small className="coupon-input__success">Cupón aplicado. Se volverá a validar antes del cobro.</small> : <small>Los cupones se validan con vigencia, stock y uso por cliente.</small>}
         </form>
         <div className="order-summary-card__total"><span>Total estimado</span><strong>{formatMoney(total)}</strong></div>
-        <p className="order-summary-card__tax">Incluye IGV. El envío final depende de la dirección y el peso.</p>
+        <p className="order-summary-card__tax">Precio final incluye IGV. La tarifa online cubre Lima y Callao; provincias requieren cotización previa.</p>
         <Link href={activeCoupon ? `/checkout?coupon=${encodeURIComponent(activeCoupon.code)}` : "/checkout"} className="button button--primary">Ir al checkout <ArrowRight size={17} /></Link>
         <div className="order-summary-card__trust">
           <span><ShieldCheck size={17} /> Pago protegido con Openpay</span>
-          <span><Truck size={17} /> Entrega confirmada antes del pago</span>
+          <span><Truck size={17} /> Tarifa visible antes del pago</span>
         </div>
       </aside>
     </div>

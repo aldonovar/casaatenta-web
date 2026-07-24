@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 
 export default function CotizaPage() {
   return (
-    <div className="pt-24 min-h-screen bg-ca-bg-deep flex flex-col justify-center">
+    <main className="pt-24 min-h-screen bg-ca-bg-deep flex flex-col justify-center">
       <CotizaFormSection source="quote" />
-    </div>
+    </main>
   );
 }

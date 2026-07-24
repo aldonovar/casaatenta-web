@@ -9,11 +9,7 @@ import {
   type ClaimEmailData,
   type ContactEmailData,
 } from "@/lib/server/email";
-import {
-  getContactInbox,
-  getCronSecret,
-  getSiteUrl,
-} from "@/lib/server/env";
+import { getContactInbox, getCronSecret, getSiteUrl } from "@/lib/server/env";
 import {
   createNewsletterConfirmationToken,
   createUnsubscribeToken,
@@ -46,15 +42,14 @@ function retryMetadata(row: RetryState, complete: boolean) {
   const delayMinutes = Math.min(24 * 60, 15 * 2 ** (retryCount - 1));
   return {
     email_retry_count: retryCount,
-    email_retry_after: new Date(Date.now() + delayMinutes * 60_000).toISOString(),
+    email_retry_after: new Date(
+      Date.now() + delayMinutes * 60_000,
+    ).toISOString(),
     last_email_error: "resend_delivery_failed",
   };
 }
 
-async function safeSend(
-  operation: () => Promise<string>,
-  reference: string,
-) {
+async function safeSend(operation: () => Promise<string>, reference: string) {
   try {
     return await operation();
   } catch (error) {
@@ -185,10 +180,8 @@ async function retryClaims() {
       minorGuardian: (row.minor_guardian as string | null) || null,
       minorGuardianAddress:
         (row.minor_guardian_address as string | null) || null,
-      minorGuardianPhone:
-        (row.minor_guardian_phone as string | null) || null,
-      minorGuardianEmail:
-        (row.minor_guardian_email as string | null) || null,
+      minorGuardianPhone: (row.minor_guardian_phone as string | null) || null,
+      minorGuardianEmail: (row.minor_guardian_email as string | null) || null,
       claimType: row.claim_type as string,
       goodType: row.good_type as string,
       productDescription: row.product_description as string,
@@ -415,6 +408,9 @@ async function purgeExpiredSecurityData() {
   const eventDeletionCutoff = new Date(
     now - 180 * 24 * 60 * 60_000,
   ).toISOString();
+  const quotationAuditCutoff = new Date(
+    now - 365 * 24 * 60 * 60_000,
+  ).toISOString();
 
   const redactionResults = await Promise.all([
     supabase
@@ -440,10 +436,17 @@ async function purgeExpiredSecurityData() {
   const error = redactionResults.find((result) => result.error)?.error;
   if (error) throw error;
 
-  const { error: deletionError } = await supabase
-    .from("email_events")
-    .delete()
-    .lt("received_at", eventDeletionCutoff);
+  const deletionResults = await Promise.all([
+    supabase
+      .from("email_events")
+      .delete()
+      .lt("received_at", eventDeletionCutoff),
+    supabase
+      .from("quotation_email_deliveries")
+      .delete()
+      .lt("created_at", quotationAuditCutoff),
+  ]);
+  const deletionError = deletionResults.find((result) => result.error)?.error;
   if (deletionError) throw deletionError;
   return { completed: true };
 }
@@ -454,7 +457,10 @@ export async function GET(request: Request) {
     cronSecret = getCronSecret();
   } catch (error) {
     console.error("[email-retry] CRON_SECRET no está configurado.", error);
-    return Response.json({ error: "Servicio no configurado." }, { status: 503 });
+    return Response.json(
+      { error: "Servicio no configurado." },
+      { status: 503 },
+    );
   }
 
   if (request.headers.get("authorization") !== `Bearer ${cronSecret}`) {
@@ -462,19 +468,14 @@ export async function GET(request: Request) {
   }
 
   try {
-    const [
-      contacts,
-      claims,
-      newsletterConfirmations,
-      newsletter,
-      retention,
-    ] = await Promise.all([
-      retryContacts(),
-      retryClaims(),
-      retryNewsletterConfirmations(),
-      retryNewsletterWelcome(),
-      purgeExpiredSecurityData(),
-    ]);
+    const [contacts, claims, newsletterConfirmations, newsletter, retention] =
+      await Promise.all([
+        retryContacts(),
+        retryClaims(),
+        retryNewsletterConfirmations(),
+        retryNewsletterWelcome(),
+        purgeExpiredSecurityData(),
+      ]);
     return Response.json(
       {
         success: true,

@@ -1,11 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Headphones, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
-import { storeConfig } from "@/lib/store-config";
+import { absoluteStoreUrl, storeConfig } from "@/lib/store-config";
+
+const pageTitle = "Ayuda, entregas y posventa";
+const pageDescription =
+  "Información de compra, despacho, cambios, garantía y asesoría técnica de Casa Atenta Tienda.";
+const canonicalUrl = absoluteStoreUrl("/ayuda");
 
 export const metadata: Metadata = {
-  title: "Ayuda, entregas y posventa",
-  description: "Información de compra, despacho, cambios, garantía y asesoría técnica de Casa Atenta Tienda.",
+  title: pageTitle,
+  description: pageDescription,
+  alternates: { canonical: canonicalUrl },
+  openGraph: {
+    type: "website",
+    locale: "es_PE",
+    siteName: storeConfig.name,
+    title: pageTitle,
+    description: pageDescription,
+    url: canonicalUrl,
+  },
 };
 
 const faqs = [
@@ -21,7 +35,7 @@ export default function HelpPage() {
       <section className="help-hero"><div className="store-container"><span className="eyebrow">Centro de ayuda</span><h1>Compra técnica, sin adivinar.</h1><p>Condiciones claras antes del pago y acompañamiento después de la entrega.</p><a href={storeConfig.whatsapp} target="_blank" rel="noreferrer" className="button button--primary">Hablar con un asesor <ArrowRight size={17} /></a></div></section>
       <section className="store-container help-grid">
         <article id="asesoria"><span><Headphones size={24} /></span><h2>Asesoría técnica</h2><p>Validamos aplicación, potencia, accesorios, plataforma de batería y configuración exacta del kit.</p></article>
-        <article id="envios"><span><Truck size={24} /></span><h2>Despacho y recojo</h2><p>La cobertura, tarifa y fecha se confirman según distrito, peso y dimensiones. Para provincias se informa agencia y condiciones de recepción.</p></article>
+        <article id="envios"><span><Truck size={24} /></span><h2>Despacho y recojo</h2><p>El checkout muestra una tarifa plana para Lima y Callao, con envío sin costo desde el umbral publicado. Para provincias confirmamos agencia, tarifa y fecha antes de cobrar.</p></article>
         <article id="cambios"><span><RefreshCcw size={24} /></span><h2>Cambios y devoluciones</h2><p>Conserva empaque, accesorios, serial y comprobante. La evaluación considera estado, motivo y normativa peruana aplicable.</p></article>
         <article id="garantia"><span><ShieldCheck size={24} /></span><h2>Garantía y servicio</h2><p>Registramos modelo y serial. Cobertura, plazo, exclusiones y red técnica se mostrarán por lote antes de habilitar la venta.</p></article>
       </section>

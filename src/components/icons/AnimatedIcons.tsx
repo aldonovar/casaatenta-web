@@ -426,7 +426,7 @@ export const ChevronDownIcon: React.FC<IconProps & { isOpen?: boolean }> = ({ cl
       strokeWidth="2.5"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`transition-all duration-300 ${isOpen ? "text-brand-gold" : "text-brand-light/40"} ${className}`}
+      className={`transition-all duration-300 ${isOpen ? "text-brand-gold" : "text-ca-text-secondary"} ${className}`}
       style={{
         transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
         filter: isOpen ? "drop-shadow(0 0 3px rgba(216, 179, 106, 0.4))" : "none"

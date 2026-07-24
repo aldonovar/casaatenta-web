@@ -10,10 +10,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "node --conditions=react-server --import tsx --test --experimental-test-isolation=none tests/quotation-email/*.test.ts",
+    "quotation:test:send": "node --conditions=react-server --import tsx scripts/send-quotation-internal-tests.ts",
     "store:dev": "npm --workspace @casa-atenta/storefront run dev",
     "store:build": "npm --workspace @casa-atenta/storefront run build",
     "store:lint": "npm --workspace @casa-atenta/storefront run lint",
-    "check:all": "npm run lint && npm run build && npm run store:lint && npm run store:build"
+    "store:typecheck": "npm --workspace @casa-atenta/storefront run typecheck",
+    "store:test": "npm --workspace @casa-atenta/storefront run test",
+    "check:all": "npm run lint && npm run typecheck && npm test && npm run build && npm run store:lint && npm run store:typecheck && npm run store:test && npm run store:build"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -37,7 +42,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "prettier": "3.9.5",
     "tailwindcss": "^4",
+    "tsx": "4.23.1",
     "typescript": "^5"
   }
 }

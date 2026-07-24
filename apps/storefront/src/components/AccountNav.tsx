@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { House, KeyRound, MapPin, PackageSearch, UserRound } from "lucide-react";
+import { DatabaseZap, House, KeyRound, MapPin, PackageSearch, UserRound } from "lucide-react";
 
 const links = [
   { href: "/cuenta", label: "Resumen", icon: House },
   { href: "/cuenta/pedidos", label: "Mis pedidos", icon: PackageSearch },
   { href: "/cuenta/direcciones", label: "Direcciones", icon: MapPin },
   { href: "/cuenta/seguridad", label: "Seguridad", icon: KeyRound },
+  { href: "/cuenta/datos", label: "Mis datos", icon: DatabaseZap },
 ];
 
 export function AccountNav() {

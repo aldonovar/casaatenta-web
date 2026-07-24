@@ -29,12 +29,12 @@
 @property --text-secondary {
   syntax: "<color>";
   inherits: true;
-  initial-value: #6F8496;
+  initial-value: #91A3B3;
 }
 @property --text-muted {
   syntax: "<color>";
   inherits: true;
-  initial-value: rgba(111, 132, 150, 0.58);
+  initial-value: #7E91A2;
 }
 @property --border-line {
   syntax: "<color>";
@@ -60,7 +60,7 @@
 :root {
   --ca-night: #07111D;
   --ca-deep-blue: #0C2742;
-  --ca-blue-gray: #6F8496;
+  --ca-blue-gray: #91A3B3;
   --ca-warm-white: #F4F0E8;
   --ca-gold: #D8B36A;
   --ca-soft-gold: #F2D38D;
@@ -70,7 +70,7 @@
   --ca-shadow: rgba(0, 0, 0, 0.5);
   --ca-focus: #F2D38D;
 
-  /* Semantics mapped to dark mode by default */
+  /* Premium dark theme: this is the single supported visual mode. */
   --bg-deep: var(--ca-night);
   --bg-primary: var(--ca-deep-blue);
   --bg-surface: var(--ca-night);
@@ -78,7 +78,7 @@
   --bg-elevated: #0C2742;
   --text-main: var(--ca-warm-white);
   --text-secondary: var(--ca-blue-gray);
-  --text-muted: rgba(111, 132, 150, 0.58);
+  --text-muted: #7E91A2;
   --border-line: var(--ca-line);
   --border-hover: var(--ca-line-strong);
   --glass-bg: rgba(7, 17, 29, 0.82);
@@ -86,25 +86,6 @@
   --shadow-color: var(--ca-shadow);
   
   --radial-glow: rgba(216, 168, 94, 0.08);
-}
-
-html.light {
-  /* Semantics mapped to light mode */
-  --bg-deep: var(--ca-warm-white);
-  --bg-primary: #EBE6DC;
-  --bg-surface: var(--ca-warm-white);
-  --bg-card: rgba(7, 17, 29, 0.04);
-  --bg-elevated: #EBE6DC;
-  --text-main: var(--ca-night);
-  --text-secondary: #4A5A6A;
-  --text-muted: rgba(74, 90, 106, 0.6);
-  --border-line: rgba(7, 17, 29, 0.12);
-  --border-hover: rgba(7, 17, 29, 0.24);
-  --glass-bg: rgba(244, 240, 232, 0.85);
-  --glass-border: rgba(7, 17, 29, 0.12);
-  --shadow-color: rgba(7, 17, 29, 0.15);
-  
-  --radial-glow: rgba(216, 168, 94, 0.16);
 }
 
 @theme {

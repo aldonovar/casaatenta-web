@@ -96,7 +96,7 @@ export const StatsCounter: React.FC = () => {
                 </div>
 
                 {/* Stat label (Monospace uppercase) */}
-                <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.2em] text-brand-light/50 max-w-[150px] leading-relaxed">
+                <span className="text-[10px] sm:text-xs font-mono uppercase tracking-[0.2em] text-ca-text-secondary max-w-[150px] leading-relaxed">
                   <BrandText>{stat.label}</BrandText>
                 </span>
               </div>

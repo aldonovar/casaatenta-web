@@ -17,6 +17,10 @@ const syne = Syne({
   display: "swap",
 });
 
+const socialImage = absoluteStoreUrl(
+  "/products/amoladora-inalambrica-dcsm04-125pfk-20v/01.webp",
+);
+
 export const metadata: Metadata = {
   metadataBase: new URL(storeConfig.url),
   title: {
@@ -33,6 +37,13 @@ export const metadata: Metadata = {
     title: "Casa Atenta Tienda",
     description: storeConfig.description,
     url: storeConfig.url,
+    images: [{ url: socialImage, alt: "Herramientas profesionales en Casa Atenta Tienda" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Casa Atenta Tienda | Herramientas profesionales",
+    description: storeConfig.description,
+    images: [socialImage],
   },
   robots: { index: !storeConfig.preview, follow: !storeConfig.preview },
 };
@@ -65,9 +76,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <div id="contenido">
-          <StoreShell>{children}</StoreShell>
-        </div>
+        <StoreShell>{children}</StoreShell>
       </body>
     </html>
   );
