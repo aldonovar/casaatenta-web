@@ -69,7 +69,15 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const showShell = pathname !== "/about/conexiones";
+  const isLinktreePage = [
+    "/links",
+    "/conexiones",
+    "/enlaces",
+    "/qr",
+    "/about/conexiones",
+  ].includes(pathname);
+
+  const showShell = !isLinktreePage;
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col overflow-x-clip bg-ca-bg-deep font-sans text-brand-light antialiased selection:bg-brand-gold selection:text-brand-dark">
@@ -102,7 +110,9 @@ export function ClientWrapper({ children }: { children: React.ReactNode }) {
       >
         {children}
       </div>
-      <WhatsAppButton variant="floating" label="Cuéntanos qué debe responder" />
+      {!isLinktreePage && (
+        <WhatsAppButton variant="floating" label="Cuéntanos qué debe responder" />
+      )}
       {showShell && <Footer />}
     </div>
   );
