@@ -6,30 +6,25 @@ import Link from "next/link";
 import { 
   MessageCircle, 
   ArrowRight, 
-  Mail, 
-  Sliders, 
-  Layers, 
-  Cpu, 
-  UserCheck, 
+  Globe, 
+  ShoppingBag, 
+  BookOpen, 
+  UserPlus, 
+  Share2, 
+  Check, 
   ArrowLeft,
-  UserPlus,
-  QrCode,
-  Share2,
-  Globe,
-  ShoppingBag,
-  BookOpen,
-  Check
+  Sliders,
+  Layers,
+  Cpu
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { WHATSAPP_LINK } from "@/constants/contact";
 import { STORE_URL } from "@/data/navigation";
 import { BLOG_URL } from "@/lib/urls";
 import { downloadVCard } from "@/lib/vcard";
-import { QRShareModal } from "@/components/links/QRShareModal";
 
 export default function LinksPage() {
   const containerRef = useRef<HTMLElement>(null);
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const canonicalUrl = typeof window !== "undefined" 
@@ -39,9 +34,10 @@ export default function LinksPage() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.set(".animate-header", { opacity: 0, y: -15 });
+      gsap.set(".animate-[#D8B36A]-subfirm", { opacity: 0, scale: 0.95 });
+      gsap.set(".animate-socials", { opacity: 0, y: 10 });
+      gsap.set(".animate-vcard", { opacity: 0, y: 10 });
       gsap.set(".animate-main-links", { opacity: 0, y: 15 });
-      gsap.set(".animate-socials", { opacity: 0, scale: 0.95 });
-      gsap.set(".animate-actions", { opacity: 0, y: 10 });
       gsap.set(".animate-secondary", { opacity: 0, y: 10 });
 
       const tl = gsap.timeline({ delay: 0.1 });
@@ -52,25 +48,25 @@ export default function LinksPage() {
         duration: 0.8,
         ease: "power3.out",
       })
+      .to(".animate-socials", {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out",
+      }, "-=0.4")
+      .to(".animate-vcard", {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power2.out",
+      }, "-=0.3")
       .to(".animate-main-links", {
         opacity: 1,
         y: 0,
         duration: 0.6,
         stagger: 0.08,
         ease: "power2.out",
-      }, "-=0.4")
-      .to(".animate-socials", {
-        opacity: 1,
-        scale: 1,
-        duration: 0.5,
-        ease: "back.out(1.2)",
       }, "-=0.3")
-      .to(".animate-actions", {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      }, "-=0.2")
       .to(".animate-secondary", {
         opacity: 1,
         y: 0,
@@ -99,8 +95,8 @@ export default function LinksPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Casa Atenta - Tu Hogar Responde",
-          text: "Arte + automatización residencial. Canales oficiales de Casa Atenta.",
+          title: "Casa Atenta | Zenit Design",
+          text: "Tu Hogar Responde. Directorio oficial de Casa Atenta.",
           url: canonicalUrl,
         });
       } catch (err) {
@@ -150,8 +146,8 @@ export default function LinksPage() {
       <div className="fixed inset-0 z-0 opacity-[0.02] architectural-grid pointer-events-none" />
       <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-brand-gold/[0.06] rounded-full blur-[140px] pointer-events-none" />
 
-      {/* Top Bar Return Button */}
-      <div className="w-full max-w-md flex items-center justify-between relative z-10 mb-8">
+      {/* Navigation Return Button */}
+      <div className="w-full max-w-md flex items-center justify-between relative z-10 mb-6">
         <Link 
           href="/" 
           className="inline-flex items-center gap-2 text-[11px] font-mono tracking-widest text-[#91A3B3] hover:text-white transition-colors group uppercase"
@@ -161,34 +157,34 @@ export default function LinksPage() {
         </Link>
       </div>
 
-      {/* Main Content Card Wrapper */}
+      {/* Main Content Wrapper */}
       <div className="w-full max-w-md flex flex-col items-center relative z-10">
         
         {/* BRAND PROFILE HEADER */}
-        <div className="flex flex-col items-center text-center mb-8 animate-header">
+        <div className="flex flex-col items-center text-center mb-6 animate-header">
           
           {/* Prominent Casa Atenta Horizontal Logo */}
-          <div className="mb-6 flex justify-center items-center">
+          <div className="mb-5 flex justify-center items-center">
             <Logo className="h-10 md:h-12 w-auto text-white" iconOnly={false} light={true} />
           </div>
 
           {/* Official Slogan */}
-          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-2">
+          <h1 className="text-xl md:text-2xl font-serif font-light tracking-[0.2em] text-[#F4F0E8] uppercase mb-3">
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Sub-slogan divider */}
-          <div className="flex items-center justify-center gap-3 my-3">
-            <span className="h-[1px] w-8 bg-brand-gold/40" />
-            <span className="text-[10px] font-mono tracking-[0.25em] text-[#D8B36A] uppercase font-light">
-              arte + automatización residencial
+          {/* Subfirma: ZENIT DESIGN en caligrafía serif italiana de alto nivel */}
+          <div className="flex items-center justify-center gap-3 my-1">
+            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
+            <span className="font-serif italic font-normal text-lg md:text-xl tracking-[0.2em] text-[#D8B36A] lowercase capitalize">
+              Zenit Design
             </span>
-            <span className="h-[1px] w-8 bg-brand-gold/40" />
+            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
           </div>
         </div>
 
-        {/* REDES SOCIALES (Inmediatamente visibles en la parte superior) */}
-        <div className="w-full mb-8 animate-socials">
+        {/* REDES SOCIALES (Integradas arriba en la cabecera) */}
+        <div className="w-full mb-6 animate-socials">
           <div className="flex items-center justify-center gap-4 py-2">
             {socialLinks.map((social, idx) => (
               <a
@@ -207,8 +203,19 @@ export default function LinksPage() {
           </div>
         </div>
 
+        {/* BOTÓN PRINCIPAL DE TARJETA DIGITAL (GUARDAR CONTACTO VCF) */}
+        <div className="w-full mb-6 animate-vcard">
+          <button
+            onClick={handleSaveContact}
+            className="w-full flex items-center justify-center gap-2.5 p-3.5 rounded-xl border border-[#D8B36A]/50 bg-[#D8B36A]/10 text-[#D8B36A] hover:bg-[#D8B36A] hover:text-[#07111D] font-mono text-xs tracking-widest uppercase transition-all duration-300 shadow-md active:scale-95 group"
+          >
+            <UserPlus className="w-4 h-4 transition-transform group-hover:scale-110" />
+            <span>Guardar Contacto en el Teléfono</span>
+          </button>
+        </div>
+
         {/* CANALES PRINCIPALES (LIMPIO Y EN PRIMER PLANO) */}
-        <div className="w-full space-y-3.5 mb-8 animate-main-links">
+        <div className="w-full space-y-3 mb-8 animate-main-links">
           
           {/* WhatsApp Corporativo */}
           <a
@@ -226,7 +233,7 @@ export default function LinksPage() {
                   WhatsApp Corporativo
                 </h2>
                 <p className="text-[11px] font-sans font-light text-emerald-200/60">
-                  Atención inmediata y proyectos
+                  Atención inmediata para proyectos
                 </p>
               </div>
             </div>
@@ -302,25 +309,6 @@ export default function LinksPage() {
 
         </div>
 
-        {/* BOTONES RÁPIDOS DE TARJETA DIGITAL (vCard + QR) */}
-        <div className="w-full grid grid-cols-2 gap-3 mb-8 animate-actions">
-          <button
-            onClick={handleSaveContact}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-[#D8B36A]/40 bg-[#D8B36A]/10 text-[#D8B36A] hover:bg-[#D8B36A] hover:text-[#07111D] font-mono text-[11px] tracking-wider transition-all duration-300 active:scale-95"
-          >
-            <UserPlus className="w-3.5 h-3.5" />
-            <span>Guardar Contacto</span>
-          </button>
-
-          <button
-            onClick={() => setIsQRModalOpen(true)}
-            className="flex items-center justify-center gap-2 p-3 rounded-lg border border-white/10 bg-white/[0.03] text-white hover:border-[#D8B36A]/40 font-mono text-[11px] tracking-wider transition-all duration-300 active:scale-95"
-          >
-            <QrCode className="w-3.5 h-3.5 text-[#D8B36A]" />
-            <span>Código QR</span>
-          </button>
-        </div>
-
         {/* EXPLORAR MÁS (Líneas minimalistas sin sobrecargas) */}
         <div className="w-full space-y-2 animate-secondary">
           <Link
@@ -363,19 +351,12 @@ export default function LinksPage() {
           className="hover:text-[#D8B36A] transition-colors inline-flex items-center gap-1.5"
         >
           <Share2 className="w-3 h-3" />
-          <span>Compartir tarjeta</span>
+          <span>Compartir esta tarjeta digital</span>
         </button>
         <div className="opacity-40">
-          © {new Date().getFullYear()} CASA ATENTA. arte + automatización residencial.
+          © {new Date().getFullYear()} CASA ATENTA. ZENIT DESIGN.
         </div>
       </div>
-
-      {/* QR Share Modal */}
-      <QRShareModal
-        isOpen={isQRModalOpen}
-        onClose={() => setIsQRModalOpen(false)}
-        targetUrl={canonicalUrl}
-      />
 
       {/* Toast Notification */}
       {toastMessage && (
