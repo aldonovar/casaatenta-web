@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
-import { Pinyon_Script } from "next/font/google";
+import { Sacramento } from "next/font/google";
 import { 
   MessageCircle, 
   ArrowRight, 
@@ -16,13 +16,12 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
-import { ZenitDesignSignature } from "@/components/links/ZenitDesignSignature";
 import { WHATSAPP_LINK } from "@/constants/contact";
 import { STORE_URL } from "@/data/navigation";
 import { BLOG_URL } from "@/lib/urls";
 import { downloadVCard } from "@/lib/vcard";
 
-const pinyonScript = Pinyon_Script({
+const sacramentoFont = Sacramento({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
@@ -106,7 +105,7 @@ export default function LinksPage() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Casa Atenta | Zenit Design",
+          title: "Casa Atenta | zenit design",
           text: "Tu Hogar Responde. Directorio oficial de Casa Atenta.",
           url: canonicalUrl,
         });
@@ -129,7 +128,7 @@ export default function LinksPage() {
     {
       name: "Instagram",
       href: "https://instagram.com/casaatenta",
-      path: "M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 12,9M18,5A1,1 0 0,1 19,6A1,1 0 0,1 17,6A1,1 0 0,1 17,6A1,1 0 0,1 18,5Z",
+      path: "M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M18,5A1,1 0 0,1 19,6A1,1 0 0,1 17,6A1,1 0 0,1 17,6A1,1 0 0,1 18,5Z",
     },
     {
       name: "TikTok",
@@ -184,11 +183,15 @@ export default function LinksPage() {
             TU HOGAR RESPONDE.
           </h1>
 
-          {/* Subfirma: ZENIT DESIGN en firma caligráfica artesanal vectorial */}
-          <div className="animate-subfirm flex items-center justify-center gap-2 my-1">
-            <span className="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#D8B36A]/40 to-transparent" />
-            <ZenitDesignSignature className="w-48 sm:w-56 h-auto" />
-            <span className="h-[1px] w-8 bg-gradient-to-r from-transparent via-[#D8B36A]/40 to-transparent" />
+          {/* Subfirma: zenit design en caligrafía Sacramento ultra-legible y fluida */}
+          <div className="animate-subfirm flex items-center justify-center gap-3 my-1">
+            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
+            <span 
+              className={`${sacramentoFont.className} text-3xl md:text-4xl text-[#D8B36A] font-normal tracking-wide lowercase leading-none drop-shadow-[0_2px_10px_rgba(216,179,106,0.25)]`}
+            >
+              zenit design
+            </span>
+            <span className="h-[1px] w-10 bg-gradient-to-r from-transparent via-[#D8B36A]/50 to-transparent" />
           </div>
         </div>
 
@@ -301,7 +304,7 @@ export default function LinksPage() {
             className="group w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#D8B36A]/50 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#91A3B3] border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors">
                 <BookOpen className="w-5 h-5" />
               </div>
               <div className="text-left">
