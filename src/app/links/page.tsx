@@ -6,13 +6,10 @@ import Link from "next/link";
 import { Italianno } from "next/font/google";
 import { 
   ArrowRight, 
-  Globe, 
-  ShoppingBag, 
-  BookOpen, 
-  UserPlus, 
   Share2, 
   Check, 
-  ArrowLeft
+  ArrowLeft,
+  UserCheck
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { WHATSAPP_LINK } from "@/constants/contact";
@@ -97,7 +94,7 @@ export default function LinksPage() {
 
   const handleSaveContact = () => {
     downloadVCard();
-    showToast("Contacto de Casa Atenta añadido");
+    showToast("Contacto de Casa Atenta guardado en tu agenda");
   };
 
   const handleSharePage = async () => {
@@ -151,7 +148,7 @@ export default function LinksPage() {
       ref={containerRef}
       className="relative min-h-screen py-12 px-5 bg-[#07111D] flex flex-col items-center justify-between text-[#F4F0E8] font-sans antialiased overflow-x-hidden selection:bg-brand-gold selection:text-[#07111D]"
     >
-      {/* Background Architectural Grid & Subtle Warm Atmosphere Lighting */}
+      {/* Background Architectural Grid & Ambient Lighting */}
       <div className="fixed inset-0 z-0 opacity-[0.02] architectural-grid pointer-events-none" />
       <div className="fixed top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-brand-gold/[0.06] rounded-full blur-[140px] pointer-events-none" />
 
@@ -214,10 +211,10 @@ export default function LinksPage() {
           </div>
         </div>
 
-        {/* CANALES PRINCIPALES (LIMPIO Y EN PRIMER PLANO) */}
+        {/* CANALES PRINCIPALES (LIMPIOS Y REFINADOS) */}
         <div className="w-full space-y-3 mb-6 animate-main-links">
           
-          {/* WhatsApp Corporativo con Isotipo Oficial WhatsApp */}
+          {/* WhatsApp Directo */}
           <a
             href={WHATSAPP_LINK}
             target="_blank"
@@ -225,45 +222,50 @@ export default function LinksPage() {
             className="group w-full flex items-center justify-between p-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-950/40 hover:border-emerald-400/60 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:border-emerald-400 transition-colors">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:border-emerald-400 transition-colors shrink-0">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                 </svg>
               </div>
               <div className="text-left">
                 <h2 className="text-sm font-sans font-medium text-white group-hover:text-emerald-300 transition-colors">
-                  WhatsApp Corporativo
+                  WhatsApp Directo
                 </h2>
                 <p className="text-[11px] font-sans font-light text-emerald-200/60">
-                  Atención inmediata para proyectos
+                  Atención inmediata para proyectos residenciales
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform shrink-0" />
           </a>
 
-          {/* Página Web Principal */}
+          {/* Página Web */}
           <Link
             href="/"
             className="group w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#D8B36A]/50 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#D8B36A] border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors">
-                <Globe className="w-5 h-5" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#D8B36A] border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors shrink-0">
+                {/* Custom Architectural Globe SVG Icon */}
+                <svg className="w-5 h-5 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M3.6 9h16.8M3.6 15h16.8" />
+                  <ellipse cx="12" cy="12" rx="4" ry="9" />
+                </svg>
               </div>
               <div className="text-left">
                 <h2 className="text-sm font-sans font-medium text-white group-hover:text-[#D8B36A] transition-colors">
-                  Página Web Principal
+                  Página Web
                 </h2>
                 <p className="text-[11px] font-sans font-light text-[#91A3B3]">
-                  www.casa-atenta.com
+                  casa-atenta.com
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all shrink-0" />
           </Link>
 
-          {/* Tienda Virtual */}
+          {/* Tienda Online */}
           <a
             href={STORE_URL}
             target="_blank"
@@ -271,22 +273,26 @@ export default function LinksPage() {
             className="group w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#D8B36A]/50 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors">
-                <ShoppingBag className="w-5 h-5" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-white border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors shrink-0">
+                {/* Custom Luxury Shopping Tote SVG Icon */}
+                <svg className="w-5 h-5 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 8h12l1.5 12H4.5L6 8z" />
+                  <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+                </svg>
               </div>
               <div className="text-left">
                 <h2 className="text-sm font-sans font-medium text-white group-hover:text-[#D8B36A] transition-colors">
-                  Tienda Virtual
+                  Tienda Online
                 </h2>
                 <p className="text-[11px] font-sans font-light text-[#91A3B3]">
                   tienda.casa-atenta.com
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all shrink-0" />
           </a>
 
-          {/* Blog Editorial */}
+          {/* Blog & Editorial */}
           <a
             href={BLOG_URL}
             target="_blank"
@@ -294,8 +300,13 @@ export default function LinksPage() {
             className="group w-full flex items-center justify-between p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-[#D8B36A]/50 transition-all duration-300 cursor-pointer"
           >
             <div className="flex items-center gap-3.5">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#91A3B3] border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors">
-                <BookOpen className="w-5 h-5" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/5 text-[#91A3B3] border border-white/10 group-hover:border-[#D8B36A]/30 transition-colors shrink-0">
+                {/* Custom Editorial Monograph Book SVG Icon */}
+                <svg className="w-5 h-5 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                  <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  <path d="M8 7h8M8 11h6" />
+                </svg>
               </div>
               <div className="text-left">
                 <h2 className="text-sm font-sans font-medium text-white group-hover:text-[#D8B36A] transition-colors">
@@ -306,12 +317,12 @@ export default function LinksPage() {
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all" />
+            <ArrowRight className="w-4 h-4 text-[#91A3B3] group-hover:text-[#D8B36A] group-hover:translate-x-1 transition-all shrink-0" />
           </a>
 
         </div>
 
-        {/* BOTÓN PRINCIPAL DE TARJETA DIGITAL (UBICADO DESPUÉS DE BLOG & EDITORIAL) */}
+        {/* GUARDAR EN TUS CONTACTOS (UBICADO DESPUÉS DE BLOG CON REDACCIÓN NATURAL Y ELEGANTE) */}
         <div className="w-full mb-8 animate-vcard">
           <button
             onClick={handleSaveContact}
@@ -319,18 +330,24 @@ export default function LinksPage() {
           >
             <div className="flex items-center gap-3.5">
               <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[#D8B36A]/20 text-[#D8B36A] group-hover:bg-[#07111D] group-hover:text-[#D8B36A] transition-colors shrink-0">
-                <UserPlus className="w-5 h-5 transition-transform group-hover:scale-110" />
+                {/* Custom Add Contact Badge SVG Icon */}
+                <svg className="w-5 h-5 fill-none stroke-current stroke-[1.5]" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="8.5" cy="7" r="4" />
+                  <line x1="20" y1="8" x2="20" y2="14" />
+                  <line x1="17" y1="11" x2="23" y2="11" />
+                </svg>
               </div>
               <div className="text-left">
                 <h2 className="text-sm font-sans font-medium transition-colors">
-                  Añadir a Contactos
+                  Guardar en tus Contactos
                 </h2>
                 <p className="text-[11px] font-sans font-light opacity-80">
-                  Guardar tarjeta digital corporativa (.vcf)
+                  Añade nuestros datos directos a tu agenda
                 </p>
               </div>
             </div>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
           </button>
         </div>
 
