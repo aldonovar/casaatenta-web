@@ -208,6 +208,14 @@ export type Database = {
       }
       email_events: {
         Row: {
+          alert_attempt_count: number
+          alert_claimed_at: string | null
+          alert_detail: string | null
+          alert_last_error: string | null
+          alert_resend_email_id: string | null
+          alert_retry_after: string | null
+          alert_sent_at: string | null
+          alert_status: string | null
           email_id: string | null
           event_created_at: string | null
           event_type: string
@@ -218,6 +226,14 @@ export type Database = {
           svix_id: string
         }
         Insert: {
+          alert_attempt_count?: number
+          alert_claimed_at?: string | null
+          alert_detail?: string | null
+          alert_last_error?: string | null
+          alert_resend_email_id?: string | null
+          alert_retry_after?: string | null
+          alert_sent_at?: string | null
+          alert_status?: string | null
           email_id?: string | null
           event_created_at?: string | null
           event_type: string
@@ -228,6 +244,14 @@ export type Database = {
           svix_id: string
         }
         Update: {
+          alert_attempt_count?: number
+          alert_claimed_at?: string | null
+          alert_detail?: string | null
+          alert_last_error?: string | null
+          alert_resend_email_id?: string | null
+          alert_retry_after?: string | null
+          alert_sent_at?: string | null
+          alert_status?: string | null
           email_id?: string | null
           event_created_at?: string | null
           event_type?: string

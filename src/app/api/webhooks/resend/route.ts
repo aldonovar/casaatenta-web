@@ -1,15 +1,20 @@
+import {
+  isQuotationAlertEvent,
+  QUOTATION_ALERT_LABELS,
+} from "@/lib/quotation-email/alert";
+import { sanitizeDeliveryError } from "@/lib/quotation-email/core";
 import { jsonResponse } from "@/lib/server/api";
 import { getResend } from "@/lib/server/email";
 import { getResendWebhookSecret } from "@/lib/server/env";
+import { processQuotationIncidentAlert } from "@/lib/server/quotation-alert";
 import { getSupabaseAdmin } from "@/lib/server/supabase";
-import { sanitizeDeliveryError } from "@/lib/quotation-email/core";
 import {
   eventTimestamp,
   isQuotationEvent,
   minimizedQuotationEventPayload,
   quotationDeliveryKey,
-  quotationTransition,
   quotationEventError,
+  quotationTransition,
   type ResendWebhookEvent,
 } from "@/lib/quotation-email/webhook";
 import type { Json } from "@/types/database.types";
@@ -54,21 +59,55 @@ export async function POST(request: Request) {
       ? event.data.to.map((email) => email.toLowerCase())
       : [];
     const quotationEvent = isQuotationEvent(event);
+    const alertEventType = isQuotationAlertEvent(event.type)
+      ? event.type
+      : null;
+    const quotationAlert = quotationEvent && alertEventType !== null;
     const supabase = getSupabaseAdmin();
-    const { error: insertError } = await supabase.from("email_events").insert({
-      svix_id: svixId,
-      event_type: event.type,
-      email_id: event.data?.email_id || null,
-      recipient_email: quotationEvent ? null : recipients[0] || null,
-      payload: quotationEvent
-        ? minimizedQuotationEventPayload(event)
-        : (event as unknown as Json),
-      event_created_at: event.created_at || null,
-    });
+    const receivedAt = new Date().toISOString();
+    const { data: insertedEvent, error: insertError } = await supabase
+      .from("email_events")
+      .insert({
+        svix_id: svixId,
+        event_type: event.type,
+        email_id: event.data?.email_id || null,
+        recipient_email: quotationEvent ? null : recipients[0] || null,
+        payload: quotationEvent
+          ? minimizedQuotationEventPayload(event)
+          : (event as unknown as Json),
+        event_created_at: event.created_at || null,
+        alert_status: quotationAlert ? "pending" : null,
+        alert_detail:
+          quotationAlert && alertEventType
+            ? quotationEventError(event, QUOTATION_ALERT_LABELS[alertEventType])
+            : null,
+        alert_retry_after: quotationAlert ? receivedAt : null,
+      })
+      .select("id, alert_status")
+      .maybeSingle();
 
-    // Si un intento previo guardó el evento pero falló al aplicar la
-    // supresión, el reintento debe continuar con el efecto secundario.
-    if (insertError && insertError.code !== "23505") throw insertError;
+    let storedEvent = insertedEvent;
+    // Un reintento firmado debe continuar los efectos secundarios pendientes,
+    // pero una alerta ya marcada como enviada no vuelve a emitirse.
+    if (insertError?.code === "23505") {
+      const { data: existingEvent, error: existingEventError } = await supabase
+        .from("email_events")
+        .select("id, alert_status")
+        .eq("svix_id", svixId)
+        .maybeSingle();
+      if (existingEventError || !existingEvent) {
+        throw (
+          existingEventError ||
+          new Error("No se encontró el evento idempotente existente.")
+        );
+      }
+      storedEvent = existingEvent;
+    } else if (insertError) {
+      throw insertError;
+    }
+    if (!storedEvent) {
+      throw new Error("No se pudo conservar el evento recibido.");
+    }
 
     const rawResendEmailId = event.data?.email_id?.trim();
     const resendEmailId =
@@ -159,86 +198,6 @@ export async function POST(request: Request) {
       }
     }
 
-    if (quotationEvent && ["email.opened", "email.clicked", "email.bounced"].includes(event.type)) {
-      const rawResendEmailId = event.data?.email_id?.trim();
-      if (rawResendEmailId) {
-        const { data: delivery, error: fetchErr } = await supabase
-          .from("quotation_email_deliveries")
-          .select("quotation_number, recipient_masked, is_test")
-          .eq("resend_email_id", rawResendEmailId)
-          .maybeSingle();
-
-        if (delivery && !fetchErr) {
-          const isTestStr = delivery.is_test ? "[PRUEBA]" : "[PRODUCCIÓN]";
-          const quotNum = delivery.quotation_number;
-          const clientEmail = delivery.recipient_masked;
-
-          let subject = "";
-          let html = "";
-          let text = "";
-
-          const occurredAt = event.created_at
-            ? new Date(event.created_at).toLocaleString("es-PE", { timeZone: "America/Lima" })
-            : new Date().toLocaleString("es-PE", { timeZone: "America/Lima" });
-
-          if (event.type === "email.opened") {
-            subject = `🔔 ${isTestStr} Cotización ${quotNum} Abierta por el Cliente`;
-            html = `
-              <div style="font-family: sans-serif; padding: 20px; color: #273445; background-color: #f4f0e8; border-radius: 8px; border: 1px solid #d8b36a;">
-                <h2 style="color: #07111d; border-bottom: 2px solid #d8b36a; padding-bottom: 8px; margin-top: 0;">Alerta de Apertura</h2>
-                <p>El cliente con correo <strong>${clientEmail}</strong> ha abierto el correo de la cotización N.° <strong>${quotNum}</strong>.</p>
-                <p><strong>Fecha/Hora del evento:</strong> ${occurredAt} (Hora de Lima)</p>
-                <hr style="border: 0; border-top: 1px solid #d8b36a; margin: 20px 0;" />
-                <p style="font-size: 11px; color: #596878; margin-bottom: 0;">Este es un mensaje automático de seguimiento de Casa Atenta.</p>
-              </div>
-            `;
-            text = `Alerta de Apertura: El cliente con correo ${clientEmail} ha abierto la cotización N.° ${quotNum} el ${occurredAt}.`;
-          } else if (event.type === "email.clicked") {
-            const clickedUrl = (event.data as Record<string, unknown> & { click?: { url?: string } })?.click?.url || "enlace desconocido";
-            subject = `🔗 ${isTestStr} Cotización ${quotNum} - Clic en Enlace`;
-            html = `
-              <div style="font-family: sans-serif; padding: 20px; color: #273445; background-color: #f4f0e8; border-radius: 8px; border: 1px solid #d8b36a;">
-                <h2 style="color: #07111d; border-bottom: 2px solid #d8b36a; padding-bottom: 8px; margin-top: 0;">Alerta de Interacción</h2>
-                <p>El cliente con correo <strong>${clientEmail}</strong> ha hecho clic en un enlace de la cotización N.° <strong>${quotNum}</strong>.</p>
-                <p><strong>Enlace visitado:</strong> <a href="${clickedUrl}" style="color: #d8b36a; text-decoration: underline;">${clickedUrl}</a></p>
-                <p><strong>Fecha/Hora del evento:</strong> ${occurredAt} (Hora de Lima)</p>
-                <hr style="border: 0; border-top: 1px solid #d8b36a; margin: 20px 0;" />
-                <p style="font-size: 11px; color: #596878; margin-bottom: 0;">Este es un mensaje automático de seguimiento de Casa Atenta.</p>
-              </div>
-            `;
-            text = `Alerta de Interacción: El cliente con correo ${clientEmail} ha hecho clic en el enlace (${clickedUrl}) de la cotización N.° ${quotNum} el ${occurredAt}.`;
-          } else if (event.type === "email.bounced") {
-            const reason = quotationEventError(event, "Rebote permanente");
-            subject = `⚠️ ${isTestStr} ERROR: Cotización ${quotNum} Rebotó (No Entregado)`;
-            html = `
-              <div style="font-family: sans-serif; padding: 20px; color: #273445; background-color: #f4f0e8; border-radius: 8px; border: 1px solid #ff4d4f; border-left: 4px solid #ff4d4f;">
-                <h2 style="color: #ff4d4f; border-bottom: 2px solid #ff4d4f; padding-bottom: 8px; margin-top: 0;">Alerta de Rebote (Error de Entrega)</h2>
-                <p>El correo enviado a <strong>${clientEmail}</strong> para la cotización N.° <strong>${quotNum}</strong> rebotó y no pudo ser entregado.</p>
-                <p><strong>Razón del error:</strong> <span style="color: #ff4d4f;">${reason}</span></p>
-                <p><strong>Fecha/Hora del evento:</strong> ${occurredAt} (Hora de Lima)</p>
-                <hr style="border: 0; border-top: 1px solid #ff4d4f; margin: 20px 0;" />
-                <p style="font-size: 11px; color: #596878; margin-bottom: 0;">Este es un mensaje de alerta crítico del sistema de correo de Casa Atenta.</p>
-              </div>
-            `;
-            text = `CRÍTICO: El correo de cotización N.° ${quotNum} para ${clientEmail} rebotó. Razón: ${reason} el ${occurredAt}.`;
-          }
-
-          try {
-            await getResend().emails.send({
-              from: "Casa Atenta <info@casa-atenta.com>",
-              to: ["steamdusk@gmail.com", "febjon19@gmail.com"],
-              subject,
-              html,
-              text,
-              replyTo: "info@casa-atenta.com"
-            });
-          } catch (sendErr) {
-            console.error(`[resend-webhook-notify] ${sanitizeDeliveryError(sendErr)}`);
-          }
-        }
-      }
-    }
-
     if (
       recipients.length > 0 &&
       (event.type === "email.bounced" ||
@@ -277,6 +236,20 @@ export async function POST(request: Request) {
           throw consentEventError;
         }
       }
+    }
+
+    if (
+      quotationAlert &&
+      storedEvent.alert_status !== null &&
+      storedEvent.alert_status !== "sent"
+    ) {
+      await processQuotationIncidentAlert({
+        emailEventId: storedEvent.id,
+        svixId,
+        eventType: event.type,
+        resendEmailId,
+        occurredAt: event.created_at || null,
+      });
     }
 
     return new Response(null, { status: 200 });

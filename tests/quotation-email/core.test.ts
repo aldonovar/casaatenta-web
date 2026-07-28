@@ -46,17 +46,18 @@ function pdfInput(
 test("usa el tratamiento profesional Dra. en HTML y texto plano", () => {
   const template = quotationDeliveryEmail(validData);
   assert.match(template.html, /Estimada Dra\. Elena Vargas:/u);
-  assert.match(
-    template.text,
-    /^PRUEBA INTERNA[\s\S]*Estimada Dra\. Elena Vargas:/u,
-  );
+  assert.match(template.text, /^Estimada Dra\. Elena Vargas:/u);
   assert.doesNotMatch(template.text, /Doctora/u);
+  assert.doesNotMatch(
+    `${template.subject}\n${template.html}\n${template.text}`,
+    /PRUEBA INTERNA|Prueba interna/u,
+  );
 });
 
 test("construye asunto y preheader exactos para la prueba", () => {
   assert.equal(
     quotationSubject(validData),
-    "[PRUEBA INTERNA] Propuesta técnica y render de su proyecto | Casa Atenta",
+    "Propuesta técnica y render de su proyecto | Casa Atenta",
   );
   assert.equal(
     quotationPreheader(validData),
@@ -109,9 +110,84 @@ test("isTest es obligatorio y producción exige dos confirmaciones explícitas",
   assert.equal(production.success, true);
 });
 
+test("producción admite render corporativo o Google Drive y bloquea otros hosts", () => {
+  const productionSchema = createQuotationEmailDataSchema(
+    validData.recipients,
+    true,
+  );
+  const productionData = {
+    ...validData,
+    isTest: false,
+    recipients: ["client@example.com"],
+    productionDocumentConfirmed: true,
+    productionConfirmation: `CONFIRMAR ENVIO ${validData.quotationNumber}`,
+  };
+
+  assert.equal(
+    productionSchema.safeParse({
+      ...productionData,
+      renderLink: "https://drive.google.com/file/d/example/view",
+    }).success,
+    true,
+  );
+  assert.equal(
+    productionSchema.safeParse({
+      ...productionData,
+      renderLink: "https://www.casa-atenta.com/propuestas/DEMO-0001/render.pdf",
+    }).success,
+    true,
+  );
+  assert.equal(
+    productionSchema.safeParse({
+      ...productionData,
+      renderLink: "https://example.com/render.pdf",
+    }).success,
+    false,
+  );
+});
+
+test("rechaza enlaces inseguros y asuntos con caracteres de control", () => {
+  for (const renderLink of [
+    "javascript:alert(1)",
+    "http://www.casa-atenta.com/render.pdf",
+    "https://usuario:secreto@www.casa-atenta.com/render.pdf",
+  ]) {
+    assert.equal(
+      quotationEmailDataSchema.safeParse({
+        ...validData,
+        renderLink,
+      }).success,
+      false,
+    );
+  }
+
+  assert.equal(
+    quotationEmailDataSchema.safeParse({
+      ...validData,
+      subject: "Cotización\r\nBcc: attacker@example.com",
+    }).success,
+    false,
+  );
+});
+
 test("acepta un PDF con extensión, MIME, tamaño y firma válidos", () => {
   const pdf = validateQuotationPdf(pdfInput());
   assert.equal(pdf.digest.length, 64);
+});
+
+test("rechaza nombres de adjunto con rutas o caracteres de control", () => {
+  for (const name of [
+    "../contrato.pdf",
+    "contrato\nBcc.pdf",
+    "carpeta\\contrato.pdf",
+  ]) {
+    assert.throws(
+      () => validateQuotationPdf(pdfInput({ name })),
+      (error) =>
+        error instanceof QuotationValidationError &&
+        error.code === "INVALID_FILENAME",
+    );
+  }
 });
 
 test("rechaza un PDF mayor a 4 MiB", () => {
@@ -230,7 +306,8 @@ test("el enmascarado no expone la dirección completa", () => {
 test("incluye el enlace del render si está presente en los datos", () => {
   const dataWithLink = {
     ...validData,
-    renderLink: "https://drive.google.com/drive/folders/1c6s7DunZcUW5x7Lgrnu99OEe_i5YGDEE?usp=sharing",
+    renderLink:
+      "https://drive.google.com/drive/folders/1c6s7DunZcUW5x7Lgrnu99OEe_i5YGDEE?usp=sharing",
   };
   const template = quotationDeliveryEmail(dataWithLink);
 
@@ -247,11 +324,40 @@ test("incluye el enlace del render si está presente en los datos", () => {
   );
 });
 
+test("refleja el párrafo documental y el cierre personalizados en HTML y texto", () => {
+  const template = quotationDeliveryEmail({
+    ...validData,
+    deliveryMessage:
+      "Tal como conversamos, adjuntamos el contrato y la cotización actualizada.",
+    closingMessage: "Le deseamos unas felices Fiestas Patrias.",
+    renderLink: "https://www.casa-atenta.com/propuestas/DEMO-0001/render.pdf",
+  });
+
+  assert.match(
+    template.html,
+    /adjuntamos el contrato y la cotizaci&#243;n actualizada/u,
+  );
+  assert.match(template.html, /Le deseamos unas felices Fiestas Patrias/u);
+  assert.match(
+    template.text,
+    /adjuntamos el contrato y la cotización actualizada/u,
+  );
+  assert.match(template.text, /Le deseamos unas felices Fiestas Patrias/u);
+  assert.match(
+    template.text,
+    /Ver render referencial:\nhttps:\/\/www\.casa-atenta\.com\/propuestas\/DEMO-0001\/render\.pdf/u,
+  );
+  assert.doesNotMatch(
+    template.text,
+    /documentación técnica desarrollada para su proyecto/u,
+  );
+});
+
 test("utiliza un asunto personalizado si está presente", () => {
   const dataWithSubject = {
     ...validData,
     subject: "Cotización proyecto Barranco",
   };
   const template = quotationDeliveryEmail(dataWithSubject);
-  assert.equal(template.subject, "[PRUEBA INTERNA] Cotización proyecto Barranco");
+  assert.equal(template.subject, "Cotización proyecto Barranco");
 });

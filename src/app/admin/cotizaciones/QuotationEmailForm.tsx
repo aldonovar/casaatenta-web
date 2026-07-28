@@ -31,12 +31,15 @@ type FormState = {
   productionConfirmation: string;
   renderLink: string;
   subject: string;
+  deliveryMessage: string;
+  closingMessage: string;
 };
 
 type DeliveryResult = {
   recipientIndex: number;
   recipientMasked: string;
-  status: "sent" | "duplicate" | "failed" | "accepted_audit_pending";
+  status:
+    "sent" | "duplicate" | "blocked" | "failed" | "accepted_audit_pending";
   resendEmailId: string | null;
   existingStatus: string | null;
   requiresReview: boolean;
@@ -49,6 +52,7 @@ type ApiResponse = {
   quotationNumber?: string;
   isTest?: boolean;
   attachment?: { name: string; bytes: number; mime: string };
+  attachments?: { name: string; bytes: number; mime: string }[];
   results?: DeliveryResult[];
 };
 
@@ -65,6 +69,8 @@ const initialState = (testRecipients: readonly string[]): FormState => ({
   productionConfirmation: "",
   renderLink: "",
   subject: "",
+  deliveryMessage: "",
+  closingMessage: "",
 });
 
 function parseRecipients(value: string) {
@@ -82,9 +88,26 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(2)} MiB`;
 }
 
+function safeRenderHref(value: string) {
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      url.username.length > 0 ||
+      url.password.length > 0
+    ) {
+      return null;
+    }
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
 function statusLabel(status: DeliveryResult["status"]) {
   if (status === "sent") return "Aceptado por Resend";
   if (status === "duplicate") return "Duplicado bloqueado";
+  if (status === "blocked") return "Destinatario suprimido";
   if (status === "accepted_audit_pending")
     return "Aceptado / auditoría pendiente";
   return "Falló";
@@ -100,7 +123,7 @@ export function QuotationEmailForm({
   const [form, setForm] = useState<FormState>(() =>
     initialState(testRecipients),
   );
-  const [pdf, setPdf] = useState<File | null>(null);
+  const [pdfs, setPdfs] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const [operationConfirmed, setOperationConfirmed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -110,7 +133,8 @@ export function QuotationEmailForm({
   const fileInput = useRef<HTMLInputElement>(null);
 
   const recipients = parseRecipients(form.recipients);
-  const subject = `${form.isTest ? "[PRUEBA INTERNA] " : ""}${form.subject || "Propuesta técnica y render de su proyecto | Casa Atenta"}`;
+  const subject =
+    form.subject || "Propuesta técnica y render de su proyecto | Casa Atenta";
   const locality = form.location.split(",", 1)[0]?.trim() || form.location;
   const preheader = `Propuesta técnica N.° ${form.quotationNumber} preparada para su proyecto en ${locality}.`;
   const confirmationPhrase = `CONFIRMAR ENVIO ${form.quotationNumber}`;
@@ -118,6 +142,7 @@ export function QuotationEmailForm({
     ? "Estimada"
     : "Estimado";
   const objectPronoun = FEMININE_TREATMENTS.has(form.treatment) ? "la" : "lo";
+  const renderHref = safeRenderHref(form.renderLink);
   const locked = Boolean(response?.results?.length);
 
   const update = <Key extends keyof FormState>(
@@ -140,22 +165,28 @@ export function QuotationEmailForm({
     setOperationConfirmed(false);
   };
 
-  const selectPdf = (next: File | null) => {
+  const selectPdfs = (next: File[]) => {
     setForm((current) => ({
       ...current,
       productionDocumentConfirmed: false,
       productionConfirmation: "",
     }));
     setResponse(null);
+    if (next.length > 2) {
+      setError("Selecciona como máximo dos documentos PDF.");
+      setPdfs([]);
+      setOperationConfirmed(false);
+      return;
+    }
     setError("");
     setOperationConfirmed(false);
-    setPdf(next);
+    setPdfs(next);
   };
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragging(false);
-    selectPdf(event.dataTransfer.files.item(0));
+    selectPdfs(Array.from(event.dataTransfer.files));
   };
 
   const toggleMode = (isTest: boolean) => {
@@ -176,12 +207,13 @@ export function QuotationEmailForm({
     setError("");
     setCopied(false);
 
-    if (!pdf) {
-      setError("Selecciona el PDF real de la cotización.");
+    if (pdfs.length < 1 || pdfs.length > 2) {
+      setError("Selecciona uno o dos documentos PDF.");
       return;
     }
-    if (pdf.size > MAX_PDF_BYTES) {
-      setError("El PDF supera el límite de 4 MiB.");
+    const totalPdfBytes = pdfs.reduce((total, pdf) => total + pdf.size, 0);
+    if (totalPdfBytes > MAX_PDF_BYTES) {
+      setError("Los documentos PDF superan en conjunto el límite de 4 MiB.");
       return;
     }
     if (!operationConfirmed) {
@@ -202,10 +234,12 @@ export function QuotationEmailForm({
       productionConfirmation: form.productionConfirmation || undefined,
       renderLink: form.renderLink || undefined,
       subject: form.subject || undefined,
+      deliveryMessage: form.deliveryMessage || undefined,
+      closingMessage: form.closingMessage || undefined,
     };
     const body = new FormData();
     body.set("metadata", JSON.stringify(metadata));
-    body.set("pdf", pdf);
+    pdfs.forEach((pdf) => body.append("pdf", pdf));
 
     setSubmitting(true);
     try {
@@ -246,7 +280,14 @@ export function QuotationEmailForm({
     ? [
         `Cotización: ${response.quotationNumber}`,
         `Modo: ${response.isTest ? "prueba" : "producción"}`,
-        `Adjunto: ${response.attachment?.name || "-"} (${response.attachment?.bytes || 0} bytes)`,
+        ...(response.attachments?.length
+          ? response.attachments.map(
+              (attachment, index) =>
+                `Adjunto ${index + 1}: ${attachment.name} (${attachment.bytes} bytes)`,
+            )
+          : [
+              `Adjunto: ${response.attachment?.name || "-"} (${response.attachment?.bytes || 0} bytes)`,
+            ]),
         ...response.results.map(
           (result) =>
             `${result.recipientMasked} | ${result.status} | Resend: ${result.resendEmailId || "sin ID"} | Idempotencia: ${result.idempotencyKey}`,
@@ -378,8 +419,13 @@ export function QuotationEmailForm({
             type="url"
             value={form.renderLink}
             onChange={(event) => update("renderLink", event.target.value)}
-            placeholder="https://drive.google.com/..."
+            placeholder="https://www.casa-atenta.com/..."
           />
+          <small>
+            {form.isTest
+              ? "Debe usar HTTPS. En prueba se permite verificar un proveedor externo."
+              : "Producción admite casa-atenta.com, www.casa-atenta.com o un enlace directo de Google Drive."}
+          </small>
         </label>
         <label>
           Asunto del correo (opcional)
@@ -388,6 +434,28 @@ export function QuotationEmailForm({
             onChange={(event) => update("subject", event.target.value)}
             placeholder="Propuesta técnica y render de su proyecto | Casa Atenta"
             maxLength={200}
+          />
+        </label>
+        <label>
+          Párrafo de entrega (opcional)
+          <input
+            value={form.deliveryMessage}
+            onChange={(event) => update("deliveryMessage", event.target.value)}
+            placeholder="Tal como conversamos, le hacemos llegar adjuntos…"
+            maxLength={500}
+          />
+          <small>
+            Úsalo para describir con precisión los documentos incluidos. Debe
+            ser una sola línea.
+          </small>
+        </label>
+        <label>
+          Mensaje antes del cierre (opcional)
+          <input
+            value={form.closingMessage}
+            onChange={(event) => update("closingMessage", event.target.value)}
+            placeholder="Aprovechamos la ocasión para desearle…"
+            maxLength={240}
           />
         </label>
         <label>
@@ -420,19 +488,26 @@ export function QuotationEmailForm({
             ref={fileInput}
             type="file"
             accept="application/pdf,.pdf"
-            onChange={(event) => selectPdf(event.target.files?.item(0) || null)}
+            multiple
+            onChange={(event) =>
+              selectPdfs(Array.from(event.target.files || []))
+            }
             className={styles.srOnly}
           />
           <p>
-            {pdf ? pdf.name : "Arrastra el PDF o selecciónalo desde el equipo"}
+            {pdfs.length > 0
+              ? pdfs.map((pdf) => pdf.name).join(" · ")
+              : "Arrastra uno o dos PDFs o selecciónalos desde el equipo"}
           </p>
           <span>
-            {pdf
-              ? `${formatBytes(pdf.size)} · ${pdf.type || "MIME no declarado"}`
-              : "PDF con firma válida · máximo 4 MiB · nunca se publica"}
+            {pdfs.length > 0
+              ? `${pdfs.length} documento${pdfs.length === 1 ? "" : "s"} · ${formatBytes(
+                  pdfs.reduce((total, pdf) => total + pdf.size, 0),
+                )} en conjunto`
+              : "PDFs con firma válida · máximo conjunto 4 MiB · nunca se publican"}
           </span>
           <button type="button" onClick={() => fileInput.current?.click()}>
-            {pdf ? "Cambiar archivo" : "Seleccionar PDF"}
+            {pdfs.length > 0 ? "Cambiar documentos" : "Seleccionar PDFs"}
           </button>
         </div>
 
@@ -440,7 +515,7 @@ export function QuotationEmailForm({
           <div className={styles.productionGate}>
             <p>
               Producción exige corregir o aprobar conscientemente el contenido
-              del PDF y mostrar el destinatario real antes de enviar.
+              de los documentos y mostrar el destinatario real antes de enviar.
             </p>
             <label className={styles.checkboxLabel}>
               <input
@@ -451,7 +526,7 @@ export function QuotationEmailForm({
                 }
               />
               Revisé destinatario, alcance, partidas, total, fotografías y
-              metadatos del PDF.
+              metadatos de todos los PDFs.
             </label>
             <label>
               Escribe exactamente: <code>{confirmationPhrase}</code>
@@ -504,35 +579,45 @@ export function QuotationEmailForm({
             {greetingAdjective} {form.treatment} {form.clientName}:
           </p>
           <p>Esperamos que se encuentre muy bien.</p>
-          <p>
-            Tal como conversamos, le hacemos llegar adjunta la propuesta técnica
-            desarrollada para su proyecto, junto con el{" "}
-            {form.renderLink ? (
-              <a
-                href={form.renderLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "#d8b36a", textDecoration: "underline" }}
-              >
-                render referencial correspondiente
-              </a>
-            ) : (
-              "render referencial correspondiente"
-            )}
-            .
-          </p>
-          {form.renderLink ? (
+          {form.deliveryMessage ? (
+            <p>{form.deliveryMessage}</p>
+          ) : (
+            <p>
+              Tal como conversamos, le hacemos llegar adjunta la documentación
+              técnica desarrollada para su proyecto, junto con el{" "}
+              {renderHref ? (
+                <a
+                  href={renderHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#d8b36a", textDecoration: "underline" }}
+                >
+                  render referencial correspondiente
+                </a>
+              ) : (
+                "render referencial correspondiente"
+              )}
+              .
+            </p>
+          )}
+          {renderHref ? (
             <div style={{ marginTop: "8px", marginBottom: "24px" }}>
-              <table role="presentation" cellPadding="0" cellSpacing="0" style={{ borderCollapse: "collapse" }}>
+              <table
+                role="presentation"
+                cellPadding="0"
+                cellSpacing="0"
+                style={{ borderCollapse: "collapse" }}
+              >
                 <tr>
                   <td align="center" style={{ backgroundColor: "#d8b36a" }}>
                     <a
-                      href={form.renderLink}
+                      href={renderHref}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
                         display: "inline-block",
-                        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
+                        fontFamily:
+                          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif",
                         fontSize: "15px",
                         lineHeight: "20px",
                         fontWeight: "700",
@@ -549,7 +634,7 @@ export function QuotationEmailForm({
             </div>
           ) : null}
           <p>
-            En el documento encontrará el alcance del proyecto, las
+            En la documentación adjunta encontrará el alcance del proyecto, las
             especificaciones técnicas, los materiales considerados y el
             presupuesto elaborado para su evaluación.
           </p>
@@ -562,6 +647,7 @@ export function QuotationEmailForm({
             Agradecemos la confianza depositada en Casa Atenta y esperamos poder
             acompañar{objectPronoun} en la ejecución de este proyecto.
           </p>
+          {form.closingMessage ? <p>{form.closingMessage}</p> : null}
           <p>
             Reciba un cordial saludo.
             <br />

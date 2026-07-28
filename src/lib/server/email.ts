@@ -184,9 +184,9 @@ function emailShell({
   );
   const senderNotice =
     configuredSenderNotice || automatedSenderNotice(audience);
-  const legalIdentity = escapeHtml(
-    `${LEGAL_PROVIDER.tradeName} · ${LEGAL_PROVIDER.displayName} · RUC ${LEGAL_PROVIDER.ruc}`,
-  );
+  // La identidad comercial de los correos no debe mezclar la marca con la
+  // identificación personal mientras Casa Atenta completa su RUC societario.
+  const brandIdentity = escapeHtml(LEGAL_PROVIDER.tradeName);
 
   const html = `<!DOCTYPE html>
 <html lang="es" dir="ltr" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -306,7 +306,7 @@ function emailShell({
               <td bgcolor="#f7f7f5" class="email-footer" style="background-color:#f7f7f5;border-top-width:1px;border-top-style:solid;border-top-color:#e4e2dc;padding-top:20px;padding-right:24px;padding-bottom:22px;padding-left:24px;">
                 ${senderNotice.html}
                 <p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:8px;margin-left:0;">${escapeHtml(footerNote || "Correo transaccional enviado por Casa Atenta.")}</p>
-                <p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:6px;margin-left:0;">${legalIdentity}</p>
+                <p class="email-muted" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:6px;margin-left:0;">${brandIdentity}</p>
                 <p class="email-muted email-footer-links" style="font-family:${FONT_FAMILY};font-size:12px;line-height:19px;color:${MUTED_TEXT};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;"><a href="${homeUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">casa-atenta.com</a><span class="email-footer-separator"> · </span><a href="mailto:${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">${escapeHtml(OPERATIONAL_CONTACT_ADDRESS)}</a><span class="email-footer-separator"> · </span><a href="${privacyUrl}" class="email-link email-footer-link" style="display:inline-block;color:${BRAND_NAVY};text-decoration:underline;">Privacidad</a></p>
               </td>
             </tr>
@@ -342,7 +342,7 @@ function transactionalEmail({
   return {
     subject,
     html: emailShell({ title, preheader, body, footerNote, audience }),
-    text: `${text.trimEnd()}\n\n${senderNotice.text}\n\n${LEGAL_PROVIDER.tradeName} · ${LEGAL_PROVIDER.displayName} · RUC ${LEGAL_PROVIDER.ruc}\n${getSiteUrl().href}\n${OPERATIONAL_CONTACT_ADDRESS}`,
+    text: `${text.trimEnd()}\n\n${senderNotice.text}\n\n${LEGAL_PROVIDER.tradeName}\n${getSiteUrl().href}\n${OPERATIONAL_CONTACT_ADDRESS}`,
   };
 }
 
@@ -377,9 +377,6 @@ function quotationObjectPronoun(treatment: QuotationEmailData["treatment"]) {
 export function quotationDeliveryEmail(data: QuotationEmailData) {
   const greeting = quotationGreeting(data);
   const objectPronoun = quotationObjectPronoun(data.treatment);
-  const testNotice = data.isTest
-    ? `${callout("Prueba interna", "Validación operativa. No reenviar a la cliente.")}`
-    : "";
   const renderDescription = data.renderLink
     ? `junto con el <a href="${escapeHtml(data.renderLink)}" class="email-link" style="color:#07111d;text-decoration:underline;">render referencial correspondiente</a>`
     : "junto con el render referencial correspondiente";
@@ -388,34 +385,37 @@ export function quotationDeliveryEmail(data: QuotationEmailData) {
     ? actionButton(data.renderLink, "Ver render referencial")
     : "";
 
-  const body = `${testNotice}
-    ${paragraph(escapeHtml(greeting))}
+  const body = `${paragraph(escapeHtml(greeting))}
     ${paragraph("Esperamos que se encuentre muy bien.")}
-    ${paragraph(`Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, ${renderDescription}.`)}
+    ${paragraph(data.deliveryMessage ? escapeHtml(data.deliveryMessage) : `Tal como conversamos, le hacemos llegar adjunta la documentación técnica desarrollada para su proyecto, ${renderDescription}.`)}
     ${renderButton}
-    ${paragraph("En el documento encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.")}
+    ${paragraph("En la documentación adjunta encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.")}
     ${paragraph("Si tuviera alguna consulta o deseara realizar algún ajuste sobre la propuesta presentada, estaremos atentos para atenderla y absolver cualquier inquietud.")}
     ${paragraph(`Agradecemos la confianza depositada en Casa Atenta y esperamos poder acompañar${objectPronoun} en la ejecución de este proyecto.`)}
+    ${data.closingMessage ? paragraph(escapeHtml(data.closingMessage)) : ""}
     ${paragraph("Reciba un cordial saludo.")}
     ${paragraph('<strong class="email-strong" style="color:#07111d;">Equipo Casa Atenta</strong><br><a href="mailto:info@casa-atenta.com" class="email-link" style="color:#07111d;text-decoration:underline;">info@casa-atenta.com</a><br>+51 908 550 942<br><a href="https://www.casa-atenta.com" class="email-link" style="color:#07111d;text-decoration:underline;">www.casa-atenta.com</a>')}`;
   const text = [
-    ...(data.isTest
-      ? ["PRUEBA INTERNA — Validación operativa. No reenviar a la cliente.", ""]
-      : []),
     greeting,
     "",
     "Esperamos que se encuentre muy bien.",
     "",
-    data.renderLink
-      ? `Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, junto con el render referencial correspondiente: ${data.renderLink}`
-      : "Tal como conversamos, le hacemos llegar adjunta la propuesta técnica desarrollada para su proyecto, junto con el render referencial correspondiente.",
+    data.deliveryMessage
+      ? data.deliveryMessage
+      : data.renderLink
+        ? `Tal como conversamos, le hacemos llegar adjunta la documentación técnica desarrollada para su proyecto, junto con el render referencial correspondiente: ${data.renderLink}`
+        : "Tal como conversamos, le hacemos llegar adjunta la documentación técnica desarrollada para su proyecto, junto con el render referencial correspondiente.",
     "",
-    "En el documento encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.",
+    ...(data.deliveryMessage && data.renderLink
+      ? ["Ver render referencial:", data.renderLink, ""]
+      : []),
+    "En la documentación adjunta encontrará el alcance del proyecto, las especificaciones técnicas, los materiales considerados y el presupuesto elaborado para su evaluación.",
     "",
     "Si tuviera alguna consulta o deseara realizar algún ajuste sobre la propuesta presentada, estaremos atentos para atenderla y absolver cualquier inquietud.",
     "",
     `Agradecemos la confianza depositada en Casa Atenta y esperamos poder acompañar${objectPronoun} en la ejecución de este proyecto.`,
     "",
+    ...(data.closingMessage ? [data.closingMessage, ""] : []),
     "Reciba un cordial saludo.",
     "",
     "Equipo Casa Atenta",

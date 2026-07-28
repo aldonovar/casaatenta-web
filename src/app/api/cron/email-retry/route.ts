@@ -9,7 +9,13 @@ import {
   type ClaimEmailData,
   type ContactEmailData,
 } from "@/lib/server/email";
+import { sanitizeDeliveryError } from "@/lib/quotation-email/core";
 import { getContactInbox, getCronSecret, getSiteUrl } from "@/lib/server/env";
+import {
+  MAX_QUOTATION_ALERT_ATTEMPTS,
+  processQuotationIncidentAlert,
+  QUOTATION_ALERT_CLAIM_LEASE_MS,
+} from "@/lib/server/quotation-alert";
 import {
   createNewsletterConfirmationToken,
   createUnsubscribeToken,
@@ -56,6 +62,62 @@ async function safeSend(operation: () => Promise<string>, reference: string) {
     console.error(`[email-retry:${reference}]`, error);
     return null;
   }
+}
+
+async function retryQuotationAlerts() {
+  const supabase = getSupabaseAdmin();
+  const now = new Date().toISOString();
+  const staleClaimCutoff = new Date(
+    Date.now() - QUOTATION_ALERT_CLAIM_LEASE_MS,
+  ).toISOString();
+  const fields =
+    "id, svix_id, event_type, email_id, event_created_at, received_at" as const;
+  const [retryableResult, staleResult] = await Promise.all([
+    supabase
+      .from("email_events")
+      .select(fields)
+      .in("alert_status", ["pending", "failed"])
+      .lt("alert_attempt_count", MAX_QUOTATION_ALERT_ATTEMPTS)
+      .lte("alert_retry_after", now)
+      .order("received_at", { ascending: true })
+      .limit(BATCH_SIZE),
+    supabase
+      .from("email_events")
+      .select(fields)
+      .eq("alert_status", "processing")
+      .lt("alert_attempt_count", MAX_QUOTATION_ALERT_ATTEMPTS)
+      .lte("alert_claimed_at", staleClaimCutoff)
+      .order("received_at", { ascending: true })
+      .limit(BATCH_SIZE),
+  ]);
+  if (retryableResult.error || staleResult.error) {
+    throw retryableResult.error || staleResult.error;
+  }
+  const rows = [...(retryableResult.data || []), ...(staleResult.data || [])]
+    .sort((left, right) => left.received_at.localeCompare(right.received_at))
+    .slice(0, BATCH_SIZE);
+
+  let completed = 0;
+  for (const row of rows) {
+    try {
+      const result = await processQuotationIncidentAlert({
+        emailEventId: row.id,
+        svixId: row.svix_id,
+        eventType: row.event_type,
+        resendEmailId: row.email_id,
+        occurredAt: row.event_created_at,
+      });
+      if (result.status === "sent" || result.status === "already_sent") {
+        completed += 1;
+      }
+    } catch (error) {
+      console.error(
+        `[email-retry:quotation-alert:${row.id}] ${sanitizeDeliveryError(error)}`,
+      );
+    }
+  }
+
+  return { attempted: rows.length, completed };
 }
 
 function formatLimaDate(value: string) {
@@ -468,14 +530,21 @@ export async function GET(request: Request) {
   }
 
   try {
-    const [contacts, claims, newsletterConfirmations, newsletter, retention] =
-      await Promise.all([
-        retryContacts(),
-        retryClaims(),
-        retryNewsletterConfirmations(),
-        retryNewsletterWelcome(),
-        purgeExpiredSecurityData(),
-      ]);
+    const [
+      contacts,
+      claims,
+      newsletterConfirmations,
+      newsletter,
+      quotationAlerts,
+      retention,
+    ] = await Promise.all([
+      retryContacts(),
+      retryClaims(),
+      retryNewsletterConfirmations(),
+      retryNewsletterWelcome(),
+      retryQuotationAlerts(),
+      purgeExpiredSecurityData(),
+    ]);
     return Response.json(
       {
         success: true,
@@ -483,6 +552,7 @@ export async function GET(request: Request) {
         claims,
         newsletterConfirmations,
         newsletter,
+        quotationAlerts,
         retention,
       },
       { headers: { "Cache-Control": "no-store" } },

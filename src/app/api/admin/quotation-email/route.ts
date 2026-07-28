@@ -4,6 +4,7 @@ import {
   QuotationValidationError,
   createQuotationEmailDataSchema,
   quotationAttachmentFilename,
+  quotationDocumentsAuditFilename,
   sanitizeDeliveryError,
 } from "@/lib/quotation-email/core";
 import {
@@ -76,33 +77,46 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const rawMetadata = formData.get("metadata");
-    const pdf = formData.get("pdf");
+    const pdfs = formData.getAll("pdf");
     if (
       typeof rawMetadata !== "string" ||
       new TextEncoder().encode(rawMetadata).byteLength > MAX_METADATA_BYTES
     ) {
       return json({ error: "Los datos de la cotización no son válidos." }, 400);
     }
-    if (!(pdf instanceof File)) {
-      return json({ error: "Selecciona el PDF de la cotización." }, 400);
+    if (
+      pdfs.length < 1 ||
+      pdfs.length > 2 ||
+      pdfs.some((pdf) => !(pdf instanceof File))
+    ) {
+      return json({ error: "Selecciona uno o dos documentos PDF." }, 400);
     }
-    if (pdf.size > QUOTATION_MAX_PDF_BYTES) {
-      return json({ error: "El PDF supera el límite de 4 MiB." }, 413);
+    const totalPdfBytes = (pdfs as File[]).reduce(
+      (total, pdf) => total + pdf.size,
+      0,
+    );
+    if (totalPdfBytes > QUOTATION_MAX_PDF_BYTES) {
+      return json(
+        { error: "Los documentos PDF superan en conjunto el límite de 4 MiB." },
+        413,
+      );
     }
 
     const data = createQuotationEmailDataSchema(
       getQuotationTestRecipients(),
       isQuotationProductionEnabled(),
     ).parse(JSON.parse(rawMetadata));
-    const bytes = new Uint8Array(await pdf.arrayBuffer());
-    const results = await sendQuotationEmail({
-      data,
-      pdf: {
+    const documents = await Promise.all(
+      (pdfs as File[]).map(async (pdf) => ({
         name: pdf.name,
         type: pdf.type,
         size: pdf.size,
-        bytes,
-      },
+        bytes: new Uint8Array(await pdf.arrayBuffer()),
+      })),
+    );
+    const results = await sendQuotationEmail({
+      data,
+      pdf: documents,
     });
 
     const failed = results.filter(
@@ -123,10 +137,18 @@ export async function POST(request: Request) {
         quotationNumber: data.quotationNumber,
         isTest: data.isTest,
         attachment: {
-          name: quotationAttachmentFilename(data.quotationNumber),
-          bytes: pdf.size,
+          name:
+            documents.length === 1
+              ? quotationAttachmentFilename(data.quotationNumber)
+              : quotationDocumentsAuditFilename(data.quotationNumber),
+          bytes: totalPdfBytes,
           mime: "application/pdf",
         },
+        attachments: documents.map((document) => ({
+          name: document.name,
+          bytes: document.size,
+          mime: document.type,
+        })),
         results,
       },
       status,

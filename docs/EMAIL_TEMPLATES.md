@@ -25,6 +25,14 @@ dibujo y se muestra a 243 × 42 px. La plantilla ofrece
 Outlook y clientes que no procesan SVG. Ambos se sirven desde URLs absolutas del
 propio dominio; no deben sustituirse por Base64, WebP ni una URL temporal.
 
+El tracking de aperturas y clics debe permanecer desactivado en el dominio de
+Resend. El webhook reconoce esos tipos de evento por compatibilidad, pero no
+envía alertas de interacción ni constituye autorización para activar píxeles o
+reescritura de enlaces. Solo los incidentes de entrega generan una alerta
+interna: se reserva primero en un outbox durable, usa una clave idempotente por
+evento, conserva el motivo exacto y reclama cada intento de forma atómica antes
+de reintentar sin tratar un fallo transitorio como éxito.
+
 El logotipo dentro del contenido no controla el avatar que muestra Gmail junto
 al remitente. Esa identidad de bandeja se gestionará por separado mediante
 Apple Branded Mail y, cuando DMARC se encuentre en cumplimiento estricto y sea
@@ -85,10 +93,13 @@ privada, con máximo 4 MiB, MIME `application/pdf`, firma `%PDF-` y nombre
 4. El contenido debe ser legible con imágenes bloqueadas y a 320 px de ancho.
 5. El SVG y su respaldo PNG deben responder `200` con `Content-Type` correcto
    (`image/svg+xml` e `image/png`) desde producción antes de una prueba real.
-6. Los botones y enlaces de texto deben abrir únicamente `https://www.casa-atenta.com`.
+6. En producción, el render debe abrir por HTTPS bajo `casa-atenta.com`,
+   `www.casa-atenta.com` o mediante un enlace directo de archivo/carpeta en
+   `drive.google.com`; los demás hosts quedan bloqueados.
 7. Los mensajes de newsletter deben incluir `List-Unsubscribe` y baja en un clic.
-8. Una cotización de prueba debe incluir `[PRUEBA INTERNA]` en el asunto y
-   limitarse a la allowlist server-side; cada destinatario recibe un mensaje e
+8. Una cotización de prueba debe ser visualmente idéntica al mensaje final y
+   limitarse a la allowlist server-side; auditoría y tags conservan el modo de
+   prueba sin mostrarlo a quien recibe, y cada destinatario obtiene un mensaje e
    ID de Resend independientes.
 9. Una respuesta a la cotización debe llegar a `info@casa-atenta.com` en
    Namecheap Private Email. La aceptación de Resend no valida por sí sola ese
