@@ -8,6 +8,7 @@ import {
 } from "@/lib/quotation-email/core";
 import {
   deliverQuotationRecipients,
+  type BlockedRecipient,
   type DuplicateDelivery,
   type QuotationProviderPayload,
 } from "@/lib/quotation-email/delivery";
@@ -24,6 +25,18 @@ type ResendRequestOptionsWithSignal = CreateEmailRequestOptions & {
   signal: AbortSignal;
 };
 
+const BLOCKING_DELIVERY_STATUSES = [
+  "bounced",
+  "complained",
+  "suppressed",
+] as const;
+
+function isBlockingDeliveryStatus(
+  status: string,
+): status is BlockedRecipient["status"] {
+  return BLOCKING_DELIVERY_STATUSES.some((candidate) => candidate === status);
+}
+
 async function reserveDelivery(input: {
   quotationNumber: string;
   isTest: boolean;
@@ -34,6 +47,26 @@ async function reserveDelivery(input: {
   idempotencyKey: string;
 }) {
   const supabase = getSupabaseAdmin();
+  const { data: blocked, error: blockedLookupError } = await supabase
+    .from("quotation_email_deliveries")
+    .select("status")
+    .eq("recipient_fingerprint", input.recipientFingerprint)
+    .in("status", [...BLOCKING_DELIVERY_STATUSES])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (blockedLookupError) {
+    throw new Error(
+      "No se pudo comprobar la supresión histórica del destinatario.",
+    );
+  }
+  if (blocked && isBlockingDeliveryStatus(blocked.status)) {
+    return {
+      kind: "blocked",
+      status: blocked.status,
+    } satisfies BlockedRecipient;
+  }
+
   const { error } = await supabase.from("quotation_email_deliveries").insert({
     quotation_number: input.quotationNumber,
     is_test: input.isTest,
@@ -137,7 +170,7 @@ async function sendThroughResend(
 
 export async function sendQuotationEmail(input: {
   data: QuotationEmailData;
-  pdf: QuotationPdfInput;
+  pdf: QuotationPdfInput | readonly QuotationPdfInput[];
 }) {
   const sender = getQuotationResendConfig();
   const template = quotationDeliveryEmail(input.data);

@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   QUOTATION_FROM,
+  QUOTATION_MAX_PDF_BYTES,
   QUOTATION_REPLY_TO,
+  QuotationValidationError,
   type QuotationEmailData,
 } from "../../src/lib/quotation-email/core";
 import {
@@ -32,9 +34,15 @@ const pdf = {
   size: bytes.byteLength,
   bytes,
 };
+const contractBytes = new TextEncoder().encode("%PDF-1.4\ncontract");
+const contractPdf = {
+  name: "CONTRATO_2026_0086_1.pdf",
+  type: "application/pdf",
+  size: contractBytes.byteLength,
+  bytes: contractBytes,
+};
 const content = {
-  subject:
-    "[PRUEBA INTERNA] Propuesta técnica y render de su proyecto | Casa Atenta",
+  subject: "Propuesta técnica y render de su proyecto | Casa Atenta",
   html: "<p>Contenido</p>",
   text: "Contenido",
   digest: "c".repeat(64),
@@ -147,6 +155,33 @@ test("una reserva duplicada bloquea el segundo envío", async () => {
   assert.equal(results[0]?.requiresReview, false);
 });
 
+for (const existingStatus of ["bounced", "complained", "suppressed"] as const) {
+  test(`un destinatario con estado histórico ${existingStatus} queda bloqueado antes del proveedor`, async () => {
+    let sends = 0;
+    const results = await deliverQuotationRecipients({
+      data,
+      pdf,
+      content,
+      dependencies: dependencies({
+        reserve: async () => ({
+          kind: "blocked",
+          status: existingStatus,
+        }),
+        send: async () => {
+          sends += 1;
+          return { data: { id: "must_not_send" }, error: null };
+        },
+      }),
+    });
+
+    assert.equal(sends, 0);
+    assert.equal(results[0]?.status, "blocked");
+    assert.equal(results[0]?.existingStatus, existingStatus);
+    assert.equal(results[0]?.requiresReview, true);
+    assert.match(results[0]?.message || "", /No se intentó el envío/u);
+  });
+}
+
 for (const existingStatus of ["pending", "failed"]) {
   test(`un duplicado en estado ${existingStatus} bloquea el envío y exige revisión`, async () => {
     let sends = 0;
@@ -209,6 +244,129 @@ test("envía adjunto real, replyTo, tags y nombre profesional sin exponer PII en
     JSON.stringify(results).includes("internal-one@example.com"),
     false,
   );
+});
+
+test("envía dos PDFs originales en un único correo y conserva auditoría e idempotencia", async () => {
+  let captured: QuotationProviderPayload | undefined;
+  let reserved:
+    { attachmentFilename: string; attachmentBytes: number } | undefined;
+  const results = await deliverQuotationRecipients({
+    data,
+    pdf: [pdf, contractPdf],
+    content,
+    dependencies: dependencies({
+      reserve: async (input) => {
+        reserved = {
+          attachmentFilename: input.attachmentFilename,
+          attachmentBytes: input.attachmentBytes,
+        };
+        return { kind: "reserved" };
+      },
+      send: async (payload) => {
+        captured = payload;
+        return { data: { id: "email_bundle" }, error: null };
+      },
+    }),
+  });
+
+  assert.deepEqual(
+    captured?.attachments.map((attachment) => attachment.filename),
+    ["quotation.pdf", "CONTRATO_2026_0086_1.pdf"],
+  );
+  assert.equal(
+    reserved?.attachmentFilename,
+    "Casa-Atenta-Documentos-DEMO-0001.pdf",
+  );
+  assert.equal(reserved?.attachmentBytes, pdf.size + contractPdf.size);
+  assert.equal(captured?.tags.at(-1)?.name, "delivery");
+  assert.equal(results[0]?.status, "sent");
+  assert.equal(results[0]?.resendEmailId, "email_bundle");
+});
+
+test("reordenar los mismos dos PDFs conserva la clave idempotente", async () => {
+  const keys: string[] = [];
+  for (const documents of [
+    [pdf, contractPdf],
+    [contractPdf, pdf],
+  ]) {
+    const results = await deliverQuotationRecipients({
+      data,
+      pdf: documents,
+      content,
+      dependencies: dependencies(),
+    });
+    keys.push(results[0]?.idempotencyKey || "");
+  }
+
+  assert.equal(keys[0], keys[1]);
+  assert.match(keys[0] || "", /^quotation-[0-9a-f]{64}$/u);
+});
+
+test("rechaza dos adjuntos con contenido o nombre duplicado", async () => {
+  for (const documents of [
+    [pdf, { ...pdf }],
+    [pdf, { ...contractPdf, name: "QUOTATION.PDF" }],
+  ]) {
+    await assert.rejects(
+      () =>
+        deliverQuotationRecipients({
+          data,
+          pdf: documents,
+          content,
+          dependencies: dependencies(),
+        }),
+      (error) =>
+        error instanceof QuotationValidationError &&
+        error.code === "DUPLICATE_PDF",
+    );
+  }
+});
+
+test("rechaza dos PDFs que superan en conjunto 4 MiB antes de reservar o enviar", async () => {
+  const documentSize = Math.floor(QUOTATION_MAX_PDF_BYTES / 2) + 1;
+  const documentBytes = new Uint8Array(documentSize);
+  documentBytes.set([0x25, 0x50, 0x44, 0x46, 0x2d]);
+  const secondDocumentBytes = documentBytes.slice();
+  secondDocumentBytes[secondDocumentBytes.length - 1] = 1;
+  let reservations = 0;
+  let sends = 0;
+
+  await assert.rejects(
+    () =>
+      deliverQuotationRecipients({
+        data,
+        pdf: [
+          {
+            name: "cotizacion.pdf",
+            type: "application/pdf",
+            size: documentBytes.byteLength,
+            bytes: documentBytes,
+          },
+          {
+            name: "contrato.pdf",
+            type: "application/pdf",
+            size: secondDocumentBytes.byteLength,
+            bytes: secondDocumentBytes,
+          },
+        ],
+        content,
+        dependencies: dependencies({
+          reserve: async () => {
+            reservations += 1;
+            return { kind: "reserved" };
+          },
+          send: async () => {
+            sends += 1;
+            return { data: { id: "must_not_send" }, error: null };
+          },
+        }),
+      }),
+    (error) =>
+      error instanceof QuotationValidationError &&
+      error.code === "PDF_TOO_LARGE",
+  );
+  assert.equal(reservations, 0);
+  assert.equal(sends, 0);
 });
 
 test("crea dos envíos separados y conserva un ID de Resend por destinatario", async () => {

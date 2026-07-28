@@ -3,7 +3,7 @@ import "server-only";
 import {
   QUOTATION_FROM,
   QUOTATION_REPLY_TO,
-  parseQuotationTestRecipients,
+  parseQuotationRecipients,
 } from "@/lib/quotation-email/core";
 
 export class ConfigurationError extends Error {
@@ -101,11 +101,22 @@ export function getQuotationAuditSecret() {
 
 export function getQuotationTestRecipients() {
   try {
-    return parseQuotationTestRecipients(required("QUOTATION_TEST_RECIPIENTS"));
+    return parseQuotationRecipients(required("QUOTATION_TEST_RECIPIENTS"));
   } catch (error) {
     if (error instanceof ConfigurationError) throw error;
     throw new ConfigurationError(
       "QUOTATION_TEST_RECIPIENTS (lista válida separada por comas)",
+    );
+  }
+}
+
+export function getQuotationAlertRecipients() {
+  try {
+    return parseQuotationRecipients(required("QUOTATION_ALERT_RECIPIENTS"));
+  } catch (error) {
+    if (error instanceof ConfigurationError) throw error;
+    throw new ConfigurationError(
+      "QUOTATION_ALERT_RECIPIENTS (lista válida separada por comas)",
     );
   }
 }

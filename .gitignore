@@ -15,6 +15,11 @@
 # testing
 /coverage
 
+# private/local document review artifacts
+/output/
+/tmp/
+/scripts/generate-0086-clarifications.py
+
 # next.js
 /.next/
 /apps/storefront/.next/

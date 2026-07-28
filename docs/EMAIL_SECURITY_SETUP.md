@@ -24,7 +24,7 @@ historial, pero no representa una autorización para cambiar DNS.
 
 ### Flujo actual de una cotización
 
-1. La aplicación entrega el mensaje y el PDF a Resend mediante HTTPS.
+1. La aplicación entrega el mensaje y uno o dos PDFs a Resend mediante HTTPS.
 2. Resend autentica y envía el correo usando los registros SPF/DKIM ya
    verificados para su flujo de salida.
 3. Si la destinataria responde, su proveedor consulta los MX de
@@ -210,16 +210,19 @@ Codex no sustituye `SUPABASE_URL` ni
 2. La migración de cotizaciones debe crear
    `quotation_email_deliveries`; verificarla de forma independiente antes del
    primer envío.
-3. `anon` y `authenticated` no tienen permisos sobre estas tablas ni sobre la
+3. La migración `20260726233537_email_event_alert_outbox.sql` debe agregar el
+   estado durable de alertas a `email_events` antes de desplegar el webhook que
+   lo utiliza.
+4. `anon` y `authenticated` no tienen permisos sobre estas tablas ni sobre la
    función de rate limiting; `service_role` conserva solo los permisos
    explícitos necesarios.
-4. Los avisos informativos de RLS sin políticas son intencionales cuando no
+5. Los avisos informativos de RLS sin políticas son intencionales cuando no
    existe acceso directo desde clientes; todo error o advertencia adicional de
    Database Advisors se debe resolver antes de desplegar.
-5. Configurar una Secret key moderna `sb_secret_...` como
+6. Configurar una Secret key moderna `sb_secret_...` como
    `SUPABASE_SECRET_KEY`. `service_role` solo queda como compatibilidad
    temporal.
-6. No exponer ninguna de estas claves con el prefijo `NEXT_PUBLIC_`.
+7. No exponer ninguna de estas claves con el prefijo `NEXT_PUBLIC_`.
 
 Las tablas tienen RLS activo, no conceden acceso a `anon` ni `authenticated` y solo la capa de servidor recibe permisos explícitos.
 
@@ -260,7 +263,10 @@ enviará como Bearer token. La tarea reintenta hasta cinco veces las
 notificaciones y recibos de contacto, las copias del Libro de Reclamaciones, la
 confirmación de doble opt-in y la bienvenida del newsletter. Las claves
 idempotentes son estables y también recuperan registros cuyo envío terminó,
-pero cuyo estado no alcanzó a persistirse en Supabase.
+pero cuyo estado no alcanzó a persistirse en Supabase. También recupera alertas
+de incidentes de cotizaciones que quedaron en el outbox con estado `pending` o
+`failed`; el webhook solicita además un reintento inmediato devolviendo `503`
+si la alerta no pudo completarse.
 
 Los envíos normales siguen siendo inmediatos; el cron solo recupera fallos
 excepcionales. Al pasar el proyecto a un plan comercial compatible, conviene
@@ -277,6 +283,7 @@ Variables obligatorias:
 - `QUOTATION_RESEND_FROM_EMAIL` (opcional; solo acepta el `From` exacto de cotizaciones)
 - `QUOTATION_AUDIT_SECRET`
 - `QUOTATION_TEST_RECIPIENTS`
+- `QUOTATION_ALERT_RECIPIENTS` (buzones operativos; no reutilizar automáticamente la allowlist de pruebas)
 - `QUOTATION_PRODUCTION_ENABLED` (fail-closed; mantener `false` hasta autorización expresa)
 - `CONTACT_INBOX`
 - `QUOTATION_ADMIN_ACCESS_TOKEN`
@@ -300,10 +307,15 @@ cotizaciones fija por defecto `Casa Atenta <info@casa-atenta.com>` y solo acepta
 `QUOTATION_RESEND_FROM_EMAIL` cuando coincide exactamente con ese valor. El
 storefront mantiene su propia configuración en su entorno independiente.
 
+`QUOTATION_ALERT_RECIPIENTS` se configura aparte de
+`QUOTATION_TEST_RECIPIENTS`: los incidentes de rebote, queja y supresión solo se
+notifican a los buzones operativos designados, aunque la allowlist de pruebas
+contenga más direcciones.
+
 La ausencia de cualquiera de los secretos requeridos deja la consola
 indisponible. Enviar a producción exige, además, que
-`QUOTATION_PRODUCTION_ENABLED` sea exactamente `true`, que el PDF haya sido
-confirmado como revisado y que el operador escriba la frase literal asociada al
+`QUOTATION_PRODUCTION_ENABLED` sea exactamente `true`, que los PDFs hayan sido
+confirmados como revisados y que el operador escriba la frase literal asociada al
 número de cotización. El modo de prueba no elimina ni satisface esos controles.
 
 ## 8. Verificación de salida
@@ -318,13 +330,19 @@ Después del despliegue:
 6. Verificar que un token Turnstile repetido sea rechazado.
 7. Revisar semanalmente reportes DMARC, rebotes y quejas durante el primer mes.
 8. Desde `/admin/cotizaciones`, ejecutar primero el modo de prueba; la allowlist
-   solo admite los dos destinatarios internos autorizados y crea un envío
+   solo admite los destinatarios internos configurados y crea un envío
    individual por dirección.
 9. Confirmar en cada resultado un ID de Resend y una fila de auditoría
    server-side sin PDF ni correo completo.
 10. Responder a un mensaje de prueba y comprobar que la respuesta llega a
     `info@casa-atenta.com` en Namecheap Private Email.
-11. No cambiar DNS durante esta verificación. SPF, DKIM y DMARC se inspeccionan;
+11. Confirmar en Resend que apertura y clic continúan desactivados; una
+    cotización de producción solo puede incluir el render bajo
+    `casa-atenta.com`, `www.casa-atenta.com` o como enlace directo de
+    archivo/carpeta en `drive.google.com`.
+12. Ejecutar `npm run email:deliverability:check` y conservar el resultado con
+    la revisión operativa.
+13. No cambiar DNS durante esta verificación. SPF, DKIM y DMARC se inspeccionan;
     los MX actuales se conservan.
 
 El procedimiento completo, incluidos errores, idempotencia, rollback y

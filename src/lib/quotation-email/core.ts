@@ -5,7 +5,7 @@ export const QUOTATION_FROM = "Casa Atenta <info@casa-atenta.com>";
 export const QUOTATION_REPLY_TO = "info@casa-atenta.com";
 export const QUOTATION_MAX_PDF_BYTES = 4 * 1024 * 1024;
 export const QUOTATION_SEND_TIMEOUT_MS = 15_000;
-export const QUOTATION_TEMPLATE_VERSION = "quotation-v1-2026-07-16";
+export const QUOTATION_TEMPLATE_VERSION = "quotation-v2-2026-07-28";
 export const QUOTATION_PRODUCTION_CONFIRMATION_PREFIX = "CONFIRMAR ENVIO";
 
 const singleLine = (minimum: number, maximum: number) =>
@@ -19,6 +19,34 @@ const singleLine = (minimum: number, maximum: number) =>
     });
 
 const recipientSchema = z.string().trim().toLowerCase().email().max(254);
+const corporateRenderHosts = new Set([
+  "casa-atenta.com",
+  "www.casa-atenta.com",
+]);
+const GOOGLE_DRIVE_RENDER_HOST = "drive.google.com";
+const renderLinkSchema = z
+  .string()
+  .trim()
+  .max(1000)
+  .url({ message: "El enlace del render debe ser una URL válida." })
+  .refine(
+    (value) => {
+      try {
+        const url = new URL(value);
+        return (
+          url.protocol === "https:" &&
+          url.username.length === 0 &&
+          url.password.length === 0
+        );
+      } catch {
+        return false;
+      }
+    },
+    {
+      message:
+        "El enlace del render debe usar HTTPS y no puede incluir credenciales.",
+    },
+  );
 
 const quotationEmailDataBaseSchema = z
   .object({
@@ -47,19 +75,16 @@ const quotationEmailDataBaseSchema = z
     isTest: z.boolean(),
     productionDocumentConfirmed: z.boolean(),
     productionConfirmation: z.string().trim().max(100).optional(),
-    renderLink: z
-      .string()
-      .trim()
-      .url({ message: "El enlace del render debe ser una URL válida." })
-      .max(1000)
-      .optional(),
-    subject: z.string().trim().max(200).optional(),
+    renderLink: renderLinkSchema.optional(),
+    subject: singleLine(1, 200).optional(),
+    deliveryMessage: singleLine(1, 500).optional(),
+    closingMessage: singleLine(1, 240).optional(),
   })
   .strict();
 
 export type QuotationEmailData = z.infer<typeof quotationEmailDataBaseSchema>;
 
-export function parseQuotationTestRecipients(value: string) {
+export function parseQuotationRecipients(value: string) {
   const recipients = value
     .split(/[\s,;]+/u)
     .map((recipient) => recipient.trim())
@@ -105,6 +130,24 @@ export function createQuotationEmailDataSchema(
       });
     }
 
+    if (data.renderLink) {
+      const renderUrl = new URL(data.renderLink);
+      const renderHost = renderUrl.hostname.toLowerCase();
+      const isCorporateRender = corporateRenderHosts.has(renderHost);
+      const isGoogleDriveRender =
+        renderHost === GOOGLE_DRIVE_RENDER_HOST &&
+        (/^\/drive\/folders\/[^/]+/u.test(renderUrl.pathname) ||
+          /^\/file\/d\/[^/]+/u.test(renderUrl.pathname));
+      if (!isCorporateRender && !isGoogleDriveRender) {
+        context.addIssue({
+          code: "custom",
+          path: ["renderLink"],
+          message:
+            "Producción solo admite renders alojados en casa-atenta.com o enlaces directos de Google Drive.",
+        });
+      }
+    }
+
     const expected = productionConfirmationFor(data.quotationNumber);
     if (!data.productionDocumentConfirmed) {
       context.addIssue({
@@ -142,9 +185,11 @@ export class QuotationValidationError extends Error {
       | "EMPTY_PDF"
       | "PDF_TOO_LARGE"
       | "INVALID_EXTENSION"
+      | "INVALID_FILENAME"
       | "INVALID_MIME"
       | "INVALID_PDF_SIGNATURE"
-      | "INVALID_PDF_SIZE",
+      | "INVALID_PDF_SIZE"
+      | "DUPLICATE_PDF",
   ) {
     super(message);
     this.name = "QuotationValidationError";
@@ -155,9 +200,10 @@ export function productionConfirmationFor(quotationNumber: string) {
   return `${QUOTATION_PRODUCTION_CONFIRMATION_PREFIX} ${quotationNumber}`;
 }
 
-export function quotationSubject(data: Pick<QuotationEmailData, "isTest" | "subject">) {
-  const baseSubject = data.subject || "Propuesta técnica y render de su proyecto | Casa Atenta";
-  return `${data.isTest ? "[PRUEBA INTERNA] " : ""}${baseSubject}`;
+export function quotationSubject(data: Pick<QuotationEmailData, "subject">) {
+  return (
+    data.subject || "Propuesta técnica y render de su proyecto | Casa Atenta"
+  );
 }
 
 export function quotationPreheader(
@@ -172,15 +218,31 @@ export function quotationAttachmentFilename(quotationNumber: string) {
   return `Casa-Atenta-Cotizacion-${safeNumber}.pdf`;
 }
 
+export function quotationDocumentsAuditFilename(quotationNumber: string) {
+  const safeNumber = quotationNumber.replace(/[^A-Za-z0-9-]/gu, "-");
+  return `Casa-Atenta-Documentos-${safeNumber}.pdf`;
+}
+
 export function validateQuotationPdf(
   input: QuotationPdfInput,
 ): ValidatedQuotationPdf {
+  const normalizedName = input.name.normalize("NFC").trim();
   if (
     !Number.isSafeInteger(input.size) ||
     input.size <= 0 ||
     input.bytes.length === 0
   ) {
     throw new QuotationValidationError("El PDF está vacío.", "EMPTY_PDF");
+  }
+  if (
+    normalizedName.length < 5 ||
+    normalizedName.length > 255 ||
+    /[\\/\r\n\u0000-\u001f\u007f]/u.test(normalizedName)
+  ) {
+    throw new QuotationValidationError(
+      "El nombre del archivo PDF no es válido.",
+      "INVALID_FILENAME",
+    );
   }
   if (input.size > QUOTATION_MAX_PDF_BYTES) {
     throw new QuotationValidationError(
@@ -194,7 +256,7 @@ export function validateQuotationPdf(
       "INVALID_PDF_SIZE",
     );
   }
-  if (!input.name.toLowerCase().endsWith(".pdf")) {
+  if (!normalizedName.toLowerCase().endsWith(".pdf")) {
     throw new QuotationValidationError(
       "El archivo debe usar la extensión .pdf.",
       "INVALID_EXTENSION",
@@ -217,6 +279,7 @@ export function validateQuotationPdf(
 
   return {
     ...input,
+    name: normalizedName,
     digest: createHash("sha256").update(input.bytes).digest("hex"),
   };
 }

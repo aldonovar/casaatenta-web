@@ -81,8 +81,8 @@ export default async function QuotationAdminPage({
           <p className={styles.eyebrow}>Casa Atenta / operación privada</p>
           <h1>Entrega de cotizaciones</h1>
           <p>
-            Envíos separados, adjunto transitorio y trazabilidad individual en
-            Resend y Supabase.
+            Envíos separados, uno o dos adjuntos transitorios y trazabilidad
+            individual en Resend y Supabase.
           </p>
         </div>
         <form action="/api/admin/quotation-session?logout=1" method="post">
@@ -99,13 +99,13 @@ export default async function QuotationAdminPage({
         <div>
           <p className={styles.warningLabel}>Revisión documental pendiente</p>
           <h2 id="pdf-review-title">
-            Revisa el documento antes de cualquier operación.
+            Revisa todos los documentos antes de cualquier operación.
           </h2>
         </div>
         <ul>
           <li>Compara partidas, subtotal, impuestos y total visible.</li>
           <li>Confirma que alcance, proyecto y ubicación coincidan.</li>
-          <li>Revisa fotografías, autor y metadatos internos del PDF.</li>
+          <li>Revisa fotografías, autor y metadatos internos de cada PDF.</li>
         </ul>
       </aside>
 

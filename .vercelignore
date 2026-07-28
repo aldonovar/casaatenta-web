@@ -1,0 +1,4 @@
+# Local customer-document review artifacts must never enter deployment uploads.
+output/
+tmp/
+scripts/generate-0086-clarifications.py
